@@ -1,0 +1,15 @@
+logs/
+npm-debug.log
+node_modules/
+coverage/
+.idea/
+.git/
+run/
+.DS_Store
+*.swp
+package-lock.json
+db/
+ui/
+temp/
+web/
+logs/
