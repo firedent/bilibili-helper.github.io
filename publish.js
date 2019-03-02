@@ -76,14 +76,14 @@ inquirer.prompt([
     message('清空仓库并拉取最新代码');
     shelljs.exec('git reset --hard'); // 清空所有未提交修改
     shelljs.exec(`git checkout ${branch}`); // 切换到目标分支
-    shelljs.exec('git remote prune origin'); // 删除清理所有远程已经删除的本地分支
+    //shelljs.exec('git remote prune origin'); // 删除清理所有远程已经删除的本地分支
     shelljs.exec(`git pull origin ${branch}`); // 拉取目标分支
     shelljs.exec('git status');
 
     const lastCommitHash = getCurrentGitCommitHash();
     message(`开始执行webpack编译过程 - hash:${lastCommitHash}`);
     //shelljs.exec(`npm run build:dll`);
-    shelljs.exec(`umi run build:prod`);
+    shelljs.exec(`npm run build:prod`);
 
     message('开始上传文件到目标服务器');
     console.log(`将 ${answers.server.srcDir} 传输到 ${answers.server.host}:${answers.server.path} 目录下`.yellow);
