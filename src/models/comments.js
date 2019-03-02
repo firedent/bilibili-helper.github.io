@@ -4,9 +4,9 @@ import Url from 'url-parse';
 
 const myCommendConfig = {
     pn: 1, // 评论页数
-    oid: 16116344, // 评论数据库id
+    oid: 44808808, // 评论数据库id
     sort: 0, // 降序
-    type: 11, // 1: 视频投稿评论类型，11: 图像投稿评论类型
+    type: 1, // 1: 视频投稿评论类型，11: 图像投稿评论类型
     root: undefined, // 获取某条评论下的回复时设置
     csrf: null,
     plat: 1,
@@ -226,9 +226,15 @@ export default {
     effects: {
         * load({payload}, {put, select}) {
             const {oid, pn, sort, type} = yield select(({comments}) => comments.config);
-            const {oid: queryOid, pn: queryPn, ps: queryPs, root} = payload.query;
-            if (payload.type) yield put({type: 'fetchReply', payload: {oid: queryOid || oid, ps: queryPs, sort, type}});
-            else yield put({type: 'fetchComment', payload: {oid: queryOid || oid, pn: queryPn || pn, sort, type, root}});
+            const {oid: queryOid, pn: queryPn, ps: queryPs, root, type: queryType} = payload.query;
+            if (payload.ptype) yield put({
+                type: 'fetchReply',
+                payload: _.pickBy({oid: queryOid || oid, ps: queryPs, sort, type: queryType || type}, _.identity),
+            });
+            else yield put({
+                type: 'fetchComment',
+                payload: _.pickBy({oid: queryOid || oid, pn: queryPn || pn, sort, type: queryType || type, root}, _.identity),
+            });
         },
         * fetchComment({payload}, {put, select}) {
             yield put({type: 'updateCommentGettingState', payload: true});

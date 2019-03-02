@@ -24,7 +24,7 @@
     },
     "scripts": {
         "p": "node ./publish.js",
-        "dev": "egg-bin dev"
+        "dev": "umi dev UMI_ENV=local"
     },
     "keywords": [
         "bilibili",

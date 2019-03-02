@@ -31,7 +31,6 @@ const Header = styled.header.attrs({className: 'comment-list-header'})`
   margin: 20px 10px 30px 0;
   color: #a9a7a7;
 `;
-
 const Comment = styled.div.attrs({className: 'comment-item'})`
   display: flex;
   margin-bottom: 30px;
@@ -270,7 +269,7 @@ class CommentList extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.location.query.page !== prevProps.location.query.page && prevProps.location.query.type === '0') {
+        if (this.props.location.query.page !== prevProps.location.query.page && prevProps.location.query.ptype === '0') {
             this.load();
         }
     }
@@ -278,9 +277,9 @@ class CommentList extends React.Component {
     load = () => {
         const {comments, dispatch, location} = this.props;
         const {config} = comments;
-        const {oid = config.oid, page = 1, type = 0} = location.query;
-        const query = {oid, [+type ? 'ps' : 'pn']: page};
-        dispatch({type: 'comments/load', payload: {query, type: +type}});
+        const {oid = config.oid, page = 1, ptype = 0} = location.query;
+        const query = {oid, [+ptype ? 'ps' : 'pn']: page};
+        dispatch({type: 'comments/load', payload: {query, ptype: +ptype}});
     };
 
     calculateNavigationPageIndex = (num, pages) => {
@@ -407,7 +406,7 @@ class CommentList extends React.Component {
                                 (<HR onClick={() => this.handleOnClickLoadMoreReplies({root: rpid, oid})}>~ LOAD MORE ~</HR>)}
                             </div>
                             {!showLoadMore && replyData.pages > 1 &&
-                            this.renderPageNavigation({oid: config.oid, pageIndex, num: replyData.page.num, pages: replyData.pages, root: rpid, type: 1})}
+                            this.renderPageNavigation({oid: config.oid, pageIndex, num: replyData.page.num, pages: replyData.pages, root: rpid, ptype: 1})}
                         </div>
                     )}
                 </div>
@@ -415,7 +414,7 @@ class CommentList extends React.Component {
         );
     };
 
-    renderPageNavigation = ({oid, pageIndex, num, pages, root, type = 0}) => {
+    renderPageNavigation = ({oid, pageIndex, num, pages, root, ptype = 0}) => {
         let handleFunc = () => {};
         if (root) handleFunc = (num) => this.handleOnClickNavigationForReply({pn: num, ps: 10, sort: 0, root});
         else handleFunc = (num) => this.handleOnClickNavigation({pn: num});
@@ -426,7 +425,7 @@ class CommentList extends React.Component {
                 )}
                 {pageIndex.map((pageNum, index) => {
                     return (
-                        <Link key={pageNum + index} to={`?oid=${oid}&page=${pageNum}&type=${type}`}>
+                        <Link key={pageNum + index} to={`?oid=${oid}&page=${pageNum}&ptype=${ptype}`}>
                             <span
                                 className={`page-navigation-link ${pageNum === '-' ? 'omit' : ''} ${num === pageNum ? 'now' : ''}`}
                                 onClick={num !== pageNum ? () => handleFunc(pageNum) : null}

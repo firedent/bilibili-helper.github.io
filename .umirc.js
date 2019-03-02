@@ -1,3 +1,5 @@
+const path = require('path');
+const srcPath = path.resolve('src');
 export default {
     routes: [
         {
@@ -7,6 +9,15 @@ export default {
             ],
         },
     ],
+    define: {
+        postURL: 'http://helper.drowsyflesh.com/',
+    },
+    alias: {
+        'Utils': path.resolve(srcPath, 'utils'),
+        'Components': path.resolve(srcPath, 'components'),
+        'Modules': path.resolve(srcPath, 'models'),
+        'Pages': path.resolve(srcPath, 'pages'),
+    },
     plugins: [
         [
             'umi-plugin-react',
