@@ -1,0 +1,12 @@
+bilibili_helper.zip
+node_modules/
+.vscode/
+*.pem
+*.crx
+.idea/
+.umi/
+.DS_Store
+package-lock.json
+build/
+*.zip
+videoUnblock/

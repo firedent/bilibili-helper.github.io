@@ -1,0 +1,31 @@
+{
+    "name": "bilibili-helper-website",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "dva": "^2.4.1",
+        "egg": "^2.18.0",
+        "lodash": "^4.17.11",
+        "moment": "^2.24.0",
+        "react": "^16.8.3",
+        "styled-components": "^4.1.3",
+        "url-parse": "^1.4.4"
+    },
+    "devDependencies": {
+        "dva-logger": "^1.0.0",
+        "egg-bin": "^4.11.0",
+        "egg-mongoose": "^3.1.1",
+        "umi-plugin-dva": "^1.4.0",
+        "umi-plugin-react": "^1.5.2"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "egg-bin dev"
+    },
+    "keywords": [
+        "bilibili",
+        "helper"
+    ],
+    "author": "DrowsyFlesh"
+}
