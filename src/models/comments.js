@@ -37,7 +37,7 @@ export default {
         },
         members: {},
         replyMap: {},
-        config: testCommendConfig,
+        config: myCommendConfig,
         status: {
             comment: {
                 getting: false,
@@ -71,7 +71,7 @@ export default {
                                     dispatch({type: 'updateEditorSendError', payload: null});
                                     const {dialog, parent, root, rpid} = data.data;
                                     setTimeout(() => {
-                                        dispatch({type: 'updateEditorGettingState', payload: false});
+                                        dispatch({type: 'updateEditorSendingState', payload: false});
                                         if (!dialog && !parent && !root && rpid) dispatch({type: 'fetchComment'});
                                         else dispatch({type: 'fetchReply', payload: {parent, root}});
                                     }, 1000);
@@ -226,7 +226,6 @@ export default {
     effects: {
         * load({payload}, {put, select}) {
             const {oid, pn, sort, type} = yield select(({comments}) => comments.config);
-            console.log(payload);
             const {oid: queryOid, pn: queryPn, ps: queryPs, root} = payload.query;
             if (payload.type) yield put({type: 'fetchReply', payload: {oid: queryOid || oid, ps: queryPs, sort, type}});
             else yield put({type: 'fetchComment', payload: {oid: queryOid || oid, pn: queryPn || pn, sort, type, root}});
@@ -247,7 +246,7 @@ export default {
             fetchFromHelper('json', {url: url.toString(), model: 'comment', sign: 'getReply'});
         },
         * sendReply({payload}, {put, select}) {
-            yield put({type: 'updateEditorGettingState', payload: true});
+            yield put({type: 'updateEditorSendingState', payload: true});
             const url = 'https://api.bilibili.com/x/v2/reply/add';
             const {oid, type, plat} = yield select(({comments}) => comments.config);
             const csrf = yield select(({user}) => user.csrf);

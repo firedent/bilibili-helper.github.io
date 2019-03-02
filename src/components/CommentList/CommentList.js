@@ -96,6 +96,7 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
         overflow-x: auto;
         white-space: pre-wrap;
         word-wrap: break-word;
+        font-family: auto;
       }
       .toolbar {
         position: absolute;
@@ -423,9 +424,9 @@ class CommentList extends React.Component {
                 {pageIndex.length > 2 && num > 1 && (
                     <span className="page-navigation-link" onClick={() => handleFunc(num - 1)}>PREV</span>
                 )}
-                {pageIndex.map((pageNum) => {
+                {pageIndex.map((pageNum, index) => {
                     return (
-                        <Link key={pageNum} to={`?oid=${oid}&page=${pageNum}&type=${type}`}>
+                        <Link key={pageNum + index} to={`?oid=${oid}&page=${pageNum}&type=${type}`}>
                             <span
                                 className={`page-navigation-link ${pageNum === '-' ? 'omit' : ''} ${num === pageNum ? 'now' : ''}`}
                                 onClick={num !== pageNum ? () => handleFunc(pageNum) : null}
