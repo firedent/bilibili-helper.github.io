@@ -83,7 +83,7 @@ inquirer.prompt([
     const lastCommitHash = getCurrentGitCommitHash();
     message(`开始执行webpack编译过程 - hash:${lastCommitHash}`);
     //shelljs.exec(`npm run build:dll`);
-    shelljs.exec(`npm run umi build`);
+    shelljs.exec(`umi run build:pro`);
 
     message('开始上传文件到目标服务器');
     console.log(`将 ${answers.server.srcDir} 传输到 ${answers.server.host}:${answers.server.path} 目录下`.yellow);

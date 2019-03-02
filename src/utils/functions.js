@@ -4,7 +4,6 @@
  * Create: 2019/2/28
  * Description:
  */
-
 export const postMessage = (message, origin = postURL) => {
     window.postMessage(message, origin);
 };

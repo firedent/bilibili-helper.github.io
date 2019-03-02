@@ -24,7 +24,8 @@
     },
     "scripts": {
         "p": "node ./publish.js",
-        "dev": "umi dev UMI_ENV=local"
+        "dev": "UMI_ENV=local umi dev",
+        "build:prod": "UMI_ENV=prod umi build"
     },
     "keywords": [
         "bilibili",

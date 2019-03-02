@@ -9,9 +9,6 @@ export default {
             ],
         },
     ],
-    define: {
-        postURL: 'http://helper.drowsyflesh.com/',
-    },
     alias: {
         'Utils': path.resolve(srcPath, 'utils'),
         'Components': path.resolve(srcPath, 'components'),
