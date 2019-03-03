@@ -7,7 +7,7 @@ import React from 'react';
 import {connect} from 'dva';
 import styled, {createGlobalStyle} from 'styled-components';
 import withRouter from 'umi/withRouter';
-import CommentList from '../../components/CommentList/CommentList';
+import CommentArea from 'Components/CommentArea';
 
 const GlobalStyleSheet = createGlobalStyle`
   html {
@@ -24,6 +24,13 @@ const GlobalStyleSheet = createGlobalStyle`
   *, body {
     margin: 0;
     padding: 0;
+  }
+  .model-img {
+    &:not([src]) {
+      content: url("data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+      border: 1px solid var(--border-color);
+      box-sizing: border-box;
+    }
   }
 `;
 
@@ -61,7 +68,7 @@ class Home extends React.Component {
                 <Header>
                     <h1>BILIBILI HELPER</h1>
                 </Header>
-                <CommentList/>
+                <CommentArea/>
             </React.Fragment>
         );
     }

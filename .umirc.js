@@ -4,9 +4,6 @@ export default {
     routes: [
         {
             path: '.', component: './layouts',
-            routes: [
-                {path: '/:oid/:page/:reply', component: './layouts'},
-            ],
         },
     ],
     alias: {

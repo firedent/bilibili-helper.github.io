@@ -10,12 +10,30 @@ import {connect} from 'dva';
 import Image from '../Image';
 
 const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
+  position: relative;
   display: flex;
   margin-bottom: 40px;
   padding-bottom: 30px;
   border-bottom: 1px solid var(--border-color);
+  transform: scale(${({canUse}) => canUse ? 1 : 0.95});
+  z-index: 100;
   &:last-of-type {
     border-bottom: none;
+  }
+  .mask{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    bottom: 20px;
+    left: -20px;
+    border-radius: 3px;
+    background-color: rgba(85, 85, 85, 0.2);
+    color: var(--content-color);
+    user-select: none;
+    z-index: 1;
   }
   
   .replies &, .main & {
@@ -81,6 +99,12 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
           background-color: var(--bilibili-blue);
           color: var(--background-color);
         }
+        &[disabled] {
+          cursor: not-allowed;
+          background-color: unset;
+          color: var(--content-color);
+          opacity: 0.2;
+        }
       }
       .stickers-box {
         position: absolute;
@@ -90,6 +114,7 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
         border-radius: 3px;
         border: 1px solid var(--border-color);
         background-color: var(--pure-white);
+        box-shadow: rgba(20, 20, 20, 0.1) 1px 1px 10px;
         z-index: 100;
         .stickers {
           height: 175px;
@@ -104,6 +129,7 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
             border-radius: 3px;
             cursor: pointer;
             transition: all 0.3s;
+            user-select: none;
             &:hover {
               background-color: var(--border-color);
             }
@@ -133,7 +159,7 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
             box-sizing: content-box;
             font-size: 12px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background-color 0.3s;
             user-select: none;
             &[on="1"], &:hover {
               background-color: var(--background-color);
@@ -145,6 +171,12 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
           }
           img {
             margin: 2px 3px;
+            &:not([src]) {
+              width: 27px;
+              height: 27px;
+              border: 1px solid var(--content-color);
+              box-sizing: border-box;
+            }
           }
         }
       }
@@ -174,6 +206,11 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
     resize: none;
     &:hover, &:focus-within {
       background-color: var(--pure-white);
+    }
+    &[disabled] {
+      opacity: 0.2;
+      background-color: var(--border-color);
+      cursor: not-allowed;
     }
   }
 `;
@@ -221,7 +258,7 @@ class CommentEditor extends React.Component {
         let next = start + 1;
         if (next >= optionJSON.length) next = optionJSON.length - 1;
         const nextCurrent = current + 1;
-        const nextStart = nextCurrent > start + length - 1 ? next : start
+        const nextStart = nextCurrent > start + length - 1 ? next : start;
         this.setState({
             emojiNavigation: {
                 ...this.state.emojiNavigation,
@@ -283,22 +320,29 @@ class CommentEditor extends React.Component {
         const {comments, name, user, emoji, global, oid, parent, root} = this.props;
         const {error, sending} = comments.status.editor;
         const {optionJSON} = emoji;
-        const {face, uid} = user.info;
+        const canUse = !!user.info;
+        const {face, uid} = user.info || {};
         return (
-            <CommentEditorWrapper>
+            <CommentEditorWrapper canUse={canUse}>
+                {!canUse && (
+                    <div className="mask">
+                        尚未登录，请登录后重试
+                    </div>
+                )}
                 <div className="header">
                     <Image className={'avatar'} url={face} sign={`sender-avatar-${uid}`}/>
                 </div>
                 <div className="main">
                     <div className="send-box">
                         <textarea
+                            disabled={!canUse}
                             ref={i => this.textarea = i}
                             placeholder={name && !global ? `回复 @${name}` : '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。'}
                         ></textarea>
-                        <button disabled={sending} onClick={() => this.handleSendReply({root, parent, oid})}>发送</button>
+                        <button disabled={sending || !canUse} onClick={() => this.handleSendReply({root, parent, oid})}>发送</button>
                     </div>
                     <div className="toolbar">
-                        <button className="stickers-btn" onClick={this.handleOnClickStickersBtn} open={on}>STICKERS</button>
+                        <button disabled={!canUse} className="stickers-btn" onClick={this.handleOnClickStickersBtn} open={on}>STICKERS</button>
                         {on && <div className="stickers-box">
                             <div className="stickers">{optionJSON[current] && this.renderEmojis(optionJSON[current].emojis, pid === 0)}</div>
                             <div className="stickers-nav">
@@ -309,7 +353,7 @@ class CommentEditor extends React.Component {
                                             key={pid}
                                             url={purl}
                                             sign={`default-emoji-tab-${pid}`}
-                                            on={current === index ? 1 : 0}
+                                            on={current === index ? '1' : '0'}
                                             onClick={() => this.handleOnClickStickerTab(pid, index)}
                                         />;
                                     }

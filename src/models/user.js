@@ -3,7 +3,7 @@ import {fetchFromHelper, getCookieFromHelper} from '../utils/functions';
 
 export default {
     state: {
-        info: {},
+        info: null,
         csrf: null,
     },
     subscriptions: {

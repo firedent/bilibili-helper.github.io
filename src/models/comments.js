@@ -37,10 +37,11 @@ export default {
         },
         members: {},
         replyMap: {},
-        config: myCommendConfig,
+        config: testCommendConfig,
         status: {
             comment: {
-                getting: false,
+                loadPage: false,
+                loadingRpid: null,
             },
             editor: {
                 getting: false,
@@ -60,11 +61,11 @@ export default {
                         if (data.code === 0) {
                             switch (sign) {
                                 case 'getComment':
-                                    dispatch({type: 'updateCommentGettingState', payload: false});
+                                    dispatch({type: 'updateCommentLoadingState', payload: false});
                                     dispatch({type: 'updateCommentData', payload: data.data});
                                     break;
                                 case 'getReply':
-                                    dispatch({type: 'updateCommentGettingState', payload: false});
+                                    dispatch({type: 'updateReplyLoadingState', payload: false});
                                     dispatch({type: 'updateReplayData', payload: data.data});
                                     break;
                                 case 'sendReply': {
@@ -177,8 +178,12 @@ export default {
             };
             return state;
         },
-        updateCommentGettingState: (state, {payload}) => {
-            state.status.comment.getting = payload;
+        updateCommentLoadingState: (state, {payload}) => {
+            state.status.comment.loadPage = payload;
+            return state;
+        },
+        updateReplyLoadingState: (state, {payload}) => {
+            state.status.comment.loadingRpid = payload;
             return state;
         },
         updateEditorSendingState: (state, {payload}) => {
@@ -237,7 +242,7 @@ export default {
             });
         },
         * fetchComment({payload}, {put, select}) {
-            yield put({type: 'updateCommentGettingState', payload: true});
+            yield put({type: 'updateCommentLoadingState', payload: true});
             const url = new Url('https://api.bilibili.com/x/v2/reply');
             const {oid, pn, sort, type} = yield select(({comments}) => comments.config);
             yield put({type: 'updateConfig', payload});
@@ -245,7 +250,7 @@ export default {
             fetchFromHelper('json', {url: url.toString(), model: 'comment', sign: 'getComment'});
         },
         * fetchReply({payload}, {put, select}) {
-            yield put({type: 'updateCommentGettingState', payload: true});
+            yield put({type: 'updateReplyLoadingState', payload: payload.root});
             const url = new Url('https://api.bilibili.com/x/v2/reply/reply');
             const {oid, type: originType} = yield select(({comments}) => comments.config);
             url.set('query', {oid, type: originType, ...payload});
