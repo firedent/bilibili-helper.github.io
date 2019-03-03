@@ -8,6 +8,7 @@ import {connect} from 'dva';
 import styled, {createGlobalStyle} from 'styled-components';
 import withRouter from 'umi/withRouter';
 import CommentArea from 'Components/CommentArea';
+import Header from 'Components/Header';
 
 const GlobalStyleSheet = createGlobalStyle`
   html {
@@ -34,22 +35,6 @@ const GlobalStyleSheet = createGlobalStyle`
   }
 `;
 
-const Header = styled.div`
-  position: relative;
-  flex-shrink: 0;
-  min-width: 800px;
-  background-color: var(--bilibili-pink);
-  color: var(--background-color);
-  padding: 50px 0px;
-  overflow: hidden;
-  & > * {
-    display: block;
-    max-width: 800px;
-    margin: 0px auto;
-    padding: 0px 10px;
-  }
-`;
-
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -65,9 +50,7 @@ class Home extends React.Component {
         return (
             <React.Fragment>
                 <GlobalStyleSheet/>
-                <Header>
-                    <h1>BILIBILI HELPER</h1>
-                </Header>
+                <Header/>
                 <CommentArea/>
             </React.Fragment>
         );

@@ -31,8 +31,8 @@ class Image extends React.Component {
     }
 
     render() {
-        const {image, sign, url, dispatch, ...rest} = this.props;
-        return <img className="model-img" key={sign} src={image[sign] || null} {...rest}/>;
+        const {image, sign, url, dispatch, className, ...rest} = this.props;
+        return <img className={['model-img', className].join(' ')} key={sign} src={image[sign] || null} {...rest}/>;
     }
 }
 

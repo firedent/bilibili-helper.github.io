@@ -29,8 +29,8 @@ export default {
                     }
                 }
             });
-            dispatch({type: 'fetchCookie'});
-            dispatch({type: 'fetchUser'});
+            //dispatch({type: 'fetchCsrf'});
+            //dispatch({type: 'fetchUser'});
         },
     },
     reducers: {
@@ -44,7 +44,7 @@ export default {
         },
     },
     effects: {
-        * fetchCookie({type, payload}, {put, call, select}) {
+        * fetchCsrf({type, payload}, {put, call, select}) {
             getCookieFromHelper({
                 detail: {
                     url: 'http://interface.bilibili.com/',

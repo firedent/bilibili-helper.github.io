@@ -30,7 +30,7 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
     bottom: 20px;
     left: -20px;
     border-radius: 3px;
-    background-color: rgba(85, 85, 85, 0.2);
+    background-color: rgba(85, 85, 85, 0.1);
     color: var(--content-color);
     user-select: none;
     z-index: 1;
@@ -40,12 +40,19 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
     border-bottom: none;
     margin: 30px 0 10px;
     padding-bottom: 0;
+    transform: scale(0.97);
     .header {
       width: 30px;
       img {
         width: 25px;
         height: 25px;
       }
+    }
+    .mask {
+      top: -10px;
+      right: -10px;
+      bottom: -10px;
+      left: -10px;
     }
   }
   .header {
@@ -55,6 +62,7 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
       width: 85px;
       height: 85px;
       border-radius: 50%;
+      flex-shrink: 0;
     }
   }
   .main {
@@ -325,9 +333,7 @@ class CommentEditor extends React.Component {
         return (
             <CommentEditorWrapper canUse={canUse}>
                 {!canUse && (
-                    <div className="mask">
-                        尚未登录，请登录后重试
-                    </div>
+                    <div className="mask">~ 尚未连接助手 ~</div>
                 )}
                 <div className="header">
                     <Image className={'avatar'} url={face} sign={`sender-avatar-${uid}`}/>

@@ -1,6 +1,9 @@
 const path = require('path');
 const srcPath = path.resolve('src');
 export default {
+    define: {
+        lastVersion: '1.2.0.8',
+    },
     routes: [
         {
             path: '.', component: './layouts',

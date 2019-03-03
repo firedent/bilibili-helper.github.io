@@ -545,4 +545,4 @@ class CommentArea extends React.Component {
     };
 }
 
-export default withRouter(connect(({comments, user, routing}) => ({comments, user, routing}))(CommentArea));
+export default withRouter(connect(({comments, user}) => ({comments, user}))(CommentArea));

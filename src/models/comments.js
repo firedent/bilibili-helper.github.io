@@ -37,7 +37,7 @@ export default {
         },
         members: {},
         replyMap: {},
-        config: testCommendConfig,
+        config: myCommendConfig,
         status: {
             comment: {
                 loadPage: false,
