@@ -1,9 +1,6 @@
 const path = require('path');
 const srcPath = path.resolve('src');
 export default {
-    define: {
-        lastVersion: '1.2.0.8',
-    },
     routes: [
         {
             path: '.', component: './layouts',
@@ -14,6 +11,8 @@ export default {
         'Components': path.resolve(srcPath, 'components'),
         'Modules': path.resolve(srcPath, 'models'),
         'Pages': path.resolve(srcPath, 'pages'),
+        'JSON': path.resolve(srcPath, 'json'),
+        'Static': path.resolve(srcPath, 'static'),
     },
     plugins: [
         [

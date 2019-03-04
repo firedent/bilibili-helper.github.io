@@ -333,10 +333,12 @@ class CommentEditor extends React.Component {
         return (
             <CommentEditorWrapper canUse={canUse}>
                 {!canUse && (
-                    <div className="mask">~ 尚未连接助手 ~</div>
+                    <div className="mask">
+                        <span>~ 尚未连接助手 ~</span>
+                    </div>
                 )}
                 <div className="header">
-                    <Image className={'avatar'} url={face} sign={`sender-avatar-${uid}`}/>
+                    {canUse && <Image className={'avatar'} url={face} sign={uid}/>}
                 </div>
                 <div className="main">
                     <div className="send-box">

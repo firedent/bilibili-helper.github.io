@@ -15,6 +15,8 @@ module.exports = () => {
                 'Components': path.resolve(srcPath, 'components'),
                 'Modules': path.resolve(srcPath, 'models'),
                 'Pages': path.resolve(srcPath, 'pages'),
+                'JSON': path.resolve(srcPath, 'json'),
+                'Static': path.resolve(srcPath, 'static'),
             },
         },
     };

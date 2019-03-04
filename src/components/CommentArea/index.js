@@ -13,6 +13,7 @@ import {connect} from 'dva';
 import Image from 'Components/Image';
 import Emoji from './Emoji';
 import CommentEditor from './CommentEditor';
+import {LOADING_IMAGE_URL} from './loadingImage';
 
 moment.locale('zh-cn');
 
@@ -40,6 +41,8 @@ const CommentListArea = styled.div.attrs({className: 'comment-area'})`
         position: absolute;
         top: 50px;
         left: calc(50% - 50px);
+        width: 100px;
+        height: 100px;
         background-color: rgba(252, 252, 252, 0.8);
         border-radius: 3px;
       }
@@ -308,8 +311,8 @@ class CommentArea extends React.Component {
     load = () => {
         const {comments, dispatch, location} = this.props;
         const {config} = comments;
-        const {oid = config.oid, page = 1, ptype = 0} = location.query;
-        const query = {oid, [+ptype ? 'ps' : 'pn']: page};
+        const {oid = config.oid, page = 1, ptype = 0, type} = location.query;
+        const query = {oid, [+ptype ? 'ps' : 'pn']: page, type};
         dispatch({type: 'comments/load', payload: {query, ptype: +ptype}});
     };
 
@@ -445,10 +448,7 @@ class CommentArea extends React.Component {
                             this.renderPageNavigation({oid: config.oid, pageIndex, num: replyData.page.num, pages: replyData.pages, root: rpid, ptype: 1})}
                             {status.comment.loadingRpid === rpid && (
                                 <div className="loading-page-mask">
-                                    <Image
-                                        url="https://s1.hdslb.com/bfs/static/blive/blfe-album-detail/static/assets/pic.loading-tv.e11a9bf05848e5af11873a52622c9050.gif"
-                                        sign="loading-gif"
-                                    />
+                                    <Image url={LOADING_IMAGE_URL} sign="loading-gif"/>
                                 </div>
                             )}
                         </div>
@@ -485,7 +485,7 @@ class CommentArea extends React.Component {
     };
 
     render = () => {
-        const {comments, user} = this.props;
+        const {comments, user, global} = this.props;
         const {mid, uname} = this.state;
         const {data, config, status} = comments;
         const {page, hots, top, replies = []} = data;
@@ -498,51 +498,51 @@ class CommentArea extends React.Component {
                 <Header>{`${acount} 评论`}</Header>
 
                 {/* send box */}
-                <CommentEditor receiver={{mid, uname}} global/>
+                <CommentEditor global receiver={{mid, uname}}/>
 
-                {/* empty */}
-                {acount === 0 && !top && !hots && !replies && (
-                    <div className="no-reply">没有留言，{!user.info && '登陆后'}开始评论吧~</div>
-                )}
+                {global.status.connected && (<React.Fragment>
+                    {/* empty */}
+                    {acount === 0 && !top && !hots && !replies &&
+                    (<div className="no-reply">没有留言，{!user.info && '登陆后'}开始评论吧~</div>)}
 
-                <div className="more-comment-list-wrapper" ref={i => this.moreCommentListWrapper = i}>
-                    {/* top */}
-                    {num === 1 && top && (
-                        <div className="wrapper">
-                            <div id="top" className="comment-list">{this.renderLine({...top, top: true})}</div>
-                            <HR disabled>IT'S A TOP COMMENT ABOVE</HR>
-                        </div>
-                    )}
+                    {/* not empty */}
+                    {acount !== 0 && (top || hots || replies) &&
+                    (<div className="more-comment-list-wrapper" ref={i => this.moreCommentListWrapper = i}>
+                        {/* top */}
+                        {num === 1 && top && (
+                            <div className="wrapper">
+                                <div id="top" className="comment-list">{this.renderLine({...top, top: true})}</div>
+                                <HR disabled>IT'S A TOP COMMENT ABOVE</HR>
+                            </div>
+                        )}
 
-                    {/* hots */}
-                    {num === 1 && hots && (
-                        <div className="list-wrapper">
-                            <div id="hots" className="comment-list">{hots.map((comment) => this.renderLine(comment))}</div>
-                            <HR onClick={this.handleOnClickHots}>LOAD MORE HOT COMMENTS</HR>
-                        </div>
-                    )}
+                        {/* hots */}
+                        {num === 1 && hots && (
+                            <div className="list-wrapper">
+                                <div id="hots" className="comment-list">{hots.map((comment) => this.renderLine(comment))}</div>
+                                <HR onClick={this.handleOnClickHots}>LOAD MORE HOT COMMENTS</HR>
+                            </div>
+                        )}
 
-                    {/* normal replies */}
-                    {replies && (
-                        <div className="list-wrapper">
-                            <div id="comments" className="comment-list">{replies.map((comment) => this.renderLine(comment))}</div>
-                            {this.renderPageNavigation({oid: config.oid, pageIndex, num, pages})}
-                        </div>
-                    )}
+                        {/* normal replies */}
+                        {replies && (
+                            <div className="list-wrapper">
+                                <div id="comments" className="comment-list">{replies.map((comment) => this.renderLine(comment))}</div>
+                                {this.renderPageNavigation({oid: config.oid, pageIndex, num, pages})}
+                            </div>
+                        )}
 
-                    {/* loading mask */}
-                    {status.comment.loadPage && (
-                        <div className="loading-page-mask">
-                            <Image
-                                url="https://s1.hdslb.com/bfs/static/blive/blfe-album-detail/static/assets/pic.loading-tv.e11a9bf05848e5af11873a52622c9050.gif"
-                                sign="loading-gif"
-                            />
-                        </div>
-                    )}
-                </div>
+                        {/* loading mask */}
+                        {status.comment.loadPage && (
+                            <div className="loading-page-mask">
+                                <Image url={LOADING_IMAGE_URL} sign="loading-gif"/>
+                            </div>
+                        )}
+                    </div>)}
+                </React.Fragment>)}
             </CommentListArea>
         );
     };
 }
 
-export default withRouter(connect(({comments, user}) => ({comments, user}))(CommentArea));
+export default withRouter(connect(({global, comments, user}) => ({global, comments, user}))(CommentArea));

@@ -4,9 +4,9 @@ export default {
     state: {
         version: null,
         status: {
-            init: false,
+            initializing: false,
             tryConnect: false,
-            connect: false,
+            connected: false,
             error: null,
         },
     },
@@ -21,9 +21,10 @@ export default {
                         if (data.code === 0) {
                             switch (sign) {
                                 case 'connect': {
-                                    dispatch({type: 'initApp', payload: data.data});
-                                    dispatch({type: 'user/fetchCsrf'});
                                     dispatch({type: 'user/fetchUser'});
+                                    dispatch({type: 'user/fetchCsrf'});
+                                    dispatch({type: 'comments/fetchVotes'});
+                                    dispatch({type: 'initApp', payload: {...data.data, initializing: false}});
                                     break;
                                 }
                             }
@@ -32,7 +33,7 @@ export default {
                     }
                 }
             });
-            //dispatch({type: 'connectHelper'});
+            dispatch({type: 'connectHelper'});
         },
     },
     reducers: {
@@ -41,14 +42,16 @@ export default {
             return state;
         },
         initApp(state, {payload}) {
-            state.status.init = payload ? true : false;
-            state.version = payload.version;
+            if (payload.connected) state.status.connected = payload.connected;
+            if (payload.version) state.version = payload.version;
+            if (payload.initializing) state.initializing = payload.initializing;
             return state;
         },
     },
     effects: {
         * connectHelper({}, {put}) {
             sendCommendToHelper('connect', {model: 'global', sign: 'connect'});
+            yield put({type: 'initApp', payload: {initializing: true}});
             yield put({type: 'updateTryConnect'});
         },
     },

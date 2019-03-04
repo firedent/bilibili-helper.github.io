@@ -1,4 +1,3 @@
-/* global lastVersion */
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/3
@@ -7,8 +6,9 @@
 import React from 'react';
 import {connect} from 'dva';
 import styled from 'styled-components';
+import WEBSITE_CONFIG from 'JSON/config.json';
 
-const HeaderWrapper = styled.div`
+const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
   position: relative;
   flex-shrink: 0;
   min-width: 800px;
@@ -45,7 +45,7 @@ const HeaderWrapper = styled.div`
     .action-box {
       display: flex;
       justify-content: flex-end;
-      align-items: center;
+      //align-items: center;
       .login-box {
         display: flex;
         flex-direction: column;
@@ -60,85 +60,78 @@ const HeaderWrapper = styled.div`
           text-align: right;
         }
         .login-btn {
-          padding: 10px 40px;
-          border-radius: 3px;
-          font-size: 14px;
-          letter-spacing: 2px;
-          border: 1px solid var(--background-color);
-          background-color: var(--bilibili-blue);
-          color: var(--background-color);
-          outline: none;
-          cursor: pointer;
-          &:hover {
-            background-color: rgba(35, 173, 229, 0.9);
-          }
-          &:active {
-            background-color: var(--bilibili-blue);
-          }
-          &[disabled] {
-            background-color: rgba(35, 173, 229, 0.5);
-            cursor: not-allowed;
-          }
+          
         }
       }
     }
   }
 `;
-
-const InfoWrapper = styled.div`
-  //position: absolute;
-  //bottom: 5px;
-  //left: calc(50% - 410px);
-  //width: 800px;
-  margin-top: 5px;
-  & > * {
-    margin-right: 5px;
+const LoginButton = styled.button`
+  padding: 10px 40px;
+  border-radius: 3px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  border: 1px solid var(--background-color);
+  background-color: var(--bilibili-blue);
+  color: var(--background-color);
+  outline: none;
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(35, 173, 229, 0.9);
+  }
+  &:active {
+    background-color: var(--bilibili-blue);
+  }
+  &[disabled] {
+    background-color: rgba(35, 173, 229, 0.5);
+    cursor: not-allowed;
   }
 `;
+
 
 class Header extends React.Component {
     constructor(props) {
         super(props);
     }
 
-    handleOnClickLogin = (init, tryConnect) => {
-        if (!init && !tryConnect) this.props.dispatch({type: 'global/connectHelper'});
+    handleOnClickLogin = (connected, tryConnect) => {
+        if (!connected && !tryConnect) this.props.dispatch({type: 'global/connectHelper'});
         else location.href = location.href;
     };
 
     render() {
         const {global} = this.props;
-        const {init, tryConnect} = global.status;
+        const {connected, tryConnect, initializing} = global.status;
+        const {lastVersion} = WEBSITE_CONFIG;
         return (
-            <HeaderWrapper>
-                <div className="header-box">
-                    <div className="title-box">
-                        <header>BILIBILI HELPER</header>
-                        <div className="version-box">
-                            <span>Last: {lastVersion}</span>
-                            {global.version && <span>You: {global.version}</span>}
+            <React.Fragment>
+                <HeaderWrapper>
+                    <div className="header-box">
+                        <div className="title-box">
+                            <header>BILIBILI HELPER</header>
+                            <div className="version-box">
+                                <span>Last: {lastVersion}</span>
+                                {global.version && <span>You: {global.version}</span>}
+                            </div>
+                        </div>
+                        <div className="action-box">
+                            {!connected && tryConnect ? (
+                                <div className="login-box">
+                                    <LoginButton
+                                        className="login-btn"
+                                        onClick={() => this.handleOnClickLogin(connected, tryConnect)}
+                                    >
+                                        {initializing && '连接中'}
+                                        {!initializing && !connected && !tryConnect && '连接助手'}
+                                        {!initializing && !connected && tryConnect && '连接助手失败，点击刷新重试'}
+                                    </LoginButton>
+                                    {(!connected && tryConnect) && <span>如果您的浏览器未安装助手或助手版本小于 1.2.0，连接将会失败<br/>请安装助手或者更新至新版本</span>}
+                                </div>
+                            ) : (null)}
                         </div>
                     </div>
-                    <div className="action-box">
-                        {!init ? (
-                            <div className="login-box">
-                                <button
-                                    className="login-btn"
-                                    onClick={() => this.handleOnClickLogin(init, tryConnect)}
-                                >{!init && !tryConnect ? '连接助手' : '连接助手失败，点击刷新重试'}</button>
-                                {(!init && !tryConnect) && <span>如果您的浏览器未安装助手或版本小于1.2.0<br/>连接将会失败</span>}
-                            </div>
-                        ) : (
-                             null
-                         )}
-                    </div>
-                </div>
-                <InfoWrapper>
-                    <img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="LICENSE"/>
-                    <img src="https://img.shields.io/chrome-web-store/v/kpbnombpnpcffllnianjibmpadjolanh.svg" alt="Chrome Web Store"/>
-                    <img src="https://img.shields.io/chrome-web-store/d/kpbnombpnpcffllnianjibmpadjolanh.svg" alt="Users"/>
-                </InfoWrapper>
-            </HeaderWrapper>
+                </HeaderWrapper>
+            </React.Fragment>
         );
     }
 }

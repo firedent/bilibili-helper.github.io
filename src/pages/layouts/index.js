@@ -7,8 +7,15 @@ import React from 'react';
 import {connect} from 'dva';
 import styled, {createGlobalStyle} from 'styled-components';
 import withRouter from 'umi/withRouter';
-import CommentArea from 'Components/CommentArea';
-import Header from 'Components/Header';
+import {
+    CommentArea,
+    Header,
+    DownloadArea,
+    Announcement,
+    BadgeArea,
+    FeedbackArea,
+    VoteArea,
+} from 'Components';
 
 const GlobalStyleSheet = createGlobalStyle`
   html {
@@ -35,28 +42,17 @@ const GlobalStyleSheet = createGlobalStyle`
   }
 `;
 
-class Home extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidMount() {
-        const {comments, routing} = this.props;
-        const {oid, pn: page} = comments.config;
-        if (!routing.location.query) router.replace({pathname: '/', query: {oid, page}});
-    }
-
-    render() {
-        return (
-            <React.Fragment>
-                <GlobalStyleSheet/>
-                <Header/>
-                <CommentArea/>
-            </React.Fragment>
-        );
-    }
-
-};
-
+const Home = () => (
+    <React.Fragment>
+        <GlobalStyleSheet/>
+        <Header/>
+        <DownloadArea/>
+        <VoteArea/>
+        <Announcement/>
+        <FeedbackArea/>
+        <BadgeArea/>
+        <CommentArea/>
+    </React.Fragment>
+);
 
 export default withRouter(connect((state) => state)(Home));

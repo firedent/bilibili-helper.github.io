@@ -18,15 +18,7 @@ import React from 'react';
 class Image extends React.Component {
     constructor(props) {
         super(props);
-    }
-
-    componentDidMount() {
-        const {sign, url} = this.props;
-        url && this.props.dispatch({type: 'image/fetch', payload: {url, sign}});
-    }
-
-    componentDidUpdate() {
-        const {sign, url} = this.props;
+        const {sign, url} = props;
         url && this.props.dispatch({type: 'image/fetch', payload: {url, sign}});
     }
 

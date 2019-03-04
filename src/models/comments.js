@@ -1,6 +1,6 @@
-import {fetchFromHelper, sendCommendToHelper, htmlDecode} from '../utils/functions';
-import router from 'umi/router';
 import Url from 'url-parse';
+import {fetchFromHelper, htmlDecode} from '../utils/functions';
+import VOTES_CONFIG from 'JSON/votes.json';
 
 const myCommendConfig = {
     pn: 1, // 评论页数
@@ -10,6 +10,13 @@ const myCommendConfig = {
     root: undefined, // 获取某条评论下的回复时设置
     csrf: null,
     plat: 1,
+};
+
+const targetConfig = {
+    oid: 16116344,
+    type: 11,
+    sort: 0,
+    pn: 1,
 };
 
 const testCommendConfig = {
@@ -35,13 +42,21 @@ export default {
             },
             top: null,
         },
+        votes: {
+            rpidArray: [],
+            likeSum: {},
+        },
         members: {},
         replyMap: {},
-        config: myCommendConfig,
+        config: targetConfig,
+        voteConfig: VOTES_CONFIG || null,
         status: {
             comment: {
                 loadPage: false,
                 loadingRpid: null,
+            },
+            vote: {
+              voting: false,
             },
             editor: {
                 getting: false,
@@ -88,6 +103,10 @@ export default {
                                     dispatch({type: 'updateCommentHateStatus', payload: {rpid, action}});
                                     break;
                                 }
+                                case 'getVote': {
+                                    dispatch({type: 'updateVoteData', payload: data.data});
+                                    break;
+                                }
                             }
                         } else if (data.code === 12025) {
                             dispatch({type: 'updateEditorSendError', payload: data.message});
@@ -96,7 +115,6 @@ export default {
                     }
                 }
             });
-            //dispatch({type: 'fetchComment', payload: myCommendConfig});
         },
     },
     reducers: {
@@ -122,7 +140,7 @@ export default {
                 };
                 return reply;
             };
-            if (payload.upper.top) {
+            if (payload.upper && payload.upper.top) {
                 payload.upper.top = calcReply(payload.upper.top);
             }
             if (payload.hots) {
@@ -133,7 +151,7 @@ export default {
             }
             state.data = {
                 ...payload,
-                top: payload.upper.top,
+                top: payload.upper ? payload.upper.top : state.data.top,
             };
             return state;
         },
@@ -176,6 +194,42 @@ export default {
                 hasExpand: replies.length === size || num !== 1,
                 needExpand: replies.length < count && num === 1,
             };
+            return state;
+        },
+        updateVoteData: (state, {payload}) => {
+            const calcReply = (reply) => {
+                const {rpid, replies, rcount, member, content} = reply;
+                reply.content.message = content.message
+                                               .replace(/&#([\d]+);/g, (all, i) => String.fromCharCode(i))
+                                               .replace(/(&.+;)/g, htmlDecode);
+                state.members[member.mid] = member;
+                state.replyMap[rpid] = {
+                    self: reply,
+                    replies: replies ? replies.map(calcReply) : null,
+                    page: {
+                        count: rcount,
+                        num: 1,
+                        size: 10,
+                    },
+                    root: {},
+                    hasExpand: false,
+                    needExpand: (replies && replies.length < rcount) || false,
+                    pages: Math.ceil(rcount / 10),
+                };
+                return reply;
+            };
+            if ((state.votes.rpidArray && state.votes.rpidArray.indexOf(payload.root.rpid) < 0) || !state.votes.rpidArray) {
+                state.votes.rpidArray = [...state.votes.rpidArray, payload.root.rpid];
+            }
+            state.votes.likeSum[payload.root.rpid] = payload.root.like;
+            calcReply(payload.root);
+            return state;
+        },
+        updateVoteSum: (state, {payload}) => {
+            if (payload) {
+                const {rpid, like} = payload;
+                state.votes.likeSum[rpid] = like;
+            } else state.votes.likeSum = {};
             return state;
         },
         updateCommentLoadingState: (state, {payload}) => {
@@ -299,6 +353,17 @@ export default {
                     method: 'POST',
                     body: {csrf, oid, type, ...payload},
                 },
+            });
+        },
+        * fetchVotes({}, {put, select}) {
+            const votesConfig = yield select(({comments}) => comments.voteConfig);
+            yield put({type: 'updateVoteSum'});
+            if (!votesConfig) console.warn('no vote config');
+            const {oid, type, rpids} = votesConfig;
+            _.map(rpids, (root) => {
+                const url = new Url('https://api.bilibili.com/x/v2/reply/reply');
+                url.set('query', {oid, type, root});
+                fetchFromHelper('json', {url: url.toString(), model: 'comment', sign: 'getVote'});
             });
         },
     },
