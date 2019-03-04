@@ -36,7 +36,7 @@ const VoteLine = styled.div`
   width: calc(100% - 62px);
   border-right: 1px solid var(--bilibili-pink);
   border-left: 1px solid var(--bilibili-pink);
-  background-color: #eaeaea;
+  background-color: #f1f1f1;
   &::after {
     content: '';
     display: block;
