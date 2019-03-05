@@ -139,6 +139,7 @@ const DownloadButton = styled.button`
   font-size: 14px;
   font-weight: bold;
   border: 1px solid var(--border-color);
+  background-color: white;
   cursor: pointer;
   outline: none;
   transition: all 0.15s;
