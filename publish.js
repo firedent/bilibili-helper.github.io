@@ -97,6 +97,8 @@ inquirer.prompt([
     message(`开始执行webpack编译过程 - hash:${lastCommitHash}`);
     //shelljs.exec(`npm run build:dll`);
     shelljs.exec(`npm run build:prod`);
+    shelljs.exec(`git commit -a -m "build"`);
+    shelljs.exec(`git push"`);
     shelljs.exec(`git push origin ${branch}`); // 拉取目标分支
 
     //message('开始上传文件到目标服务器');
