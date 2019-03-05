@@ -34,6 +34,7 @@ const VoteLine = styled.div`
   margin-bottom: 2px;
   padding: 7px 10px;
   width: calc(100% - 62px);
+  border-radius: 3px;
   border-right: 1px solid var(--bilibili-pink);
   border-left: 1px solid var(--bilibili-pink);
   background-color: #f1f1f1;
@@ -45,7 +46,7 @@ const VoteLine = styled.div`
     left: 0;
     bottom: 0;
     width: ${({likesum, like}) => (likesum ? like / likesum * 100 : 0)}%;
-    //border-radius: 0 3px 3px 0;
+    border-radius: 0 3px 3px 0;
     background-color: var(--bilibili-pink);
     transition: width 0.3s;
   }

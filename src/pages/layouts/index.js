@@ -15,6 +15,7 @@ import {
     BadgeArea,
     FeedbackArea,
     VoteArea,
+    Page
 } from 'Components';
 
 const GlobalStyleSheet = createGlobalStyle`
@@ -42,7 +43,7 @@ const GlobalStyleSheet = createGlobalStyle`
   }
 `;
 const Home = () => (
-    <React.Fragment>
+    <Page>
         <GlobalStyleSheet/>
         <Header/>
         <DownloadArea/>
@@ -51,7 +52,7 @@ const Home = () => (
         <FeedbackArea/>
         <BadgeArea/>
         <CommentArea/>
-    </React.Fragment>
+    </Page>
 );
 
 export default withRouter(connect((state) => state)(Home));
