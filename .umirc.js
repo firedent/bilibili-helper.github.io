@@ -1,6 +1,7 @@
 const path = require('path');
 const srcPath = path.resolve('src');
 export default {
+    hash: true,
     routes: [
         {
             path: '.', component: './layouts',
