@@ -1,8 +1,8 @@
 const path = require('path');
 const srcPath = path.resolve('src');
 export default {
+    base: '/docs/',
     publicPath: '/docs',
-    base: '/docs',
     outputPath: './docs',
     hash: true,
     routes: [
