@@ -6,6 +6,6 @@
 
 export default {
     define: {
-        postURL: 'http://helper.drowsyflesh.com/',
+        postURL: 'http://bilibli-helper.github.io/',
     },
 };

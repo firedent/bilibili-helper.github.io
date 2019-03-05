@@ -77,16 +77,17 @@ inquirer.prompt([
     shelljs.exec('git reset --hard'); // 清空所有未提交修改
     shelljs.exec(`git checkout ${branch}`); // 切换到目标分支
     //shelljs.exec('git remote prune origin'); // 删除清理所有远程已经删除的本地分支
-    shelljs.exec(`git pull origin ${branch}`); // 拉取目标分支
-    shelljs.exec('git status');
+    //shelljs.exec(`git pull origin ${branch}`); // 拉取目标分支
+    //shelljs.exec('git status');
 
     const lastCommitHash = getCurrentGitCommitHash();
     message(`开始执行webpack编译过程 - hash:${lastCommitHash}`);
     //shelljs.exec(`npm run build:dll`);
     shelljs.exec(`npm run build:prod`);
+    shelljs.exec(`git push origin ${branch}`); // 拉取目标分支
 
-    message('开始上传文件到目标服务器');
-    console.log(`将 ${answers.server.srcDir} 传输到 ${answers.server.host}:${answers.server.path} 目录下`.yellow);
-    rsyncFolders(`${answers.server.srcDir}`, `${answers.server.host}:${answers.server.path}`);
+    //message('开始上传文件到目标服务器');
+    //console.log(`将 ${answers.server.srcDir} 传输到 ${answers.server.host}:${answers.server.path} 目录下`.yellow);
+    //rsyncFolders(`${answers.server.srcDir}`, `${answers.server.host}:${answers.server.path}`);
     // shelljs.exec('yarn');
 });

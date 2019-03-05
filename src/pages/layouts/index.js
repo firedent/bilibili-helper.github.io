@@ -41,7 +41,6 @@ const GlobalStyleSheet = createGlobalStyle`
     }
   }
 `;
-
 const Home = () => (
     <React.Fragment>
         <GlobalStyleSheet/>
