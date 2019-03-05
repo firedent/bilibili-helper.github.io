@@ -125,7 +125,7 @@ class Header extends React.Component {
                                         {!initializing && !connected && !tryConnect && '连接助手'}
                                         {!initializing && !connected && tryConnect && '连接助手失败，点击刷新重试'}
                                     </LoginButton>
-                                    {(!connected && tryConnect) && <span>如果您的浏览器未安装助手或助手版本小于 1.2.0，连接将会失败<br/>请安装助手或者更新至新版本</span>}
+                                    {(!connected && tryConnect) && <span>如果您的浏览器未安装助手或助手版本小于 1.2.0.8，连接将会失败<br/>请安装助手或者更新至新版本</span>}
                                 </div>
                             ) : (null)}
                         </div>
