@@ -35,6 +35,7 @@ const serverList = [{
     value: {
         srcDir: './dist/',
         branch: 'master',
+        //host: 'root@47.91.213.174',
         host: 'root@47.91.213.174',
         path: 'helper/',
         //webpack: require.resolve('./webpack.config.production'),

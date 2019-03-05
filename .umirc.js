@@ -3,6 +3,7 @@ const srcPath = path.resolve('src');
 export default {
     publicPath: '/docs',
     base: '/docs',
+    outputPath: './docs',
     hash: true,
     routes: [
         {
