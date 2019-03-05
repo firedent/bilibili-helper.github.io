@@ -1,6 +1,7 @@
 const path = require('path');
 const srcPath = path.resolve('src');
 export default {
+    outputPath: './docs',
     hash: true,
     routes: [
         {
