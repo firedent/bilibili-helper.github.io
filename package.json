@@ -23,9 +23,8 @@
         "umi-plugin-react": "^1.5.2"
     },
     "scripts": {
-        "p": "node ./publish.js",
         "dev": "UMI_ENV=local umi dev",
-        "build:prod": "UMI_ENV=prod umi build"
+        "build": "UMI_ENV=prod umi build"
     },
     "keywords": [
         "bilibili",
