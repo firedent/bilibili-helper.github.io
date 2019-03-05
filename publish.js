@@ -3,7 +3,7 @@
  * Create: 2018-03-16
  * Description: 发布脚本
  */
-'use strict'
+'use strict';
 // const fs = require('fs');
 // const Path = require('path');
 const colors = require('colors');
@@ -28,27 +28,38 @@ const rsyncFolders = (from, to) => {
     shelljs.exec(`rsync -e ssh --exclude-from './rsync-exclude' "${from}" "${to}" --checksum --recursive --delete --progress`);
 };
 
-const serverList = [{
-    key: 'aliyun:hongkong',
-    name: 'aliyun - hongkong',
-    short: 'aliyun - hongkong',
-    value: {
-        srcDir: './dist/',
-        branch: 'master',
-        //host: 'root@47.91.213.174',
-        host: 'root@47.91.213.174',
-        path: 'helper/',
-        //webpack: require.resolve('./webpack.config.production'),
-        web: 'http://www.drowsyflesh.com',
-    }
-}];
+const serverList = [
+    {
+        key: 'github:bilibili-helper',
+        name: 'github - bilibili-helper',
+        short: 'github - bilibili-helper',
+        value: {
+            branch: 'master',
+            //webpack: require.resolve('./webpack.config.production'),
+            web: 'https://bilibili-helper.github.io/',
+        },
+    },
+    //{
+    //    key: 'aliyun:hongkong',
+    //    name: 'aliyun - hongkong',
+    //    short: 'aliyun - hongkong',
+    //    value: {
+    //        srcDir: './dist/',
+    //        branch: 'master',
+    //        host: 'root@47.91.213.174',
+    //        path: 'helper/',
+    //        //webpack: require.resolve('./webpack.config.production'),
+    //        web: 'http://www.drowsyflesh.com',
+    //    },
+    //},
+];
 
 inquirer.prompt([
     {
         name: 'server',
         type: 'list',
         choices: serverList,
-        message: 'Please select the server you want publish to.'
+        message: 'Please select the server you want publish to.',
     },
     {
         name: 'sure',
