@@ -33,6 +33,7 @@ const serverList = [
         key: 'github:bilibili-helper',
         name: 'github - bilibili-helper',
         short: 'github - bilibili-helper',
+        host: 'github page',
         value: {
             branch: 'master',
             //webpack: require.resolve('./webpack.config.production'),
