@@ -532,7 +532,9 @@ class CommentArea extends React.Component {
                         {/* normal replies */}
                         {replies && (
                             <div className="list-wrapper">
-                                <div id="comments" className="comment-list">{replies.map((comment) => this.renderLine(comment))}</div>
+                                <div id="comments" className="comment-list">
+                                    {replies.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
+                                    </div>
                                 {this.renderPageNavigation({oid: config.oid, pageIndex, num, pages})}
                             </div>
                         )}
