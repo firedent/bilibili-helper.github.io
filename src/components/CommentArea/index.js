@@ -522,7 +522,9 @@ class CommentArea extends React.Component {
                         {/* hots */}
                         {num === 1 && hots && (
                             <div className="list-wrapper">
-                                <div id="hots" className="comment-list">{hots.map((comment) => this.renderLine(comment))}</div>
+                                <div id="hots" className="comment-list">
+                                    {hots.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
+                                </div>
                                 <HR onClick={this.handleOnClickHots}>LOAD MORE HOT COMMENTS</HR>
                             </div>
                         )}
