@@ -83,12 +83,18 @@ const DownloadAreaWrapper = styled.div`
         li {
           padding: 2px 10px;
           font-size: 12px;
+          text-align: right;
           list-style: none;
           cursor: pointer;
           transition: all 0.1s;
           &:hover, &.active {
             background-color: var(--bilibili-blue);
             color: var(--pure-white);
+          }
+          img {
+            width: 14px;
+            margin-right: 3px;
+            vertical-align: sub;
           }
         }
       }
@@ -216,13 +222,15 @@ class DownloadArea extends React.Component {
         super(props);
         let i = 0;
         const firstVersion = _.find(DOWNLOADS_CONFIG, ({version, url}) => url).version;
-        this.downloadThree = _.compact(_.map(DOWNLOADS_CONFIG, (data) => {
+        this.downloadThree = [];
+        this.restVersion = [];
+        _.forEach(DOWNLOADS_CONFIG, (data) => {
             const {url} = data;
             if (url && i < 3) {
                 i += 1;
-                return data;
-            }
-        }));
+                this.downloadThree.push(data);
+            } else this.restVersion.push(data);
+        });
         this.state = {
             tabVersion: firstVersion,
             showMoreVersion: false,
@@ -244,7 +252,18 @@ class DownloadArea extends React.Component {
             case 'test':
                 return '测试版';
             default:
-                return '未定义版本';
+                return '';
+        }
+    };
+
+    getVersionTypeIcon = (sign) => {
+        switch (sign) {
+            case 'store':
+                return <img src="../static/icons/google_favicon.ico"/>;
+            case 'test':
+                return 'test ';
+            default:
+                return '';
         }
     };
 
@@ -263,7 +282,7 @@ class DownloadArea extends React.Component {
                                     className={`download-btn ${version === tabVersion && 'active'}`}
                                     onClick={() => this.handleOnClickTab(version)}
                                 >
-                                    <span>{version === lastVersion && '最新'}{this.getVersionTypeString(sign)} {version}</span>
+                                    <span>{this.getVersionTypeString(sign)} {version}</span>
                                     {version === tabVersion && (
                                         <a href={url}>
                                             <i className="download-btn">Click here to download</i>
@@ -272,14 +291,18 @@ class DownloadArea extends React.Component {
                             )
                         ))}
                     </div>
-                    <div className="more-version-box">
+                    <div className="more-version-box">µ
                         <button className={`more-version-btn ${showMoreVersion && 'active'}`} onClick={this.handleOnClickMoreVersion}>More Version</button>
                         {showMoreVersion && <ul>
-                            {DOWNLOADS_CONFIG.map(({version, url, sign}) => (
-                                !url && <li
+                            {this.restVersion.map(({version, url, sign}) => (
+
+                                <li
                                     className={`${version === tabVersion && 'active'}`}
                                     key={version} onClick={() => this.handleOnClickTab(version)}
-                                >{sign} {version}</li>
+                                >
+                                    {this.getVersionTypeIcon(sign)}
+                                    {version}
+                                </li>
                             ))}
                         </ul>}
                     </div>
