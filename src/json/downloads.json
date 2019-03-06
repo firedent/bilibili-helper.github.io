@@ -2,7 +2,7 @@
     {
         "version": "1.2.0.8",
         "sign": "test",
-        "url": "",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/test/bilibilihelper_1.2.0.beta.8.crx",
         "info": [
             ["fix", "修复新版番剧页面助手无法显示的问题，偶尔可以下载到flv文件，其他功能正常"],
             ["fix", "修复<i>动态推送</i>模块，增加选择推送的种类（番剧，投稿，小视频，专栏）"],
