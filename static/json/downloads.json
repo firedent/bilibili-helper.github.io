@@ -1,9 +1,10 @@
 [
     {
-        "version": "1.2.0.8",
+        "version": "1.2.0.9",
         "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/test/bilibilihelper_1.2.0.beta.8.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/test/bilibilihelper_1.2.0.beta.9.crx",
         "info": [
+            ["fix", "增加了新版播放页面视频下载的支持"],
             ["fix", "修复新版番剧页面助手无法显示的问题，偶尔可以下载到flv文件，其他功能正常"],
             ["fix", "修复<i>动态推送</i>模块，增加选择推送的种类（番剧，投稿，小视频，专栏）"],
             ["fix", "修复<i>字幕下载</i>功能失效的问题"],
@@ -37,7 +38,7 @@
     },
     {
         "version": "1.1.7",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.1.7/bilibilihelper_1.1.7.crx",
+        "url": "",
         "sign": "store",
         "info": [
             ["fix", "修复<i>银瓜子兑换硬币</i>功能存在的BUG，执行逻辑改为和<i>自动签到</i>功能一样"],
@@ -61,7 +62,7 @@
     {
         "version": "1.1.5",
         "sign": "store",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.1.5/bilibilihelper_1.1.5.crx",
+        "url": "",
         "info": [
             ["fix", "修复了<i>外挂字幕下载</i>功能会在后台不停发送请求的问题"],
             ["fix", "修复了在未登录情况下<i>设置页面</i>部分功能无法启用的问题"],
