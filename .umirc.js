@@ -15,7 +15,7 @@ export default {
         'Components': path.resolve(srcPath, 'components'),
         'Modules': path.resolve(srcPath, 'models'),
         'Pages': path.resolve(srcPath, 'pages'),
-        'JSON': path.resolve(srcPath, 'json'),
+        'JSON': path.resolve('static', 'json'),
         'Static': path.resolve(srcPath, 'static'),
     },
     plugins: [
