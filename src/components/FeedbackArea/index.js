@@ -49,7 +49,7 @@ const FeedbackWrapper = styled.div`
 export default () => (
     <FeedbackWrapper>
         <h3>问题反馈 ~ FEEDBACK</h3>
-        <a className="github" href="https://github.com/bilibili-helper/bilibili-helper/issues" target="_blank">在「GITHUB」上反馈（推荐）</a>
+        <a className="github" href="https://github.com/bilibili-helper/bilibili-helper/issues" target="_blank">在「Github」上反馈（推荐）</a>
         <a href="https://weibo.com/guguke" target="_blank">在「微博」@啾咕咕www</a>
         <a href="https://weibo.com/ruo0037" target="_blank">在「微博」@没睡醒的肉啊</a>
         <a className="qq">在「QQ群548321019」私聊 肉肉</a>
