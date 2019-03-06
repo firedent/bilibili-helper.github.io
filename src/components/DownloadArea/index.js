@@ -291,7 +291,7 @@ class DownloadArea extends React.Component {
                             )
                         ))}
                     </div>
-                    <div className="more-version-box">µ
+                    <div className="more-version-box">
                         <button className={`more-version-btn ${showMoreVersion && 'active'}`} onClick={this.handleOnClickMoreVersion}>More Version</button>
                         {showMoreVersion && <ul>
                             {this.restVersion.map(({version, url, sign}) => (

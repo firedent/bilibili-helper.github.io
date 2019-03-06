@@ -61,7 +61,10 @@ const Header = styled.header.attrs({className: 'comment-list-header'})`
 const Comment = styled.div.attrs({className: 'comment-item'})`
   display: flex;
   margin-bottom: 30px;
-  &:last-of-type .main{
+  &:last-of-type > .main{
+    & > .content:last-of-type {
+      border-bottom: none;
+    }
     .replies-box {
       border-bottom: none;
     }
