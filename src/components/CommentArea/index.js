@@ -57,6 +57,10 @@ const Header = styled.header.attrs({className: 'comment-list-header'})`
   font-size: 20px;
   margin: 20px 10px 30px 0;
   color: #a9a7a7;
+  p {
+    margin: 3px 0px;
+    font-size: 12px;
+  }
 `;
 const Comment = styled.div.attrs({className: 'comment-item'})`
   display: flex;
@@ -498,7 +502,10 @@ class CommentArea extends React.Component {
         return (
             <CommentListArea>
                 {/* header */}
-                <Header>{`${acount} 评论`}</Header>
+                <Header>
+                    {`${acount} 评论`}
+                    <p>本评论区来自哔哩哔哩弹幕网的评论系统，请遵守相关法律法规并共同维护秩序</p>
+                </Header>
 
                 {/* send box */}
                 <CommentEditor global receiver={{mid, uname}}/>
@@ -534,7 +541,7 @@ class CommentArea extends React.Component {
                             <div className="list-wrapper">
                                 <div id="comments" className="comment-list">
                                     {replies.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
-                                    </div>
+                                </div>
                                 {this.renderPageNavigation({oid: config.oid, pageIndex, num, pages})}
                             </div>
                         )}
