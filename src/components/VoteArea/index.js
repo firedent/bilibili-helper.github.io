@@ -14,6 +14,12 @@ const VoteAreaWrapper = styled.div`
     margin: 15px 0 20px;
     font-size: 16px;
     color: #212121;
+    p {
+      margin: 3px 0px;
+      font-size: 12px;
+      color: var(--content-color);
+      font-weight: normal;
+    }
   }
   .votes-list {
     margin-left: 10px;
@@ -152,7 +158,10 @@ class VoteArea extends React.Component {
         const sum = _.reduce(votes.likeSum, (sum, like) => sum + like);
         return (
             <VoteAreaWrapper>
-                <h3>功能投票 ~ VOTE</h3>
+                <h3>
+                    新功能投票 ~ VOTE
+                    <p>为希望添加进助手的功能点赞吧~</p>
+                </h3>
                 <div className="votes-list">
                     {votes.rpidArray.length > 0 && votes.rpidArray.map((rpid) => this.renderVote(sum, replyMap[rpid].self))}
                 </div>

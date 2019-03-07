@@ -17,7 +17,7 @@ const FeedbackWrapper = styled.div`
   a {
     display: inline-block;
     margin: 3px 5px;
-    padding: 6px 18px;
+    padding: 6px 12px;
     font-size: 12px;
     border-radius: 3px;
     text-decoration: none;
@@ -45,13 +45,18 @@ const FeedbackWrapper = styled.div`
   .qq {
     background-color: #11abff;
   }
+  .comments {
+    background-color: var(--bilibili-pink);
+  }
+  
 `;
 export default () => (
     <FeedbackWrapper>
         <h3>问题反馈 ~ FEEDBACK</h3>
-        <a className="github" href="https://github.com/bilibili-helper/bilibili-helper/issues" target="_blank">在「Github」上反馈（推荐）</a>
-        <a href="https://weibo.com/guguke" target="_blank">在「微博」@啾咕咕www</a>
-        <a href="https://weibo.com/ruo0037" target="_blank">在「微博」@没睡醒的肉啊</a>
+        <a className="comments">「评论区」留言</a>
+        <a className="github" href="https://github.com/bilibili-helper/bilibili-helper/issues" target="_blank">「Github」上反馈</a>
+        <a href="https://weibo.com/guguke" target="_blank">「微博」@啾咕咕www</a>
+        <a href="https://weibo.com/ruo0037" target="_blank">「微博」@没睡醒的肉啊</a>
         <a className="qq">在「QQ群548321019」私聊 肉肉</a>
     </FeedbackWrapper>
 )
