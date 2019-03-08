@@ -45,5 +45,8 @@ export default {
                 },
             },
         ],
+        ['umi-plugin-react', {
+            dynamicImport: true,
+        }],
     ],
 };
