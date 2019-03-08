@@ -1,3 +1,4 @@
+/* global local */
 export const dva = {
     config: {
         onError(e) {
@@ -6,10 +7,10 @@ export const dva = {
         },
     },
     plugins: [
-        require('dva-logger')({
+        local ? require('dva-logger')({
             predicate: (state, action) => action.type.indexOf('@') === -1 && action.type !== 'image/update' && action.type !== 'image/fetch',
             collapsed: true,
-        }),
+        }) : '',
     ],
 };
 

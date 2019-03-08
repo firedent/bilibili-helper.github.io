@@ -1,10 +1,10 @@
-/* global postURL */
+/* global local */
 /**
  * Author: DrowsyFlesh
  * Create: 2019/2/28
  * Description:
  */
-export const postMessage = (message, origin = postURL) => {
+export const postMessage = (message, origin = (local ? 'http://localhost:8000/' : 'https://bilibili-helper.github.io/')) => {
     window.postMessage(message, origin);
 };
 

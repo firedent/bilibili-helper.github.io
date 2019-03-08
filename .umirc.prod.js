@@ -6,6 +6,6 @@
 
 export default {
     define: {
-        postURL: 'https://bilibili-helper.github.io/',
+        local: false,
     },
 };

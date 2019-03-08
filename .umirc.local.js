@@ -8,7 +8,7 @@ const path = require('path');
 
 export default {
     define: {
-        postURL: 'http://localhost:8000/',
+        local: true,
     },
     //chainWebpack(config, {webpack}) {
     //    config.plugin('HTMLWebpackPlugin').use(new HTMLWebpackPlugin());
