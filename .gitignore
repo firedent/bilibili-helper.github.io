@@ -11,4 +11,5 @@ build/
 *.zip
 videoUnblock/
 dist/
+docs/
 .umirc.local.js

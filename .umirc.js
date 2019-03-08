@@ -16,12 +16,12 @@ export default {
         'JSON': path.resolve('static', 'json'),
         'Static': path.resolve(srcPath, 'static'),
     },
-    copy: [
-        {
-            from: 'static/',
-            to: 'static/',
-        }
-    ],
+    //copy: [
+    //    {
+    //        from: 'static/',
+    //        to: 'static/',
+    //    }
+    //],
     plugins: [
         [
             'umi-plugin-react',
