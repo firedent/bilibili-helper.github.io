@@ -20,11 +20,12 @@ export default {
         {
             from: 'static/',
             to: 'static/',
-        }
+        },
     ],
     externals: {
-        "react": "window.React",
-        "react-dom": "window.ReactDOM"
+        'react': 'window.React',
+        'react-dom': 'window.ReactDOM',
+        'lodash': 'window._',
     },
     plugins: [
         [
@@ -34,6 +35,7 @@ export default {
                 dva: {
                     immer: true,
                 },
+                dynamicImport: true,
                 routes: {
                     exclude: [
                         /model\.(j|t)sx?$/,
@@ -45,8 +47,5 @@ export default {
                 },
             },
         ],
-        ['umi-plugin-react', {
-            dynamicImport: true,
-        }],
     ],
 };

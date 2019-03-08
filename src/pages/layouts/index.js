@@ -17,7 +17,6 @@ import {
     VoteArea,
     Page
 } from 'Components';
-
 const GlobalStyleSheet = createGlobalStyle`
   html {
     --background-color: #fafafa;
