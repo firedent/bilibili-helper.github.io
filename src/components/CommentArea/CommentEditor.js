@@ -333,7 +333,7 @@ class CommentEditor extends React.Component {
             <CommentEditorWrapper canUse={canUse}>
                 {!canUse && (
                     <div className="mask">
-                        <span>~ 尚未连接助手 ~</span>
+                        <span>~ {!global.status.connected && '未连接助手'} {!canUse && global.status.connected && '尚未登录'} ~</span>
                     </div>
                 )}
                 <div className="header">
@@ -376,4 +376,4 @@ class CommentEditor extends React.Component {
     }
 }
 
-export default connect(({user, emoji, comments}) => ({user, emoji, comments}))(CommentEditor);
+export default connect(({user, emoji, comments, global}) => ({user, emoji, comments, global}))(CommentEditor);
