@@ -22,6 +22,7 @@ const DownloadAreaWrapper = styled.div`
       line-height: 22px;
       vertical-align: bottom;
       font-size: 12px;
+      font-weight: normal;
       border: 1px solid;
       border-radius: 3px;
       text-decoration: none;
