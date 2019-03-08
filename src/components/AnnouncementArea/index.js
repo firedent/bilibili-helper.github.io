@@ -5,8 +5,8 @@
  */
 import _ from 'lodash';
 import React from 'react';
+import {connect} from 'dva';
 import styled from 'styled-components';
-import ANNOUNCEMENTS from 'JSON/announcement.json';
 
 //import sliderImage1 from 'Static/slider/1.png';
 
@@ -53,16 +53,17 @@ const AnnouncementWrapper = styled.div`
   }
 `;
 
-export default class Announcement extends React.Component {
+class AnnouncementArea extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
+        const {announcements} = this.props;
         return (
             <AnnouncementWrapper id="announcement">
                 <h3>重要公告 ~ ANNOUNCEMENTS</h3>
-                {_.map(ANNOUNCEMENTS, (info, title) => (
+                {_.map(announcements.config, (info, title) => (
                     title === '功能删除须知' && <div className="item" key={title}>
                         <ul className="content">{info.map((text, index) => <li key={index} dangerouslySetInnerHTML={{__html: text}}/>)}</ul>
                     </div>
@@ -71,3 +72,5 @@ export default class Announcement extends React.Component {
         );
     }
 }
+
+export default connect(({announcements}) => ({announcements}))(AnnouncementArea);

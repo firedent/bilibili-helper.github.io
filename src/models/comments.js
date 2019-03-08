@@ -1,6 +1,5 @@
 import Url from 'url-parse';
 import {fetchFromHelper, htmlDecode} from '../utils/functions';
-import VOTES_CONFIG from 'JSON/votes.json';
 
 const myCommendConfig = {
     pn: 1, // 评论页数
@@ -49,7 +48,7 @@ export default {
         members: {},
         replyMap: {},
         config: targetConfig,
-        voteConfig: VOTES_CONFIG || null,
+        voteConfig: null,
         status: {
             comment: {
                 loadPage: false,
@@ -281,8 +280,19 @@ export default {
             state.replyMap[rpid] = reply;
             return state;
         },
+        updateVoteConfig: (state, {payload}) => {
+            state.voteConfig = payload;
+            return state;
+        }
     },
     effects: {
+        * loadVoteConfig ({payload}, {put, call}) {
+            const configResponse = yield call(fetch, '../static/json/votes.json');
+            if (configResponse.status === 200) {
+                const config = yield configResponse.json();
+                yield put({type: 'updateVoteConfig', payload: config});
+            }
+        },
         * load({payload}, {put, select}) {
             const {oid, pn, sort, type} = yield select(({comments}) => comments.config);
             const {oid: queryOid, pn: queryPn, ps: queryPs, root, type: queryType} = payload.query;

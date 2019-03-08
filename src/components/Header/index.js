@@ -6,7 +6,6 @@
 import React from 'react';
 import {connect} from 'dva';
 import styled from 'styled-components';
-import WEBSITE_CONFIG from 'JSON/config.json';
 
 const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
   position: relative;
@@ -102,7 +101,6 @@ class Header extends React.Component {
     render() {
         const {global} = this.props;
         const {connected, tryConnect, initializing} = global.status;
-        const {lastVersion} = WEBSITE_CONFIG;
         return (
             <React.Fragment>
                 <HeaderWrapper>
@@ -110,7 +108,7 @@ class Header extends React.Component {
                         <div className="title-box">
                             <header>BILIBILI HELPER</header>
                             <div className="version-box">
-                                <span>Last: {lastVersion}</span>
+                                {global.config && <span>Last: {global.config.lastVersion}</span>}
                                 {global.version && <span>You: {global.version}</span>}
                             </div>
                         </div>

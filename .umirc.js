@@ -1,9 +1,7 @@
 const path = require('path');
 const srcPath = path.resolve('src');
 export default {
-    //publicPath: '/',
-    //base: '/',
-    //outputPath: './docs',
+    outputPath: './docs',
     hash: true,
     routes: [
         {
@@ -18,6 +16,12 @@ export default {
         'JSON': path.resolve('static', 'json'),
         'Static': path.resolve(srcPath, 'static'),
     },
+    copy: [
+        {
+            from: 'static/',
+            to: 'static/',
+        }
+    ],
     plugins: [
         [
             'umi-plugin-react',

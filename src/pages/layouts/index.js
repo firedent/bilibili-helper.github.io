@@ -11,7 +11,7 @@ import {
     CommentArea,
     Header,
     DownloadArea,
-    Announcement,
+    AnnouncementArea,
     BadgeArea,
     FeedbackArea,
     VoteArea,
@@ -48,7 +48,7 @@ const Home = () => (
         <Header/>
         <DownloadArea/>
         <VoteArea/>
-        <Announcement/>
+        <AnnouncementArea/>
         <FeedbackArea/>
         <BadgeArea/>
         <CommentArea/>

@@ -4,11 +4,8 @@
  * Description:
  */
 import React from 'react';
+import {connect} from 'dva';
 import styled from 'styled-components';
-import WEBSITE_CONFIG from 'JSON/config';
-import DOWNLOADS_CONFIG from 'JSON/downloads.json';
-
-const {lastVersion} = WEBSITE_CONFIG;
 
 const DownloadAreaWrapper = styled.div`
   width: 800px;
@@ -220,21 +217,38 @@ const DownloadButton = styled.button`
 class DownloadArea extends React.Component {
     constructor(props) {
         super(props);
-        let i = 0;
-        const firstVersion = _.find(DOWNLOADS_CONFIG, ({version, url}) => url).version;
-        this.downloadThree = [];
-        this.restVersion = [];
-        _.forEach(DOWNLOADS_CONFIG, (data) => {
-            const {url} = data;
-            if (url && i < 3) {
-                i += 1;
-                this.downloadThree.push(data);
-            } else this.restVersion.push(data);
-        });
         this.state = {
-            tabVersion: firstVersion,
+            tabVersion: null,
             showMoreVersion: false,
+            downloads: null,
+            downloadThree: null,
+            restVersion: null,
         };
+
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        let i = 0;
+        const {global} = this.props;
+        const {firstVersion, downloadThree, restVersion} = this.state;
+        if (!prevState.downloads && global.downloads && !firstVersion && !downloadThree && !restVersion) {
+            const firstVersion = _.find(global.downloads, ({version, url}) => url).version;
+            const downloadThree = [];
+            const restVersion = [];
+            _.forEach(global.downloads, (data) => {
+                const {url} = data;
+                if (url && i < 3) {
+                    i += 1;
+                    downloadThree.push(data);
+                } else restVersion.push(data);
+            });
+            const newState = {
+                tabVersion: firstVersion,
+                downloadThree,
+                restVersion,
+            };
+            this.setState(newState);
+        }
     }
 
     handleOnClickTab = (version) => {
@@ -268,14 +282,20 @@ class DownloadArea extends React.Component {
     };
 
     render() {
-        const {tabVersion, showMoreVersion} = this.state;
+        const {global} = this.props;
+        const {
+            tabVersion,
+            showMoreVersion,
+            downloadThree,
+            restVersion,
+        } = this.state;
         return (
             <DownloadAreaWrapper id="downloadArea">
                 <h3>下载助手 ~ DOWNLOAD<span className="sub-title">旧版本不提供下载方式</span></h3>
 
                 <div className="tab-bar">
                     <div className="versions">
-                        {this.downloadThree.map(({version, sign, url}) => (
+                        {downloadThree && downloadThree.map(({version, sign, url}) => (
                             url && (
                                 <DownloadButton
                                     key={version}
@@ -294,7 +314,7 @@ class DownloadArea extends React.Component {
                     <div className="more-version-box">
                         <button className={`more-version-btn ${showMoreVersion && 'active'}`} onClick={this.handleOnClickMoreVersion}>More Version</button>
                         {showMoreVersion && <ul>
-                            {this.restVersion.map(({version, url, sign}) => (
+                            {restVersion && restVersion.map(({version, url, sign}) => (
 
                                 <li
                                     className={`${version === tabVersion && 'active'}`}
@@ -308,7 +328,7 @@ class DownloadArea extends React.Component {
                     </div>
                 </div>
                 <div className="tab-contents">
-                    {DOWNLOADS_CONFIG.map(({version, url, info}) => (
+                    {global.downloads && global.downloads.map(({version, url, info}) => (
                         tabVersion === version && (<ol key={version}>
                             {info.map((line, index) => (
                                 <li
@@ -327,4 +347,4 @@ class DownloadArea extends React.Component {
     }
 }
 
-export default DownloadArea;
+export default connect(({global}) => ({global}))(DownloadArea);

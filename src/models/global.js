@@ -3,6 +3,8 @@ import {sendCommendToHelper} from 'Utils/functions';
 export default {
     state: {
         version: null,
+        config: null,
+        downloads: null,
         status: {
             initializing: false,
             tryConnect: false,
@@ -21,9 +23,11 @@ export default {
                         if (data.code === 0) {
                             switch (sign) {
                                 case 'connect': {
+                                    dispatch({type: 'fetchConfig'});
+                                    dispatch({type: 'fetchDownloadsConfig'});
+                                    dispatch({type: 'comments/loadVoteConfig'}).then(() => dispatch({type: 'comments/fetchVotes'}));
                                     dispatch({type: 'user/fetchUser'});
                                     dispatch({type: 'user/fetchCsrf'});
-                                    dispatch({type: 'comments/fetchVotes'});
                                     dispatch({type: 'initApp', payload: {...data.data, initializing: false}});
                                     break;
                                 }
@@ -43,10 +47,18 @@ export default {
         },
         initApp(state, {payload}) {
             if (payload.connected) state.status.connected = payload.connected;
-            if (payload.version) state.version = payload.version;
+            if (payload.config) state.version = payload.config;
             if (payload.initializing) state.initializing = payload.initializing;
             return state;
         },
+        updateAppConfig(state, {payload}) {
+            state.config = payload;
+            return state;
+        },
+        updateDownloadsConfig(state, {payload}) {
+            state.downloads = payload;
+            return state;
+        }
     },
     effects: {
         * connectHelper({}, {put}) {
@@ -54,5 +66,19 @@ export default {
             yield put({type: 'initApp', payload: {initializing: true}});
             yield put({type: 'updateTryConnect'});
         },
+        * fetchConfig({}, {put, call}) {
+            const configResponse = yield call(fetch,'../static/json/config.json');
+            if (configResponse.status === 200) {
+                const config = yield configResponse.json();
+                yield put({type: 'updateAppConfig', payload: config});
+            }
+        },
+        * fetchDownloadsConfig({}, {put, call}) {
+            const downloadsResponse = yield call(fetch,'../static/json/downloads.json');
+            if (downloadsResponse.status === 200) {
+                const config = yield downloadsResponse.json();
+                yield put({type: 'updateDownloadsConfig', payload: config});
+            }
+        }
     },
 };
