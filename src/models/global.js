@@ -24,7 +24,6 @@ export default {
                             switch (sign) {
                                 case 'connect': {
                                     dispatch({type: 'fetchConfig'});
-                                    dispatch({type: 'fetchDownloadsConfig'});
                                     dispatch({type: 'comments/loadVoteConfig'}).then(() => dispatch({type: 'comments/fetchVotes'}));
                                     dispatch({type: 'user/fetchUser'});
                                     dispatch({type: 'user/fetchCsrf'});
@@ -38,6 +37,8 @@ export default {
                 }
             });
             dispatch({type: 'connectHelper'});
+            dispatch({type: 'fetchConfig'});
+            dispatch({type: 'fetchDownloadsConfig'});
         },
     },
     reducers: {
