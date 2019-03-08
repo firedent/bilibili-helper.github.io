@@ -11,16 +11,35 @@ const DownloadAreaWrapper = styled.div`
   width: 800px;
   margin: 10px auto 20px;
   h3 {
-    display: flex;
+    //display: flex;
     align-items: center;
     margin: 15px 0 20px;
     font-size: 16px;
     color: #212121;
-    .sub-title {
-      font-size: 10px;
-      font-weight: 400;
+    a {
       margin-left: 20px;
+      padding: 2px 7px;
+      line-height: 22px;
+      vertical-align: bottom;
+      font-size: 12px;
+      border: 1px solid;
+      border-radius: 3px;
+      text-decoration: none;
+      background-color: var(--pure-white);
+      color: var(--bilibili-blue);
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+      &:active {
+        background-color: var(--bilibili-blue);
+        color: var(--pure-white);
+      }
+    }
+    p {
+      margin: 3px 0px;
+      font-size: 12px;
       color: var(--content-color);
+      font-weight: normal;
     }
   }
   header {
@@ -220,35 +239,43 @@ class DownloadArea extends React.Component {
         this.state = {
             tabVersion: null,
             showMoreVersion: false,
-            downloads: null,
             downloadThree: null,
             restVersion: null,
         };
-
+    }
+    componentDidMount() {
+        const {global} = this.props;
+        const {firstVersion, downloadThree, restVersion} = this.state;
+        if (global.downloads && (!firstVersion && !downloadThree && !restVersion)) {
+            this.updateDownloads(global.downloads);
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        let i = 0;
         const {global} = this.props;
         const {firstVersion, downloadThree, restVersion} = this.state;
-        if (!prevState.downloads && global.downloads && !firstVersion && !downloadThree && !restVersion) {
-            const firstVersion = _.find(global.downloads, ({version, url}) => url).version;
-            const downloadThree = [];
-            const restVersion = [];
-            _.forEach(global.downloads, (data) => {
-                const {url} = data;
-                if (url && i < 3) {
-                    i += 1;
-                    downloadThree.push(data);
-                } else restVersion.push(data);
-            });
-            const newState = {
-                tabVersion: firstVersion,
-                downloadThree,
-                restVersion,
-            };
-            this.setState(newState);
+        if (global.downloads && (!firstVersion && !downloadThree && !restVersion)) {
+            this.updateDownloads(global.downloads);
         }
+    }
+
+    updateDownloads = (downloads) => {
+        const firstVersion = _.find(downloads, ({version, url}) => url).version;
+        const downloadThree = [];
+        const restVersion = [];
+        let i = 0;
+        _.forEach(downloads, (data) => {
+            const {url} = data;
+            if (url && i < 3) {
+                i += 1;
+                downloadThree.push(data);
+            } else restVersion.push(data);
+        });
+        this.setState({
+            tabVersion: firstVersion,
+            downloadThree,
+            restVersion,
+        });
     }
 
     handleOnClickTab = (version) => {
@@ -291,8 +318,10 @@ class DownloadArea extends React.Component {
         } = this.state;
         return (
             <DownloadAreaWrapper id="downloadArea">
-                <h3>下载助手 ~ DOWNLOAD<span className="sub-title">旧版本不提供下载方式</span></h3>
-
+                <h3>
+                    下载助手 ~ DOWNLOAD<a href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85" target="_blank">安装方法</a>
+                    <p className="sub-title" >旧版本不提供下载地址</p>
+                </h3>
                 <div className="tab-bar">
                     <div className="versions">
                         {downloadThree && downloadThree.map(({version, sign, url}) => (
@@ -340,8 +369,6 @@ class DownloadArea extends React.Component {
                         </ol>)),
                     )}
                 </div>
-
-                {/*</ol>*/}
             </DownloadAreaWrapper>
         );
     }

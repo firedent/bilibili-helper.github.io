@@ -26,8 +26,8 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
     justify-content: space-between;
     height: 80px;
     .title-box {
-      header {
-        font-size: 30px;
+      h1 {
+        font-size: 24px;
       }
       .version-box {
         height: 12px;
@@ -106,7 +106,7 @@ class Header extends React.Component {
                 <HeaderWrapper>
                     <div className="header-box">
                         <div className="title-box">
-                            <header>BILIBILI HELPER</header>
+                            <h1>BILIBILI HELPER</h1>
                             <div className="version-box">
                                 {global.config && <span>Last: {global.config.lastVersion}</span>}
                                 {global.version && <span>You: {global.version}</span>}

@@ -33,6 +33,7 @@ const GlobalStyleSheet = createGlobalStyle`
   *, body {
     margin: 0;
     padding: 0;
+    font-family: system-ui, "PingFang SC", STHeiti, sans-serif;
   }
   .model-img {
     &:not([src]) {
