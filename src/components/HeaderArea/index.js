@@ -1,5 +1,3 @@
-import Image from 'Components/Image';
-
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/3
@@ -70,11 +68,12 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
   img {
     position: absolute;
     top: 100%;
-    right: 0px;
-    left: -5px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 37px;
     max-width: unset;
-    margin: -3px 0 0;
-    width: 101%;
+    margin: -1px 0 0;
     padding: 0;
   }
 `;
@@ -141,7 +140,6 @@ class HeaderArea extends React.Component {
                             ) : (null)}
                         </div>
                     </div>
-                    <Image src="../static/images/headerBottom.svg"/>
                 </HeaderWrapper>
             </React.Fragment>
         );
