@@ -8,7 +8,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
-
+    width: 800px;
+    margin: 10px auto;
+    padding: 0px 10px;
 `;
 
 class Page extends React.Component {
@@ -17,7 +19,7 @@ class Page extends React.Component {
     }
     render() {
         return (
-            <PageWrapper>{this.props.children}</PageWrapper>
+            <PageWrapper {...this.props}>{this.props.children}</PageWrapper>
         );
     }
 }

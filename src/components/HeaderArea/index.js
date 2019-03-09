@@ -88,7 +88,7 @@ const LoginButton = styled.button`
 `;
 
 
-class Header extends React.Component {
+class HeaderArea extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -134,4 +134,4 @@ class Header extends React.Component {
     }
 }
 
-export default connect(({global, user}) => ({global, user}))(Header);
+export default connect(({global, user}) => ({global, user}))(HeaderArea);

@@ -9,13 +9,14 @@ import styled, {createGlobalStyle} from 'styled-components';
 import withRouter from 'umi/withRouter';
 import {
     CommentArea,
-    Header,
+    HeaderArea,
     DownloadArea,
     AnnouncementArea,
     BadgeArea,
     FeedbackArea,
     VoteArea,
-    Page
+    Page,
+    FeedArea,
 } from 'Components';
 const GlobalStyleSheet = createGlobalStyle`
   html {
@@ -43,16 +44,17 @@ const GlobalStyleSheet = createGlobalStyle`
   }
 `;
 const Home = () => (
-    <Page>
+    <React.Fragment>
         <GlobalStyleSheet/>
-        <Header/>
+        <HeaderArea/>
         <DownloadArea/>
         <VoteArea/>
         <AnnouncementArea/>
         <FeedbackArea/>
+        <FeedArea/>
         <BadgeArea/>
         <CommentArea/>
-    </Page>
+    </React.Fragment>
 );
 
 export default withRouter(connect((state) => state)(Home));

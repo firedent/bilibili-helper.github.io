@@ -14,13 +14,14 @@ import Image from 'Components/Image';
 import Emoji from './Emoji';
 import CommentEditor from './CommentEditor';
 import {LOADING_IMAGE_URL} from './loadingImage';
+import Page from 'Components/Page';
 
 moment.locale('zh-cn');
 
 const CommentListArea = styled.div.attrs({className: 'comment-area'})`
   position: relative;
   margin: 10px auto 50px;
-  padding: 0px 10px;
+  
   width: 800px;
   .no-reply {
     color: var(--content-color);
@@ -500,61 +501,63 @@ class CommentArea extends React.Component {
         const pages = Math.ceil(count / size) || 1;
         const pageIndex = this.calculateNavigationPageIndex(num, pages);
         return (
-            <CommentListArea>
-                {/* header */}
-                <Header>
-                    {`${acount} 评论`}
-                    <p>本评论区来自哔哩哔哩弹幕网的评论系统，请遵守相关法律法规并共同维护秩序</p>
-                </Header>
+            <Page>
+                <CommentListArea>
+                    {/* header */}
+                    <Header>
+                        {`${acount} 评论`}
+                        <p>本评论区来自哔哩哔哩弹幕网的评论系统，请遵守相关法律法规并共同维护秩序</p>
+                    </Header>
 
-                {/* send box */}
-                <CommentEditor global receiver={{mid, uname}}/>
+                    {/* send box */}
+                    <CommentEditor global receiver={{mid, uname}}/>
 
-                {global.status.connected && (<React.Fragment>
-                    {/* empty */}
-                    {acount === 0 && !top && !hots && !replies &&
-                    (<div className="no-reply">没有留言，{!user.info && '登陆后'}开始评论吧~</div>)}
+                    {global.status.connected && (<React.Fragment>
+                        {/* empty */}
+                        {acount === 0 && !top && !hots && !replies &&
+                        (<div className="no-reply">没有留言，{!user.info && '登陆后'}开始评论吧~</div>)}
 
-                    {/* not empty */}
-                    {acount !== 0 && (top || hots || replies) &&
-                    (<div className="more-comment-list-wrapper" ref={i => this.moreCommentListWrapper = i}>
-                        {/* top */}
-                        {num === 1 && top && (
-                            <div className="wrapper">
-                                <div id="top" className="comment-list">{this.renderLine({...top, top: true})}</div>
-                                <HR disabled>IT'S A TOP COMMENT ABOVE</HR>
-                            </div>
-                        )}
-
-                        {/* hots */}
-                        {num === 1 && hots && (
-                            <div className="list-wrapper">
-                                <div id="hots" className="comment-list">
-                                    {hots.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
+                        {/* not empty */}
+                        {acount !== 0 && (top || hots || replies) &&
+                        (<div className="more-comment-list-wrapper" ref={i => this.moreCommentListWrapper = i}>
+                            {/* top */}
+                            {num === 1 && top && (
+                                <div className="wrapper">
+                                    <div id="top" className="comment-list">{this.renderLine({...top, top: true})}</div>
+                                    <HR disabled>IT'S A TOP COMMENT ABOVE</HR>
                                 </div>
-                                <HR onClick={this.handleOnClickHots}>LOAD MORE HOT COMMENTS</HR>
-                            </div>
-                        )}
+                            )}
 
-                        {/* normal replies */}
-                        {replies && (
-                            <div className="list-wrapper">
-                                <div id="comments" className="comment-list">
-                                    {replies.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
+                            {/* hots */}
+                            {num === 1 && hots && (
+                                <div className="list-wrapper">
+                                    <div id="hots" className="comment-list">
+                                        {hots.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
+                                    </div>
+                                    <HR onClick={this.handleOnClickHots}>LOAD MORE HOT COMMENTS</HR>
                                 </div>
-                                {this.renderPageNavigation({oid: config.oid, pageIndex, num, pages})}
-                            </div>
-                        )}
+                            )}
 
-                        {/* loading mask */}
-                        {status.comment.loadPage && (
-                            <div className="loading-page-mask">
-                                <Image url={LOADING_IMAGE_URL} sign="loading-gif"/>
-                            </div>
-                        )}
-                    </div>)}
-                </React.Fragment>)}
-            </CommentListArea>
+                            {/* normal replies */}
+                            {replies && (
+                                <div className="list-wrapper">
+                                    <div id="comments" className="comment-list">
+                                        {replies.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
+                                    </div>
+                                    {this.renderPageNavigation({oid: config.oid, pageIndex, num, pages})}
+                                </div>
+                            )}
+
+                            {/* loading mask */}
+                            {status.comment.loadPage && (
+                                <div className="loading-page-mask">
+                                    <Image url={LOADING_IMAGE_URL} sign="loading-gif"/>
+                                </div>
+                            )}
+                        </div>)}
+                    </React.Fragment>)}
+                </CommentListArea>
+            </Page>
         );
     };
 }

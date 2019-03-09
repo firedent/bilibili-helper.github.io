@@ -5,6 +5,7 @@ export default {
         version: null,
         config: null,
         downloads: null,
+        feeds: null,
         status: {
             initializing: false,
             tryConnect: false,
@@ -39,6 +40,7 @@ export default {
             dispatch({type: 'connectHelper'});
             dispatch({type: 'fetchConfig'});
             dispatch({type: 'fetchDownloadsConfig'});
+            dispatch({type: 'fetchFeedsConfig'});
         },
     },
     reducers: {
@@ -58,6 +60,10 @@ export default {
         },
         updateDownloadsConfig(state, {payload}) {
             state.downloads = payload;
+            return state;
+        },
+        updateFeedsConfig(state, {payload}) {
+            state.feeds = payload;
             return state;
         }
     },
@@ -79,6 +85,13 @@ export default {
             if (downloadsResponse.status === 200) {
                 const config = yield downloadsResponse.json();
                 yield put({type: 'updateDownloadsConfig', payload: config});
+            }
+        },
+        * fetchFeedsConfig({}, {put, call}) {
+            const feedsResponse = yield call(fetch,'../static/json/feed.json');
+            if (feedsResponse.status === 200) {
+                const config = yield feedsResponse.json();
+                yield put({type: 'updateFeedsConfig', payload: config});
             }
         }
     },

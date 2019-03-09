@@ -6,46 +6,10 @@
 import React from 'react';
 import {connect} from 'dva';
 import styled from 'styled-components';
+import {Header} from 'Components/Header';
+import Page from 'Components/Page';
 
 const DownloadAreaWrapper = styled.div`
-  width: 800px;
-  margin: 10px auto 20px;
-  h3 {
-    //display: flex;
-    align-items: center;
-    margin: 15px 0 20px;
-    font-size: 16px;
-    color: #212121;
-    a {
-      margin-left: 20px;
-      padding: 2px 7px;
-      line-height: 22px;
-      vertical-align: bottom;
-      font-size: 12px;
-      font-weight: normal;
-      border: 1px solid;
-      border-radius: 3px;
-      text-decoration: none;
-      background-color: var(--pure-white);
-      color: var(--bilibili-blue);
-      cursor: pointer;
-      outline: none;
-      user-select: none;
-      &:active {
-        background-color: var(--bilibili-blue);
-        color: var(--pure-white);
-      }
-    }
-    p {
-      margin: 3px 0px;
-      font-size: 12px;
-      color: var(--content-color);
-      font-weight: normal;
-    }
-  }
-  header {
-    margin-bottom: 7px;
-  }
   ol {
     //height: 180px;
     //border: 10px solid var(--border-color);
@@ -117,9 +81,7 @@ const DownloadAreaWrapper = styled.div`
       }
     }
   }
-  .tab-contents {
-    
-  }
+  .tab-contents {}
   .info-item {
     margin-left: 20px;
     padding: 4px 0;
@@ -244,6 +206,7 @@ class DownloadArea extends React.Component {
             restVersion: null,
         };
     }
+
     componentDidMount() {
         const {global} = this.props;
         const {firstVersion, downloadThree, restVersion} = this.state;
@@ -277,7 +240,7 @@ class DownloadArea extends React.Component {
             downloadThree,
             restVersion,
         });
-    }
+    };
 
     handleOnClickTab = (version) => {
         this.setState({tabVersion: version});
@@ -318,59 +281,63 @@ class DownloadArea extends React.Component {
             restVersion,
         } = this.state;
         return (
-            <DownloadAreaWrapper id="downloadArea">
-                <h3>
-                    下载助手 ~ DOWNLOAD<a href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85" target="_blank">安装方法</a>
-                    <p className="sub-title" >旧版本不提供下载地址</p>
-                </h3>
-                <div className="tab-bar">
-                    <div className="versions">
-                        {downloadThree && downloadThree.map(({version, sign, url}) => (
-                            url && (
-                                <DownloadButton
-                                    key={version}
-                                    className={`download-btn ${version === tabVersion && 'active'}`}
-                                    onClick={() => this.handleOnClickTab(version)}
-                                >
-                                    <span>{this.getVersionTypeString(sign)} {version}</span>
-                                    {version === tabVersion && (
-                                        <a href={url}>
-                                            <i className="download-btn">Click here to download</i>
-                                        </a>)}
-                                </DownloadButton>
-                            )
-                        ))}
-                    </div>
-                    <div className="more-version-box">
-                        <button className={`more-version-btn ${showMoreVersion && 'active'}`} onClick={this.handleOnClickMoreVersion}>More Version</button>
-                        {showMoreVersion && <ul>
-                            {restVersion && restVersion.map(({version, url, sign}) => (
+            <Page>
+                <DownloadAreaWrapper id="downloadArea">
+                    <Header>
+                        下载助手 ~ DOWNLOAD<a
+                        href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85"
+                        target="_blank">安装方法</a>
+                        <p className="sub-title">旧版本不提供下载地址哟~</p>
+                    </Header>
+                    <div className="tab-bar">
+                        <div className="versions">
+                            {downloadThree && downloadThree.map(({version, sign, url}) => (
+                                url && (
+                                    <DownloadButton
+                                        key={version}
+                                        className={`download-btn ${version === tabVersion && 'active'}`}
+                                        onClick={() => this.handleOnClickTab(version)}
+                                    >
+                                        <span>{this.getVersionTypeString(sign)} {version}</span>
+                                        {version === tabVersion && (
+                                            <a href={url}>
+                                                <i className="download-btn">Click here to download</i>
+                                            </a>)}
+                                    </DownloadButton>
+                                )
+                            ))}
+                        </div>
+                        <div className="more-version-box">
+                            <button className={`more-version-btn ${showMoreVersion && 'active'}`} onClick={this.handleOnClickMoreVersion}>More Version</button>
+                            {showMoreVersion && <ul>
+                                {restVersion && restVersion.map(({version, url, sign}) => (
 
-                                <li
-                                    className={`${version === tabVersion && 'active'}`}
-                                    key={version} onClick={() => this.handleOnClickTab(version)}
-                                >
-                                    {this.getVersionTypeIcon(sign)}
-                                    {version}
-                                </li>
-                            ))}
-                        </ul>}
+                                    <li
+                                        className={`${version === tabVersion && 'active'}`}
+                                        key={version} onClick={() => this.handleOnClickTab(version)}
+                                    >
+                                        {this.getVersionTypeIcon(sign)}
+                                        {version}
+                                    </li>
+                                ))}
+                            </ul>}
+                        </div>
                     </div>
-                </div>
-                <div className="tab-contents">
-                    {global.downloads && global.downloads.map(({version, url, info}) => (
-                        tabVersion === version && (<ol key={version}>
-                            {info.map((line, index) => (
-                                <li
-                                    key={index}
-                                    className="info-item"
-                                    dangerouslySetInnerHTML={{__html: line[1]}}
-                                />
-                            ))}
-                        </ol>)),
-                    )}
-                </div>
-            </DownloadAreaWrapper>
+                    <div className="tab-contents">
+                        {global.downloads && global.downloads.map(({version, url, info}) => (
+                            tabVersion === version && (<ol key={version}>
+                                {info.map((line, index) => (
+                                    <li
+                                        key={index}
+                                        className="info-item"
+                                        dangerouslySetInnerHTML={{__html: line[1]}}
+                                    />
+                                ))}
+                            </ol>)),
+                        )}
+                    </div>
+                </DownloadAreaWrapper>
+            </Page>
         );
     }
 }

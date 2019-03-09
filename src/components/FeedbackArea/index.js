@@ -5,15 +5,11 @@
  */
 import React from 'react';
 import styled from 'styled-components';
+import {Header} from 'Components/Header';
 
 const FeedbackWrapper = styled.div`
   width: 800px;
   margin: 10px auto;
-  h3 {
-    margin: 15px 0 20px;
-    font-size: 16px;
-    color: #212121;
-  }
   a {
     display: inline-block;
     margin: 3px 5px;
@@ -52,7 +48,10 @@ const FeedbackWrapper = styled.div`
 `;
 export default () => (
     <FeedbackWrapper>
-        <h3>问题反馈 ~ FEEDBACK</h3>
+        <Header>
+            问题反馈 ~ FEEDBACK
+            <p>赶紧留言吧~想说什么都可以~</p>
+        </Header>
         <a className="comments">「评论区」留言</a>
         <a className="github" href="https://github.com/bilibili-helper/bilibili-helper/issues" target="_blank">「Github」上反馈</a>
         <a href="https://weibo.com/guguke" target="_blank">「微博」@啾咕咕www</a>

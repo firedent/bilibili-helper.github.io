@@ -9,7 +9,7 @@ import styled from 'styled-components';
 const InfoWrapper = styled.div`
   width: 800px;
   height: 20px;
-  margin: 50px auto 20px;
+  margin: 20px auto;
   & > * {
     display: inline-block;
     margin-right: 5px;
