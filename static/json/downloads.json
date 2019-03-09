@@ -1,8 +1,8 @@
 [
     {
-        "version": "1.2.0.10",
-        "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/test/bilibilihelper_1.2.0.beta.10.crx",
+        "version": "1.2.0",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.x/bilibilihelper_1.2.0.crx",
         "info": [
             ["fix", "增加了新版播放页面视频下载的支持"],
             ["fix", "修复新版番剧页面助手无法显示的问题，偶尔可以下载到flv文件，其他功能正常"],
@@ -25,7 +25,7 @@
     },
     {
         "version": "1.1.8",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.1.8/bilibilihelper_1.1.8.crx",
+        "url": "",
         "sign": "store",
         "info": [
             ["fix", "修复<i>视频下载</i>功能中切换分P后下载链接不变的问题"],
