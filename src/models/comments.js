@@ -109,6 +109,7 @@ export default {
                             }
                         } else if (data.code === 12025) {
                             dispatch({type: 'updateEditorSendError', payload: data.message});
+                            dispatch({type: 'updateEditorSendingState', payload: false});
                         }
                         break;
                     }
