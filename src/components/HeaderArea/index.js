@@ -1,3 +1,5 @@
+import Image from 'Components/Image';
+
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/3
@@ -10,11 +12,12 @@ import styled from 'styled-components';
 const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
   position: relative;
   flex-shrink: 0;
+  margin-bottom: 40px;
   min-width: 800px;
   background-color: var(--bilibili-pink);
   color: var(--background-color);
   padding: 50px 0px 20px;
-  overflow: hidden;
+  //overflow: hidden;
   & > * {
     display: block;
     max-width: 800px;
@@ -63,6 +66,16 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
         }
       }
     }
+  }
+  img {
+    position: absolute;
+    top: 100%;
+    right: 0px;
+    left: -5px;
+    max-width: unset;
+    margin: -3px 0 0;
+    width: 101%;
+    padding: 0;
   }
 `;
 const LoginButton = styled.button`
@@ -128,6 +141,7 @@ class HeaderArea extends React.Component {
                             ) : (null)}
                         </div>
                     </div>
+                    <Image src="../static/images/headerBottom.svg"/>
                 </HeaderWrapper>
             </React.Fragment>
         );
