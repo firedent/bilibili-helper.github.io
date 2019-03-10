@@ -1,10 +1,11 @@
 [
     {
-        "version": "1.2.1.1",
+        "version": "1.2.1.2",
         "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.1.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.2.crx",
         "info": [
             ["fix", "修复了去污粉关闭后仍然启用的bug"],
+            ["fix", "修复了当“跨区域解锁”功能开启时，直播区相关功能加载错误的问题"],
             ["improve", "增加去污粉功能的额外特性，现在将鼠标移动到聊天内容框中的弹幕上后，会显示该行弹幕所有所有被屏蔽的信息"]
         ]
     },
