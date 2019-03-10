@@ -233,6 +233,7 @@ class CommentEditor extends React.Component {
                 length: 7,
                 current: 0,
             },
+            tempMessage: null,
         };
     }
 
@@ -305,6 +306,9 @@ class CommentEditor extends React.Component {
         value && this.props.dispatch({
             type: 'comments/sendReply', payload: {root, parent, message, oid, csrf},
         });
+        this.setState({tempMessage: value}, () => {
+            this.textarea.value = '';
+        });
     };
 
     renderEmojis = (emojis, isText) => emojis.map((emoji) => {
@@ -322,7 +326,7 @@ class CommentEditor extends React.Component {
     });
 
     render() {
-        const {on, emojiNavigation} = this.state;
+        const {on, emojiNavigation, tempMessage} = this.state;
         const {start, length, pid, current} = emojiNavigation;
         const {comments, name, user, emoji, global, oid, parent, root} = this.props;
         const {error, sending} = comments.status.editor;
@@ -345,7 +349,8 @@ class CommentEditor extends React.Component {
                             disabled={!canUse}
                             ref={i => this.textarea = i}
                             placeholder={name && !global ? `回复 @${name}` : '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。'}
-                        ></textarea>
+                            defaultValue={error ? tempMessage : ''}
+                        />
                         <button disabled={sending || !canUse} onClick={() => this.handleSendReply({root, parent, oid})}>发送</button>
                     </div>
                     <div className="toolbar">
