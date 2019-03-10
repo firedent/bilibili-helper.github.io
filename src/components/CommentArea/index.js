@@ -15,6 +15,7 @@ import Emoji from './Emoji';
 import CommentEditor from './CommentEditor';
 import {LOADING_IMAGE_URL} from './loadingImage';
 import Page from 'Components/Page';
+import {cumulativeOffset} from 'Utils/functions';
 
 moment.locale('zh-cn');
 
@@ -342,21 +343,20 @@ class CommentArea extends React.Component {
     };
 
     handleOnClickHots = () => {
-        window.scrollTo(0, this.moreCommentListWrapper.offsetTop);
         this.props.dispatch({type: 'comments/fetchComment', payload: {sort: 1}});
     };
 
     handleOnClickLoadMoreReplies = (payload = {}) => {
-        const targetReply = this[`reply-${payload.root}`];
-        if (targetReply) {
-            targetReply.querySelector('.replies-box').scrollIntoView({behavior: 'smooth', inline: 'start'});
-        }
+        //const targetReply = this[`reply-${payload.root}`];
+        //if (targetReply) {
+            //targetReply.querySelector('.replies-box').scrollIntoView({behavior: 'smooth', inline: 'start'});
+        //}
         this.props.dispatch({type: 'comments/fetchReply', payload: {pn: 1, ps: 10, ...payload}});
     };
 
     // 点击全局评论列表中的分页按钮
     handleOnClickNavigation = () => {
-        window.scrollTo(0, this.moreCommentListWrapper.offsetTop);
+        window.scrollTo(0, cumulativeOffset(this.moreCommentListWrapper).top - 20);
     };
 
     // 点击回复列表中的分页按钮
@@ -514,11 +514,11 @@ class CommentArea extends React.Component {
 
                     {global.status.connected && (<React.Fragment>
                         {/* empty */}
-                        {acount === 0 && !top && !hots && !replies &&
+                        {acount === 0 && !top && !hots && !replies && !status.comment.loadPage &&
                         (<div className="no-reply">没有留言，{!user.info && '登陆后'}开始评论吧~</div>)}
 
                         {/* not empty */}
-                        {acount !== 0 && (top || hots || replies) &&
+                        {acount !== 0 && (top || hots || replies || status.comment.loadPage) &&
                         (<div className="more-comment-list-wrapper" ref={i => this.moreCommentListWrapper = i}>
                             {/* top */}
                             {num === 1 && top && (
