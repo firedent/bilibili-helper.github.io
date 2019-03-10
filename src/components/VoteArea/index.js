@@ -39,7 +39,7 @@ const VoteLine = styled.div`
   font-size: 14px;
   margin-bottom: 2px;
   padding: 7px 10px;
-  width: calc(100% - 62px);
+  width: calc(100% - 72px);
   border-radius: 3px;
   border-right: 1px solid var(--bilibili-pink);
   border-left: 1px solid var(--bilibili-pink);
@@ -70,7 +70,7 @@ const VoteLine = styled.div`
   .percent {
     position: absolute;
     top: 8px;
-    right: -36px;
+    right: -46px;
     font-size: 12px;
     color: var(--content-color);
   }
@@ -113,7 +113,7 @@ class VoteArea extends React.Component {
         super(props);
         this.state = {
             voting: false,
-        }
+        };
     }
 
     handleOnClickLike = (action, rpid) => {
@@ -140,7 +140,8 @@ class VoteArea extends React.Component {
                     disabled={this.state.voting}
                     className="like" on={action === 1 ? '1' : '0'}
                     onClick={() => this.handleOnClickLike(Number(action !== 1), rpid)}
-                >LIKE</button>
+                >LIKE
+                </button>
                 <button
                     disabled={this.state.voting}
                     className="hate" on={action === 2 ? '1' : '0'}
@@ -148,14 +149,23 @@ class VoteArea extends React.Component {
                 >HATE
                 </button>
             </div>
-            <div className="percent">{Number(likeSum ? like / likeSum * 100 : 0).toFixed(0)}%</div>
+            <div className="percent">{Number(likeSum ? like / likeSum * 100 : 0).toFixed(1)}%</div>
         </VoteLine>
     );
 
+    getVotes = () => {
+        let res = [];
+        const {votes, replyMap} = this.props.comments;
+        if (votes.rpidArray && votes.rpidArray.length > 0) {
+            res = _.sortBy(votes.rpidArray.map((rpid) => replyMap[rpid].self), ({like}) => -like);
+        }
+        return res;
+    };
+
     render() {
-        const {comments, global} = this.props;
-        const {votes, replyMap} = comments;
-        const sum = _.reduce(votes.likeSum, (sum, like) => sum + like);
+        const {global, comments} = this.props;
+        const sortedVotes = this.getVotes();
+        const sum = _.reduce(comments.votes.likeSum, (sum, like) => sum + like);
         return (
             <VoteAreaWrapper>
                 <h3>
@@ -163,7 +173,7 @@ class VoteArea extends React.Component {
                     <p>为希望添加进助手的功能点赞吧~</p>
                 </h3>
                 <div className="votes-list">
-                    {votes.rpidArray.length > 0 && votes.rpidArray.map((rpid) => this.renderVote(sum, replyMap[rpid].self))}
+                    {sortedVotes.map((voteData) => this.renderVote(sum, voteData))}
                 </div>
                 {!global.status.connected && <div className="mask">~ 尚未连接助手 ~</div>}
             </VoteAreaWrapper>

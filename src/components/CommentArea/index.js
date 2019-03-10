@@ -347,10 +347,6 @@ class CommentArea extends React.Component {
     };
 
     handleOnClickLoadMoreReplies = (payload = {}) => {
-        //const targetReply = this[`reply-${payload.root}`];
-        //if (targetReply) {
-            //targetReply.querySelector('.replies-box').scrollIntoView({behavior: 'smooth', inline: 'start'});
-        //}
         this.props.dispatch({type: 'comments/fetchReply', payload: {pn: 1, ps: 10, ...payload}});
     };
 
