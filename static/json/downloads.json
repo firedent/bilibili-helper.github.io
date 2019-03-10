@@ -1,5 +1,14 @@
 [
     {
+        "version": "1.2.1.1",
+        "sign": "test",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.1.crx",
+        "info": [
+            ["fix", "修复了去污粉关闭后仍然启用的bug"],
+            ["improve", "增加去污粉功能的额外特性，现在将鼠标移动到聊天内容框中的弹幕上后，会显示该行弹幕所有所有被屏蔽的信息"]
+        ]
+    },
+    {
         "version": "1.2.0",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.x/bilibilihelper_1.2.0.crx",
