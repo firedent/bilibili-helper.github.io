@@ -284,8 +284,9 @@ class DownloadArea extends React.Component {
             <Page>
                 <DownloadAreaWrapper id="downloadArea">
                     <Header>
-                        下载助手 ~ DOWNLOAD<a
-                        href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85"
+                        下载助手 ~ DOWNLOAD
+                        <a href="https://www.bilibili.com/video/av44808808" target="_blank">功能介绍</a>
+                        <a href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85"
                         target="_blank">安装方法</a>
                         <p className="sub-title">旧版本不提供下载地址哟~</p>
                     </Header>
