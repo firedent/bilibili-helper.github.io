@@ -11,11 +11,22 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
   position: relative;
   flex-shrink: 0;
   margin-bottom: 40px;
+  padding-bottom: 0;
+  height: 80px;
   min-width: 800px;
   background-color: var(--bilibili-pink);
   color: var(--background-color);
   padding: 50px 0px 20px;
   //overflow: hidden;
+  &::after {
+    content: '';
+    display: block;
+    margin-top: 10px;
+    width: 100%;
+    height: 20px;
+    background-color: #fb7299;
+    border-radius: 0 0 50% 50%;
+  }
   & > * {
     display: block;
     max-width: 800px;

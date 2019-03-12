@@ -1,8 +1,8 @@
 [
     {
-        "version": "1.2.1.3",
+        "version": "1.2.1.4",
         "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.3.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.4.crx",
         "info": [
             ["fix", "修复了去污粉关闭后仍然启用的bug"],
             ["fix", "修复了当“跨区域解锁”功能开启时，直播区相关功能加载错误的问题"],
