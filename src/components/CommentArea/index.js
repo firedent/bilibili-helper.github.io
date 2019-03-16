@@ -469,7 +469,9 @@ class CommentArea extends React.Component {
         return (
             <PageNavigation>
                 {pageIndex.length > 2 && num > 1 && (
-                    <span className="page-navigation-link" onClick={() => handleFunc(num - 1)}>PREV</span>
+                    <Link key={'prev'} to={`?oid=${oid}&page=${num - 1}&ptype=${ptype}`}>
+                        <span className="page-navigation-link" onClick={() => handleFunc(num - 1)}>PREV</span>
+                    </Link>
                 )}
                 {pageIndex.map((pageNum, index) => {
                     return (
@@ -482,7 +484,9 @@ class CommentArea extends React.Component {
                     );
                 })}
                 {pageIndex.length > 2 && num < pages && (
-                    <span className="page-navigation-link" onClick={() => handleFunc(num + 1)}>NEXT</span>
+                    <Link key={'next'} to={`?oid=${oid}&page=${num + 1}&ptype=${ptype}`}>
+                        <span className="page-navigation-link" onClick={() => handleFunc(num + 1)}>NEXT</span>
+                    </Link>
                 )}
             </PageNavigation>
         );
