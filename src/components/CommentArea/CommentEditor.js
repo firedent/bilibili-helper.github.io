@@ -235,6 +235,7 @@ class CommentEditor extends React.Component {
             },
             tempMessage: null,
         };
+        this.onCommandDown = false;
     }
 
     handleOnClickStickersBtn = () => {
@@ -298,8 +299,21 @@ class CommentEditor extends React.Component {
         this.textarea.selectionEnd = f.length + name.length;
     };
 
-    handleSendReply = ({root = null, parent = null, oid = null}) => {
-        const {name} = this.props;
+    handleOnKeyDown = ({ctrlKey, keyCode, key}) => {
+        if (keyCode === 91 || keyCode === 93) {
+            this.onCommandDown = true;
+        }
+        if (ctrlKey && key === 'Enter' || (this.onCommandDown && key === 'Enter')) {
+            this.handleSendReply();
+        }
+    };
+
+    handleOnKeyUp = ({ctrlKey, key, keyCode}) => {
+        if (this.onCommandDown && (keyCode === 91 || keyCode === 93 || keyCode === 224 || keyCode === 17)) this.onCommandDown = false;
+    };
+
+    handleSendReply = () => {
+        const {oid, parent, root, name} = this.props;
         const {value} = this.textarea;
         const message = name ? `回复 @${name} :${value}` : value;
         const {csrf} = this.props.user;
@@ -328,7 +342,7 @@ class CommentEditor extends React.Component {
     render() {
         const {on, emojiNavigation, tempMessage} = this.state;
         const {start, length, pid, current} = emojiNavigation;
-        const {comments, name, user, emoji, global, oid, parent, root} = this.props;
+        const {comments, name, user, emoji, global} = this.props;
         const {error, sending} = comments.status.editor;
         const {optionJSON} = emoji;
         const canUse = !!user.info;
@@ -350,8 +364,10 @@ class CommentEditor extends React.Component {
                             ref={i => this.textarea = i}
                             placeholder={name && !global ? `回复 @${name}` : '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。'}
                             defaultValue={error ? tempMessage : ''}
+                            onKeyUp={this.handleOnKeyUp}
+                            onKeyDown={this.handleOnKeyDown}
                         />
-                        <button disabled={sending || !canUse} onClick={() => this.handleSendReply({root, parent, oid})}>发送</button>
+                        <button disabled={sending || !canUse} onClick={this.handleSendReply}>发送</button>
                     </div>
                     <div className="toolbar">
                         <button disabled={!canUse} className="stickers-btn" onClick={this.handleOnClickStickersBtn} open={on}>STICKERS</button>
