@@ -85,10 +85,8 @@ const DownloadAreaWrapper = styled.div`
   .info-item {
     position: relative;
     margin-left: 20px;
-    padding-left: 5px;
-    padding: 4px 0;
+    padding: 5px 0 5px 5px;
     font-size: 12px;
-    text-indent: 5px;
     border-radius: 3px;
     //border-bottom: 1px solid var(--pure-white);
     border-bottom: 1px solid var(--border-color);
@@ -103,6 +101,9 @@ const DownloadAreaWrapper = styled.div`
       margin: 0 3px;
       font-style: normal;
       color: var(--content-color);
+    }
+    li {
+      padding-left: 5px;
     }
     & li::after {
       content: ';';
