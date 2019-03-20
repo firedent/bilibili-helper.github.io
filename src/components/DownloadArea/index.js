@@ -17,7 +17,6 @@ const DownloadAreaWrapper = styled.div`
     border-radius: 3px;
     //box-shadow: rgba(20,20,20,0.1) 0px 0px 10px;
     //background-color: var(--border-color);
-    overflow: auto;
   }
   .tab-bar {
     display: flex;
@@ -84,6 +83,7 @@ const DownloadAreaWrapper = styled.div`
   }
   .tab-contents {}
   .info-item {
+    position: relative;
     margin-left: 20px;
     padding-left: 5px;
     padding: 4px 0;
@@ -102,14 +102,21 @@ const DownloadAreaWrapper = styled.div`
     i {
       margin: 0 3px;
       font-style: normal;
-      color: var(--bilibili-pink);
+      color: var(--content-color);
     }
-    &::after {
+    & li::after {
       content: ';';
       display: inline;
     }
-    &:last-of-type::after {
+    &:last-of-type li::after {
       content: '。';
+    }
+    a {
+      position: absolute;
+      top: 5px;
+      right: calc(100% + 25px);
+      color: var(--bilibili-blue);
+      text-decoration: none;
     }
   }
 `;
@@ -290,7 +297,7 @@ class DownloadArea extends React.Component {
                         下载助手 ~ DOWNLOAD
                         <a href="https://www.bilibili.com/video/av44808808" target="_blank">功能介绍</a>
                         <a href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85"
-                        target="_blank">安装方法</a>
+                           target="_blank">安装方法</a>
                         <p className="sub-title">旧版本不提供下载地址哟~</p>
                     </Header>
                     <div className="tab-bar">
@@ -331,11 +338,15 @@ class DownloadArea extends React.Component {
                         {global.downloads && global.downloads.map(({version, url, info}) => (
                             tabVersion === version && (<ol key={version}>
                                 {info.map((line, index) => (
-                                    <li
-                                        key={index}
-                                        className="info-item"
-                                        dangerouslySetInnerHTML={{__html: line[1]}}
-                                    />
+                                    <div className="info-item" key={index}>
+                                        <li dangerouslySetInnerHTML={{__html: line[1]}}/>
+                                        {line[2] !== undefined && (
+                                            <a
+                                                target="_blank"
+                                                href={`https://github.com/bilibili-helper/bilibili-helper/issues/${line[2]}`}
+                                            >#{line[2]}</a>
+                                        )}
+                                    </div>
                                 ))}
                             </ol>)),
                         )}
