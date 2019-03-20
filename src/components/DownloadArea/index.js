@@ -32,6 +32,7 @@ const DownloadAreaWrapper = styled.div`
         padding: 3px 8px;
         border: 1px solid var(--border-color);
         border-radius: 3px;
+        background-color: var(--pure-white);
         align-self: flex-end;
         outline: none;
         user-select: none;
@@ -84,6 +85,7 @@ const DownloadAreaWrapper = styled.div`
   .tab-contents {}
   .info-item {
     margin-left: 20px;
+    padding-left: 5px;
     padding: 4px 0;
     font-size: 12px;
     text-indent: 5px;
@@ -100,6 +102,7 @@ const DownloadAreaWrapper = styled.div`
     i {
       margin: 0 3px;
       font-style: normal;
+      color: var(--bilibili-pink);
     }
     &::after {
       content: ';';

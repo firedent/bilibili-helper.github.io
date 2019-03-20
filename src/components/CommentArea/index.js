@@ -63,6 +63,9 @@ const Header = styled.header.attrs({className: 'comment-list-header'})`
     margin: 3px 0px;
     font-size: 12px;
   }
+  a {
+    color: var(--bilibili-blue);
+  }
 `;
 const Comment = styled.div.attrs({className: 'comment-item'})`
   display: flex;
@@ -506,7 +509,11 @@ class CommentArea extends React.Component {
                     {/* header */}
                     <Header>
                         {`${acount} 评论`}
-                        <p>本评论区来自哔哩哔哩弹幕网的评论系统，请遵守相关法律法规并共同维护秩序</p>
+                        <p>
+                            本评论区来自哔哩哔哩弹幕网的评论系统，原地址为:
+                            <a target="_blank" href="https://h.bilibili.com/16116344#canvas-detail-comment-ctnr">h16116344</a>
+                            ，如果无法链接助手，可以前往该页面进行留言
+                            <br/>请遵守相关法律法规并共同维护秩序</p>
                     </Header>
 
                     {/* send box */}

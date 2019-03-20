@@ -349,9 +349,13 @@ class CommentEditor extends React.Component {
         const {face, uid} = user.info || {};
         return (
             <CommentEditorWrapper canUse={canUse}>
-                {!canUse && (
+                {(!canUse || sending) && (
                     <div className="mask">
-                        <span>~ {!global.status.connected && '未连接助手'} {!canUse && global.status.connected && '尚未登录'} ~</span>
+                        <span>~
+                            {!global.status.connected && '未连接助手'}
+                            {!canUse && global.status.connected && '尚未登录'}
+                            {sending && '发送中'}
+                            ~</span>
                     </div>
                 )}
                 <div className="header">
