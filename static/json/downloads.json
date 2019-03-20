@@ -2,14 +2,16 @@
     {
         "version": "1.2.1.4",
         "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.4.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.5.crx",
         "info": [
             ["fix", "修复了去污粉关闭后仍然启用的bug"],
             ["fix", "修复由于“跨区域限制解锁”功能导致的部分页面和功能无法正常使用的问题"],
             ["fix", "修复“夜间模式”下评论区表情框背景黑色问题"],
             ["fix", "修复自动领瓜子无法关闭的问题"],
             ["fix", "修复弹幕查询功能中卡片位置显示不正确和闪动的问题"],
-            ["improve", "增加去污粉功能的额外特性，现在将鼠标移动到聊天内容框中的弹幕上后，会显示该行弹幕所有所有被屏蔽的信息"]
+            ["fix", "修复由于chrome73版本中添加CORB策略导致的请求失败问题。但是由于一些由服务端决定的强制同源策略，“字幕下载”功能在大于等于73版本下无法正常请求，故此时会被自动禁用并提示你降浏览器版本"],
+            ["improve", "增加去污粉功能的额外特性，现在将鼠标移动到聊天内容框中的弹幕上后，会显示该行弹幕所有所有被屏蔽的信息"],
+            ["improve", "增加chrome版本校验过程，修改鉴权逻辑现在被禁用的功能也会进行鉴权流程（为的是获得期望的失败结果）"]
         ]
     },
     {
