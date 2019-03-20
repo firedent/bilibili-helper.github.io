@@ -10,6 +10,7 @@ export default {
     define: {
         local: true,
     },
+
     //chainWebpack(config, {webpack}) {
     //    config.plugin('HTMLWebpackPlugin').use(new HTMLWebpackPlugin());
     //    console.log(config.loader);

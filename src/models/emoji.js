@@ -41,13 +41,20 @@ export default {
     reducers: {
         updateOptions(state, {type, payload}) {
             const emojiURLs = {};
-            payload.forEach(({pid, emojis, purl}) => {
+            const {vip, free} = payload;
+            free.forEach(({pid, emojis, purl}) => {
+                emojiURLs[pid] = purl;
+                emojis.forEach(({name, url}) => {
+                    if (url) emojiURLs[name] = url;
+                });
+            })
+            vip.forEach(({pid, emojis, purl}) => {
                 emojiURLs[pid] = purl;
                 emojis.forEach(({name, url}) => {
                     if (url) emojiURLs[name] = url;
                 });
             });
-            state.optionJSON = [DEFAULT_EMOJI, ...payload];
+            state.optionJSON = [DEFAULT_EMOJI, ...free, ...vip];
             state.emojiURLs = emojiURLs;
             return state;
         },
@@ -55,7 +62,7 @@ export default {
     effects: {
         * fetchOptions({type, payload}, {put, call, select}) {
             fetchFromHelper('json', {
-                url: 'https://api.bilibili.com/x/v2/reply/web/emojis',
+                url: 'https://api.bilibili.com/x/v2/reply/v2/emojis',
                 model: 'emoji',
             });
         },
