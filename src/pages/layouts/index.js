@@ -15,6 +15,7 @@ import {
     BadgeArea,
     FeedbackArea,
     VoteArea,
+    WebsiteUpdateArea,
     Page,
     FeedArea,
 } from 'Components';
@@ -48,6 +49,7 @@ const Home = () => (
         <GlobalStyleSheet/>
         <HeaderArea/>
         <DownloadArea/>
+        <WebsiteUpdateArea/>
         <VoteArea/>
         <AnnouncementArea/>
         <FeedbackArea/>

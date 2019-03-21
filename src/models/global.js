@@ -6,6 +6,7 @@ export default {
         config: null,
         downloads: null,
         feeds: null,
+        websiteUpdate: null,
         status: {
             initializing: false,
             tryConnect: false,
@@ -41,6 +42,7 @@ export default {
             dispatch({type: 'fetchConfig'});
             dispatch({type: 'fetchDownloadsConfig'});
             dispatch({type: 'fetchFeedsConfig'});
+            dispatch({type: 'fetchWebsiteUpdateConfig'});
         },
     },
     reducers: {
@@ -64,6 +66,10 @@ export default {
         },
         updateFeedsConfig(state, {payload}) {
             state.feeds = payload;
+            return state;
+        },
+        updateWebsiteUpdateConfig(state, {payload}) {
+            state.websiteUpdate = payload;
             return state;
         }
     },
@@ -92,6 +98,13 @@ export default {
             if (feedsResponse.status === 200) {
                 const config = yield feedsResponse.json();
                 yield put({type: 'updateFeedsConfig', payload: config});
+            }
+        },
+        * fetchWebsiteUpdateConfig({}, {put, call}) {
+            const updateResponse = yield call(fetch,'../static/json/websiteUpdate.json');
+            if (updateResponse.status === 200) {
+                const config = yield updateResponse.json();
+                yield put({type: 'updateWebsiteUpdateConfig', payload: config});
             }
         }
     },

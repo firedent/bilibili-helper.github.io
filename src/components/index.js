@@ -7,6 +7,7 @@
 export CommentArea from 'Components/CommentArea';
 export HeaderArea from 'Components/HeaderArea';
 export DownloadArea from 'Components/DownloadArea';
+export WebsiteUpdateArea from 'Components/websiteUpdate';
 export AnnouncementArea from 'Components/AnnouncementArea';
 export BadgeArea from 'Components/BadgeArea';
 export FeedbackArea from 'Components/FeedbackArea';
