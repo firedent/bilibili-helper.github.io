@@ -8,9 +8,9 @@ export default {
     define: {
         local: false,
     },
-    //externals: {
-    //    'react': 'window.React',
-    //    'react-dom': 'window.ReactDOM',
-    //    'lodash': 'window._',
-    //},
+    externals: {
+        'react': 'window.React',
+        'react-dom': 'window.ReactDOM',
+        'lodash': 'window._',
+    },
 };
