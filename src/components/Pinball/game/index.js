@@ -5,7 +5,7 @@
  */
 import {Application} from 'pixi.js';
 import {Ball, Baffle} from 'Pinball/game/items';
-import {bindKeyboard} from 'Pinball/game/lib';
+import {bindKeyboard, Vector2} from 'Pinball/game/lib';
 
 const [width, height] = [300, 300];
 export const app = new Application({
@@ -15,12 +15,13 @@ export const app = new Application({
     transparent: true,
 });
 
+const speed = 1;
 let ball = new Ball({
     color: 0xffffff,
-    speed: 1,
-    radius: 5,
-    position: {x: 150, y: 50},
-    acceleration: {x: 1, y: 5},
+    speed: speed,
+    radius: 50,
+    position: new Vector2(50, 50),
+    acceleration: new Vector2(1 / speed, 2 / speed),
 }).init();
 
 app.stage.addChild(ball.item);
@@ -30,14 +31,13 @@ let baffle = new Baffle({
     length: 100,
     thick: 7,
     speed: 0.4,
-    position: {x: 80, y: 250},
+    position: new Vector2(100, 250),
 }).init();
 app.stage.addChild(baffle.item);
 
 app.ticker.add(delta => gameLoop(delta));
+baffle.collisionCheckWithBall(ball);
 
-const up = bindKeyboard(document, 38);
-const down = bindKeyboard(document, 40);
 const left = bindKeyboard(document, 37);
 const right = bindKeyboard(document, 39);
 
@@ -45,12 +45,8 @@ const gameLoop = (delta) => {
     ball.collisionCheckWithBox(width, height);
     baffle.collisionCheckWithBall(ball);
     ball.move(delta);
-    !up.down && !down.down && !left.down && !right.down && baffle.stopMove();
-    //if (up.down) baffle.moveUp();
-    //if (down.down) baffle.moveDown();
+    !left.down && !right.down && baffle.stopMove();
     if (left.down) baffle.moveLeft();
     if (right.down) baffle.moveRight();
-    if (up.down || down.down || left.down || right.down) baffle.collisionCheckWithBox(width, height);
-    //if (!up.down && !down.down) baffle.moveToCenter(700);
-
+    if (left.down || right.down) baffle.collisionCheckWithBox(width, height);
 };

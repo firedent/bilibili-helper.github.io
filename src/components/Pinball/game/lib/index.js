@@ -4,3 +4,4 @@
  * Description:
  */
 export {bindKeyboard} from './keyboard';
+export {Vector2} from './Vector2';

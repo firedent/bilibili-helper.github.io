@@ -1,3 +1,5 @@
+import {Vector2} from 'Components/Pinball/game/lib';
+
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/22
@@ -11,10 +13,10 @@ export class Baffle {
         this.length = length;
         this.thick = thick;
         this.speed = speed;
-        this.position = position || {x: 0, y: 0};
-        this.acceleration = acceleration || {x: 0.001, y: 0.001};
-        this.maxAcceleration = {x: length * 0.1, y: thick * 0.1};
-        this.recoveryAcceleration = {x: 0.001, y: 0.001};
+        this.position = position || new Vector2(0, 0);
+        this.acceleration = acceleration || new Vector2(0.001, 0.001);
+        this.maxAcceleration = new Vector2(length * 0.07, thick * 0.1);
+        this.recoveryAcceleration = new Vector2(0.001, 0.001);
     }
 
     init() {
@@ -24,59 +26,30 @@ export class Baffle {
         item.endFill();
         item.x = this.position.x;
         item.y = this.position.y;
-        item.length = this.length;
-        item.thick = this.thick;
-        item.speed = this.speed;
-        item.acceleration = this.acceleration;
         this.item = item;
         return this;
     }
 
-    moveUp(max) {
-        if (Object.is(this.item.acceleration.y, NaN)) this.item.acceleration.y = this.maxAcceleration.y;
-        if (this.item.acceleration.y < this.maxAcceleration.y) this.item.acceleration.y += Math.pow(this.item.acceleration.y, 0.9) * 10;
-        this.item.y -= this.item.acceleration.y;
-    }
-
-    moveDown(min) {
-        if (Object.is(this.item.acceleration.y, NaN)) this.item.acceleration.y = this.maxAcceleration.y;
-        if (this.item.acceleration.y < this.maxAcceleration.y) this.item.acceleration.y += Math.pow(this.item.acceleration.y, 0.9) * 10;
-        this.item.y += this.item.acceleration.y;
+    setX(n) {
+        this.item.x = n;
+        return this;
     }
 
     moveLeft() {
-        if (Object.is(this.item.acceleration.x, NaN)) this.item.acceleration.x = this.maxAcceleration.x;
-        if (this.item.acceleration.x < this.maxAcceleration.x) this.item.acceleration.x += (this.item.acceleration.x + 0.5) * this.item.speed;
-        this.item.x -= this.item.acceleration.x;
+        if (Object.is(this.acceleration.x, NaN)) this.acceleration.x = this.maxAcceleration.x;
+        if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed;
+        return this.setX(this.item.x - this.acceleration.x);
     }
 
     moveRight() {
-        if (Object.is(this.item.acceleration.x, NaN)) this.item.acceleration.x = this.maxAcceleration.x;
-        if (this.item.acceleration.x < this.maxAcceleration.x) this.item.acceleration.x += (this.item.acceleration.x + 0.5) * this.item.speed;
-        this.item.x += this.item.acceleration.x;
-    }
-
-    moveToCenter(center) {
-        if (this.item.y === center) return;
-        if (this.recoveryAcceleration.y < this.maxAcceleration.y * 10) {
-            this.recoveryAcceleration.y += Math.sqrt(this.recoveryAcceleration.y);
-        }
-        if (this.item.y - center > 0) {
-            this.item.y -= this.recoveryAcceleration.y;
-        } else if (this.item.y - center < 0) {
-            this.item.y += this.recoveryAcceleration.y;
-        }
-        if (Math.abs(this.item.y - center) < 10) {
-            this.item.y = center;
-            this.recoveryAcceleration.y = 0.001;
-        }
+        if (Object.is(this.acceleration.x, NaN)) this.acceleration.x = this.maxAcceleration.x;
+        if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed;
+        return this.setX(this.item.x + this.acceleration.x);
     }
 
     stopMove() {
-        if (this.item.acceleration.x > 0.001) this.item.acceleration.x -= this.item.acceleration.x;
-        else this.item.acceleration.x = 0.001;
-        if (this.item.acceleration.y > 0.001) this.item.acceleration.y -= this.item.acceleration.y;
-        else this.item.acceleration.y = 0.001;
+        this.acceleration.set(0, 0);
+        return this;
     }
 
     collisionCheckWithBox(width, height) {
@@ -90,32 +63,58 @@ export class Baffle {
         } else if (this.item.y + this.thick > height) {
             this.item.y = height - this.thick;
         }
+        return this;
     }
 
     collisionCheckWithBall(ball) {
-        if (ball.item.y < this.item.y) return;
-        if (ball.item.y > this.item.y + this.item.thick) return;
-        if (ball.item.x < this.item.x) return;
-        if (ball.item.x > this.item.x + this.item.length) return;
+        let topS = this.topS(ball);
+        if (topS > ball.radius) return;
+        let bottomS = this.bottomS(ball);
+        if (bottomS > ball.radius) return;
+        let leftS = this.leftS(ball);
+        if (leftS > ball.radius) return;
+        let rightS = this.rightS(ball);
+        if (rightS > ball.radius) return;
 
-        const topS = Math.abs(this.item.y - ball.item.y);
-        const bottomS = Math.abs(ball.item.y - this.item.y - this.item.thick);
-        const leftS = Math.abs(this.item.x - ball.item.x);
-        const rightS = Math.abs(ball.item.x - this.item.x - this.item.length);
-        if ((topS < ball.item.radius && ball.item.x > this.item.x && ball.item.x < this.item.x + this.item.length)
-            || (bottomS < ball.item.radius && ball.item.x > this.item.x && ball.item.x < this.item.x + this.item.length)) {
-            ball.acceleration.y = -ball.acceleration.y;
+        // 弹板角落回弹处理
+        const distanceToTopLeft = new Vector2(this.item.x, this.item.y).distanceTo(ball.position);
+        if (distanceToTopLeft - ball.radius < 1) {
+            if (ball.acceleration.y > 0) ball.acceleration.negateY();
+            if (ball.acceleration.x > 0) ball.acceleration.negateX();
+            return this;
         }
-        if ((leftS < ball.item.radius && ball.item.y > this.item.y && ball.item.y < this.item.y + this.item.thick)
-            || (rightS < ball.item.radius && ball.item.y > this.item.y && ball.item.y < this.item.y + this.item.thick)) {
-            ball.acceleration.x = -ball.acceleration.x;
+        const distanceToTopRight = new Vector2(this.item.x + this.length, this.item.y).distanceTo(ball.position);
+        if (distanceToTopRight - ball.radius < 1) {
+            if (ball.acceleration.y > 0) ball.acceleration.negateY();
+            if (ball.acceleration.x < 0) ball.acceleration.negateX();
+            return this;
         }
-
-        if (topS < 0 && bottomS < 0 && leftS < 0 && rightS < 0) {
-            if (topS < bottomS) ball.item.y -= this.item.thick;
-            else ball.item.y += this.item.thick;
-            if (leftS < rightS) ball.item.x -= this.item.thick;
-            else ball.item.x += this.item.thick;
+        const distanceToBottomLeft = new Vector2(this.item.x, this.item.y + this.thick).distanceTo(ball.position);
+        if (distanceToBottomLeft - ball.radius < 1) {
+            if (ball.acceleration.y < 0) ball.acceleration.negateY();
+            if (ball.acceleration.x > 0) ball.acceleration.negateX();
+            return this;
         }
+        const distanceToBottomRight = new Vector2(this.item.x + this.length, this.item.y + this.thick).distanceTo(ball.position);
+        if (distanceToBottomRight - ball.radius < 1) {
+            if (ball.acceleration.y < 0) ball.acceleration.negateY();
+            if (ball.acceleration.x < 0) ball.acceleration.negateX();
+            return this;
+        }
+        // 弹板四面回弹处理
+        if ((topS > 0 && topS <= ball.radius && ball.item.x > this.item.x && ball.item.x < this.item.x + this.length)
+            || (bottomS > 0 && bottomS <= ball.radius && ball.item.x > this.item.x && ball.item.x < this.item.x + this.length)) {
+            ball.acceleration.negateY();
+        }
+        if ((leftS > 0 && leftS <= ball.radius && ball.item.y > this.item.y && ball.item.y < this.item.y + this.thick)
+            || (rightS > 0 && rightS <= ball.radius && ball.item.y > this.item.y && ball.item.y < this.item.y + this.thick)) {
+            ball.acceleration.negateX();
+        }
+        return this;
     }
+
+    topS = (ball) => this.item.y - ball.item.y;
+    bottomS = (ball) => ball.item.y - this.item.y - this.thick;
+    leftS = (ball) => this.item.x - ball.item.x;
+    rightS = (ball) => ball.item.x - this.item.x - this.length;
 };
