@@ -18,7 +18,9 @@ import {
     WebsiteUpdateArea,
     Page,
     FeedArea,
+    PinballArea,
 } from 'Components';
+
 const GlobalStyleSheet = createGlobalStyle`
   html {
     --background-color: #fafafa;
@@ -56,6 +58,7 @@ const Home = () => (
         <FeedArea/>
         <BadgeArea/>
         <CommentArea/>
+        <PinballArea/>
     </React.Fragment>
 );
 

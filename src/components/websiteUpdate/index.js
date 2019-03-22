@@ -134,10 +134,10 @@ class WebsiteUpdateArea extends React.Component {
                 <WebsiteUpdateAreaWrapper id="downloadArea">
                     <Header>
                         网站动态 ~ DYNAMIC FOR WEBSITE
-                        <p className="sub-title">这里会不定期列出网站的更新动态~</p>
+                        <p className="sub-title">这里列出最新的10条网站动态~</p>
                     </Header>
                     <ol className="tab-contents">
-                        {global.websiteUpdate && global.websiteUpdate.map((html, index) => (
+                        {global.websiteUpdate && global.websiteUpdate.slice(0, 10).map((html, index) => (
                             <div className="info-item" key={index}>
                                 <li dangerouslySetInnerHTML={{__html: html}}/>
                             </div>

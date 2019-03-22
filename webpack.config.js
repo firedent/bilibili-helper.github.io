@@ -17,6 +17,7 @@ module.exports = () => {
                 'Pages': path.resolve(srcPath, 'pages'),
                 'JSON': path.resolve('static', 'json'),
                 'Static': path.resolve(srcPath, 'static'),
+                'Pinball': path.resolve(srcPath, 'components', 'Pinball'),
             },
         },
     };
