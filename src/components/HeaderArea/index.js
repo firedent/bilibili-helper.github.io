@@ -131,8 +131,8 @@ class HeaderArea extends React.Component {
                         <div className="title-box">
                             <h1>BILIBILI HELPER</h1>
                             <div className="version-box">
-                                {global.config && <span>Last: {global.config.lastVersion}</span>}
-                                {global.version && <span>You: {global.version}</span>}
+                                {global.config && <span>Latest: {global.config.lastVersion}</span>}
+                                {global.version && <span>Yours: {global.version}</span>}
                             </div>
                         </div>
                         <div className="action-box">
