@@ -140,6 +140,20 @@ export class Vector2 {
         return (v.x === this.x) && (v.y === this.y);
     }
 
+    // computes the angle in radians with respect to the positive x-axis
+    angle() {
+        let angle = Math.atan2(this.y, this.x);
+        if (angle < 0) angle += 2 * Math.PI;
+        return angle;
+    }
+
+    flip() {
+        this.x = this.y + this.x;
+        this.y = this.x - this.y;
+        this.x = this.x - this.y;
+        return this;
+    }
+
     rotateAround(center, angle) {
         const c = Math.cos(angle), s = Math.sin(angle);
 

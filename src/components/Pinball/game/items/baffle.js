@@ -17,6 +17,8 @@ export class Baffle {
         this.acceleration = acceleration || new Vector2(0.001, 0.001);
         this.maxAcceleration = new Vector2(length * 0.07, thick * 0.1);
         this.recoveryAcceleration = new Vector2(0.001, 0.001);
+
+        this.canMove = true;
     }
 
     init() {
@@ -31,11 +33,12 @@ export class Baffle {
     }
 
     setX(n) {
-        this.item.x = n;
+        if (this.canMove) this.item.x = n;
         return this;
     }
 
     moveLeft() {
+
         if (Object.is(this.acceleration.x, NaN)) this.acceleration.x = this.maxAcceleration.x;
         if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed;
         return this.setX(this.item.x - this.acceleration.x);
@@ -67,6 +70,7 @@ export class Baffle {
     }
 
     collisionCheckWithBall(ball) {
+        this.canMove = true;
         let topS = this.topS(ball);
         if (topS > ball.radius) return;
         let bottomS = this.bottomS(ball);
@@ -78,27 +82,36 @@ export class Baffle {
 
         // 弹板角落回弹处理
         const distanceToTopLeft = new Vector2(this.item.x, this.item.y).distanceTo(ball.position);
-        if (distanceToTopLeft - ball.radius < 1) {
-            if (ball.acceleration.y > 0) ball.acceleration.negateY();
-            if (ball.acceleration.x > 0) ball.acceleration.negateX();
+        const angle = ball.acceleration.clone().angle();
+        if (distanceToTopLeft - ball.radius < 1) { // attack top left
+            if ((angle >= 0 && angle < Math.PI * 3 / 4) || angle > Math.PI * 7 / 4) ball.acceleration.flip().negate();
+            else if (angle > Math.PI * 3 / 2 && angle <= Math.PI * 7 / 4) ball.acceleration.negateX(); // 4
+            else if (angle >= Math.PI * 3 / 4 && angle < Math.PI) ball.acceleration.negateY(); // 5
+            this.canMove = false;
             return this;
         }
         const distanceToTopRight = new Vector2(this.item.x + this.length, this.item.y).distanceTo(ball.position);
         if (distanceToTopRight - ball.radius < 1) {
-            if (ball.acceleration.y > 0) ball.acceleration.negateY();
-            if (ball.acceleration.x < 0) ball.acceleration.negateX();
+            if (angle > Math.PI / 4 && angle < Math.PI * 5 / 4) ball.acceleration.flip();
+            else if (angle > 0 && angle <= Math.PI / 4) ball.acceleration.negateY(); // 4
+            else if (angle >= Math.PI * 5 / 4 && angle < Math.PI * 3 / 2) ball.acceleration.negateX(); // 5
+            this.canMove = false;
             return this;
         }
         const distanceToBottomLeft = new Vector2(this.item.x, this.item.y + this.thick).distanceTo(ball.position);
         if (distanceToBottomLeft - ball.radius < 1) {
-            if (ball.acceleration.y < 0) ball.acceleration.negateY();
-            if (ball.acceleration.x > 0) ball.acceleration.negateX();
+            if ((angle >= 0 && angle < Math.PI / 4) || angle > Math.PI * 5 / 4) ball.acceleration.flip();
+            else if (angle >= Math.PI / 4 && angle < Math.PI / 2) ball.acceleration.negateX(); // 4
+            else if (angle > Math.PI && angle <= Math.PI * 5 / 4) ball.acceleration.negateY(); // 5
+            this.canMove = false;
             return this;
         }
         const distanceToBottomRight = new Vector2(this.item.x + this.length, this.item.y + this.thick).distanceTo(ball.position);
         if (distanceToBottomRight - ball.radius < 1) {
-            if (ball.acceleration.y < 0) ball.acceleration.negateY();
-            if (ball.acceleration.x < 0) ball.acceleration.negateX();
+            if (angle > Math.PI * 3 / 4 && angle < Math.PI * 7 / 4) ball.acceleration.flip().negate();
+            else if (angle >= Math.PI * 7 / 4) ball.acceleration.negateY(); // 4
+            else if (angle > Math.PI / 2 && angle <= Math.PI * 3 / 4) ball.acceleration.negateX(); // 5
+            this.canMove = false;
             return this;
         }
         // 弹板四面回弹处理

@@ -6,6 +6,8 @@
 import React from 'react';
 import {connect} from 'dva';
 import styled from 'styled-components';
+import {PinballArea} from 'Components/Pinball';
+
 
 const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
   position: relative;
@@ -17,7 +19,6 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
   background-color: var(--bilibili-pink);
   color: var(--background-color);
   padding: 50px 0px 20px;
-  //overflow: hidden;
   &::after {
     content: '';
     display: block;
@@ -114,6 +115,10 @@ const LoginButton = styled.button`
 class HeaderArea extends React.Component {
     constructor(props) {
         super(props);
+        this.app = null;
+        this.state = {
+            showPinball: false,
+        }
     }
 
     handleOnClickLogin = (connected, tryConnect) => {
@@ -129,7 +134,10 @@ class HeaderArea extends React.Component {
                 <HeaderWrapper>
                     <div className="header-box">
                         <div className="title-box">
-                            <h1>BILIBILI HELPER</h1>
+                            <h1>
+                                BILIBILI HELPER
+                                <PinballArea/>
+                            </h1>
                             <div className="version-box">
                                 {global.config && <span>Last: {global.config.lastVersion}</span>}
                                 {global.version && <span>You: {global.version}</span>}

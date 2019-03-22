@@ -58,7 +58,6 @@ const Home = () => (
         <FeedArea/>
         <BadgeArea/>
         <CommentArea/>
-        <PinballArea/>
     </React.Fragment>
 );
 
