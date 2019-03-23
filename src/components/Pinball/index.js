@@ -7,6 +7,9 @@ import React from 'react';
 import styled, {keyframes} from 'styled-components';
 import {createApp} from './game';
 
+const canvasWidth = 300;
+const canvasHeight = 300;
+
 const PinballDownAnimate = keyframes`
   0% {
     top: 0px;
@@ -49,12 +52,24 @@ const PinballView = styled.div`
   border-radius: 20px;
   background-color: var(--background-color);
   z-index: 1000;
+  &::after {
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    background-color: var(--pure-white);
+    opacity: 0.5;
+  }
   canvas {
     position: absolute;
-    top: calc(50% - 150px);
-    right: calc(50% - 150px);
-    width: 300px;
-    height: 300px;
+    top: calc(50% - ${canvasHeight / 2}px);
+    right: calc(50% - ${canvasWidth / 2}px);
+    width: ${canvasWidth}px;
+    height: ${canvasHeight}px;
     border-radius: 10px;
     background-color: var(--bilibili-pink);
   }
@@ -89,24 +104,38 @@ export class PinballArea extends React.Component {
         this.state = {
             show: false,
         };
+
+    }
+
+    componentDidMount() {
+        this.handleOnClickPinball();
     }
 
     handleOnClickPinball = () => {
-        if (!this.app) this.app = createApp(300, 300);
+        if (!this.app) this.app = createApp(canvasWidth, canvasHeight);
         if (this.app) this.view.appendChild(this.app.view);
+        this.app.start();
+        document.body.style.overflow = 'hidden';
 
         this.setState({show: !this.state.show});
     };
 
     handleOnClickCloseBtn = () => {
         this.setState({show: false});
+        this.app.stop();
+        document.body.style.overflow = '';
     };
+
+    handleOnScroll = (e) => {
+        e.preventDefault();
+        return false;
+    }
 
     render() {
         return (
             <React.Fragment>
                 <PinballBtn className="pinball" onClick={this.handleOnClickPinball}/>
-                <PinballView ref={i => this.view = i} show={this.state.show}>
+                <PinballView ref={i => this.view = i} show={this.state.show} onScroll={this.handleOnScroll}>
                     <Title>RPG Pinball</Title>
                     <CloseBtn onClick={this.handleOnClickCloseBtn}>Close</CloseBtn>
                 </PinballView>

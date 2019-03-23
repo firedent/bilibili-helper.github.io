@@ -51,7 +51,9 @@ export class Vector2 {
     }
 
     sub(v) {
-        return this.add(this.negate(v));
+        this.x -= v.x;
+        this.y -= v.y;
+        return this;
     }
 
     subScalar(scalar) {
@@ -141,10 +143,14 @@ export class Vector2 {
     }
 
     // computes the angle in radians with respect to the positive x-axis
+    rad() {
+        let radian = Math.atan2(this.y, this.x);
+        if (radian < 0) radian += 2 * Math.PI;
+        return 2 * Math.PI - radian; // 转化为笛卡尔坐标系内的方向
+    }
+
     angle() {
-        let angle = Math.atan2(this.y, this.x);
-        if (angle < 0) angle += 2 * Math.PI;
-        return angle;
+        return this.rad() * 180 / Math.PI;
     }
 
     flip() {
@@ -172,5 +178,58 @@ export class Vector2 {
 
     toArray() {
         return [this.x, this.y];
+    }
+
+    dot(v) {
+        return this.x * v.x + this.y * v.y;
+    }
+
+    radWithVector(v) {
+        const m = this.length() * v.length();
+        let dot = this.dot(v.normalize());
+        if (dot / m > 1 || dot / m < -1) {
+            v = v.clone().negate();
+            dot = this.dot(v);
+        }
+        return Math.acos(dot / m);
+    }
+
+    angleWithVector(v) {
+        return this.radWithVector(v) * 180 / Math.PI;
+    }
+
+    // get the minimum rad between two vector's line
+    radWithLine(v) {
+        const rad = this.radWithVector(v);
+        if (rad > Math.PI / 2) return Math.PI - rad;
+        else return rad;
+    }
+
+    angleWithLine(v) {
+        return this.radWithLine(v) * 180 / Math.PI;
+    }
+
+    projectionWithLine(line) {
+        let theta = this.radWithLine(line);
+        if (theta > Math.PI / 2) theta = Math.PI / 2 - this.radWithLine(line);
+        const NormalLength = 2 * this.length() * Math.sin(theta);
+        const Normal = line.normal().setLength(NormalLength);
+        const NormalLineDot = Normal.dot(this);
+        const res = line.clone();
+        return res.sub(Normal.multiplyScalar(2 * NormalLineDot)).setLength(this.length());
+    }
+
+    projectionWithNormal(normal) {
+        const theta = this.radWithLine(normal);
+        const NormalLength = 2 * this.length() * Math.sin(theta);
+        const Normal = normal.setLength(NormalLength);
+        const NormalLineDot = Normal.dot(this);
+        const res = normal.normal();
+        return res.sub(Normal.multiplyScalar(2 * NormalLineDot)).setLength(this.length());
+    }
+
+    // return the normal vector
+    normal() {
+        return new Vector2(this.y / this.x, -1).normalize();
     }
 }
