@@ -4,7 +4,6 @@
  * Description:
  */
 import {Game, Vector2} from 'Pinball/game/lib';
-import {BlockMap} from 'Pinball/game/items';
 
 export const createApp = (width, height) => {
     const game = new Game().create(width, height);
@@ -27,10 +26,10 @@ export const createApp = (width, height) => {
             gap: 10,
             padding: 40,
         })
-        .createBlock({row: 0, column: 0, radius: 3})
-        .createBlock({row: 0, column: 1, radius: 3})
-        .createBlock({row: 1, column: 0, radius: 3})
-        .createBlock({row: 1, column: 1, radius: 3});
+        .createBlock({row: 0, column: 0, radius: 3, width: 10, height: 10})
+        .createBlock({row: 0, column: 1, radius: 3, width: 20, height: 20})
+        .createBlock({row: 1, column: 0, radius: 3, width: 30, height: 30})
+        .createBlock({row: 1, column: 1, radius: 3, width: 40, height: 10});
 
     game.addTicker((delta) => {
         game.ballsMap.forEach((ball) => {

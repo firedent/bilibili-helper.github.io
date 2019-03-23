@@ -43,13 +43,12 @@ export class BlockMap {
     }
 
     createBlock({color, index, row, column, hp, radius, width = this.columnWidth, height = this.rowHeight, ...rest}) {
-        if (width > this.columnWidth) {
-            console.error('block\'s width is larger than column width');
-            return this;
-        } else if (height > this.rowHeight) {
-            console.error('block\'s height is larger than row height');
-            return this;
-        }
+        //if (width > this.columnWidth) {
+        //    console.warn('block\'s width is larger than column width');
+        //}
+        //if (height > this.rowHeight) {
+        //    console.warn('block\'s height is larger than row height');
+        //}
         let boxPosition;
         if (index !== undefined) {
             if (index > this.maxNumber) {

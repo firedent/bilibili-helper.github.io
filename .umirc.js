@@ -23,14 +23,22 @@ export default {
             to: 'static/',
         },
     ],
+    externals: {
+        'react': 'window.React',
+        'react-dom': 'window.ReactDOM',
+        'lodash': 'window._',
+        'pixi.js': 'window.PIXI',
+    },
     plugins: [
         [
             'umi-plugin-react',
             {
+                chunks: ['pinball', 'vendors', 'umi'],
                 antd: false,
                 dva: {
                     immer: true,
                 },
+                hardSource: true,
                 dynamicImport: true,
                 routes: {
                     exclude: [

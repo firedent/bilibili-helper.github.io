@@ -38,11 +38,11 @@ export default {
                     }
                 }
             });
-            //dispatch({type: 'connectHelper'});
-            //dispatch({type: 'fetchConfig'});
-            //dispatch({type: 'fetchDownloadsConfig'});
-            //dispatch({type: 'fetchFeedsConfig'});
-            //dispatch({type: 'fetchWebsiteUpdateConfig'});
+            dispatch({type: 'connectHelper'});
+            dispatch({type: 'fetchConfig'});
+            dispatch({type: 'fetchDownloadsConfig'});
+            dispatch({type: 'fetchFeedsConfig'});
+            dispatch({type: 'fetchWebsiteUpdateConfig'});
         },
     },
     reducers: {

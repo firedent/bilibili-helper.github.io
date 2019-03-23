@@ -1,18 +1,18 @@
-import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/items';
-import {Vector2} from 'Components/Pinball/game/lib/Vector2';
-
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/23
  * Description:
  */
-import {Application, Container, Graphics} from 'pixi.js';
+import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/items';
+import {Vector2} from 'Components/Pinball/game/lib/Vector2';
+import {Application, Container} from 'pixi.js';
 
 export class Game {
-    constructor() {
+    constructor({outputLevel = 'debug'} = {outputLevel: 'debug'}) {
         this.app = null;
         this.width = 0;
         this.height = 0;
+        this.outputLevel = outputLevel;
 
         this.ballsContainer = new Container();
         this.ballsMap = [];
@@ -47,7 +47,7 @@ export class Game {
     }
 
     createBaffle({color, length, thick, speed, position, radius, ...rest}) {
-        this.baffle =  new Baffle({color, length, thick, speed, position, radius, ...rest}).init(this);
+        this.baffle = new Baffle({color, length, thick, speed, position, radius, ...rest}).init(this);
         this.app.stage.addChild(this.baffle.item);
         return this.baffle;
     }
