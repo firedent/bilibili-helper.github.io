@@ -52,18 +52,6 @@ const PinballView = styled.div`
   border-radius: 20px;
   background-color: var(--background-color);
   z-index: 1000;
-  &::after {
-    content: '';
-    display: block;
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: -1;
-    background-color: var(--pure-white);
-    opacity: 0.5;
-  }
   canvas {
     position: absolute;
     top: calc(50% - ${canvasHeight / 2}px);

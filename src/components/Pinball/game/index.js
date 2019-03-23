@@ -8,15 +8,14 @@ import {Game, Vector2} from 'Pinball/game/lib';
 export const createApp = (width, height) => {
     const game = new Game().create(width, height);
     game.createBall({
-        radius: 50,
-        position: new Vector2(250, 50),
-        acceleration: new Vector2(-1, 1),
+        radius: 10,
+        position: new Vector2(50, 50),
+        acceleration: new Vector2(1, 1),
         speed: 1,
     });
     game.createBaffle({
-        position: new Vector2(100, 100),
+        position: new Vector2(100, 250),
         length: 100,
-        thick: 20,
         radius: 10,
     });
 

@@ -28,10 +28,10 @@ export class Game {
             transparent: true,
         });
         this.app = app;
-        this.createCollisionNormalLine(width, height);
-        this.createCollisionInputLine(width, height);
-        this.createCollisionOutputLine(width, height);
-        this.createCollisionLine(width, height);
+        //this.createCollisionNormalLine(width, height);
+        //this.createCollisionInputLine(width, height);
+        //this.createCollisionOutputLine(width, height);
+        //this.createCollisionLine(width, height);
         return this;
     }
 

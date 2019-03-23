@@ -100,7 +100,7 @@ export class Ball {
         const bottomLeftRes = this.collisionCheckAtCornerCircle({
             target,
             point: new Vector2(target.item.x + target.radius, target.item.y + target.height - target.radius),
-            firstCheck: (angle < 135 && angle >= 0) || angle > 315,
+            firstCheck: (angle <= 135 && angle >= 0) || angle >= 315,
             secondCheck: angle >= 135 && angle <= 180,
             thirdCheck: angle >= 270 && angle <= 315,
         });
@@ -110,7 +110,7 @@ export class Ball {
         const bottomRightRes = this.collisionCheckAtCornerCircle({
             target,
             point: new Vector2(target.item.x + target.width - target.radius, target.item.y + target.height - target.radius),
-            firstCheck: angle > 45 && angle < Math.PI * 225,
+            firstCheck: angle >= 45 && angle <= Math.PI * 225,
             secondCheck: angle >= 0 && angle <= 45,
             thirdCheck: angle >= 225 && angle < 270,
         });
@@ -144,10 +144,10 @@ export class Ball {
 
     setBallAcceleration(ball, normal) {
         const projectionVector = ball.acceleration.projectionWithNormal(normal);
-        this.app.collisionLine.rotation = normal.rad();
-        this.app.collisionNormalLine.rotation = normal.normal().rad();
-        this.app.collisionOutputLine.rotation = projectionVector.rad();
-        this.app.collisionInputLine.rotation = ball.acceleration.rad();
+        //this.app.collisionLine.rotation = normal.rad();
+        //this.app.collisionNormalLine.rotation = normal.normal().rad();
+        //this.app.collisionOutputLine.rotation = projectionVector.rad();
+        //this.app.collisionInputLine.rotation = ball.acceleration.rad();
         ball.acceleration.copy(projectionVector);
     }
 
