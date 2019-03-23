@@ -8,7 +8,17 @@ import {Vector2} from 'Components/Pinball/game/lib';
 import {Graphics} from 'pixi.js';
 
 export class Baffle {
-    constructor({color, length, thick, speed = 1, position = new Vector2(0, 0), acceleration = new Vector2(0.001, 0.001), radius = 0}) {
+    constructor({
+        color = 0xffffff,
+        length = 100,
+        thick = 10,
+        speed = 1,
+        position = new Vector2(0, 0),
+        acceleration = new Vector2(0.001, 0.001),
+        radius = 0,
+    }) {
+        this._radius = 0;
+
         this.color = color;
         this.length = length;
         this.thick = thick;
@@ -19,6 +29,15 @@ export class Baffle {
         this.maxAcceleration = new Vector2(length * 0.07, thick * 0.1);
 
         this.canMove = true;
+    }
+
+    get radius() {
+        return this._radius;
+    }
+
+    set radius(value) {
+        const shorter = Math.min(this.thick, this.length);
+        this._radius = value < shorter / 2 ? value : shorter / 2;
     }
 
     get width() {
@@ -43,7 +62,7 @@ export class Baffle {
         this.app = app;
         let item = new Graphics();
         item.beginFill(this.color);
-        if (this.radius) item.drawRoundedRect(0, 0, this.length, this.thick, this.radius);
+        if (this.radius !== 0) item.drawRoundedRect(0, 0, this.length, this.thick, this.radius);
         else item.drawRect(0, 0, this.length, this.thick);
         item.endFill();
         item.x = this.position.x;

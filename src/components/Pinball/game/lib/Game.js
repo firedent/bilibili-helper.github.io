@@ -83,21 +83,20 @@ export class Game {
         return this;
     }
 
-
     addTicker(tickFunc) {
         this.app.ticker.add(tickFunc);
     }
 
-    createBall({color = 0xffffff, radius = 10, speed = 1, position = new Vector2(0, 0), acceleration = new Vector2(0, 0)}) {
-        let ball = new Ball({color, speed, radius, position, acceleration: acceleration.multiplyScalar(speed)}).init(this);
+    createBall({color = 0xffffff, radius = 10, speed = 1, position = new Vector2(0, 0), acceleration = new Vector2(0, 0), ...rest}) {
+        let ball = new Ball({color, speed, radius, position, acceleration: acceleration.multiplyScalar(speed), ...rest}).init(this);
         this.ballsMap.push(ball);
         this.ballsContainer.addChild(ball.item);
         this.app.stage.addChild(this.ballsContainer);
         return ball;
     }
 
-    createBaffle({color = 0xffffff, length = 100, thick = 7, speed = 0.4, position = new Vector2(0, 0)}) {
-        let baffle = new Baffle({color, length, thick, speed, position}).init(this);
+    createBaffle({color = 0xffffff, length = 100, thick = 7, speed = 0.4, position = new Vector2(0, 0), radius = 0, ...rest}) {
+        let baffle = new Baffle({color, length, thick, speed, position, radius, ...rest}).init(this);
         this.baffle = baffle;
         this.app.stage.addChild(baffle.item);
         return baffle;

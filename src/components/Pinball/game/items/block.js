@@ -8,12 +8,13 @@ import {Vector2} from 'Components/Pinball/game/lib';
 import {Graphics} from 'pixi.js';
 
 export class Block {
-    constructor({color, hp, position, width, height}) {
+    constructor({color = 0xffffff, width, height, radius = 0, hp = 1, position = new Vector2(0, 0)}) {
         this.color = color;
         this.hp = hp;
         this.width = width;
         this.height = height;
-        this.position = position || new Vector2(0, 0);
+        this.radius = radius;
+        this.position = position;
     }
 
     init() {
