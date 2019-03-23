@@ -10,6 +10,7 @@ export default {
     ],
     alias: {
         'Utils': path.resolve(srcPath, 'utils'),
+        'Pinball': path.resolve(srcPath, 'components', 'Pinball'),
         'Components': path.resolve(srcPath, 'components'),
         'Modules': path.resolve(srcPath, 'models'),
         'Pages': path.resolve(srcPath, 'pages'),
@@ -22,14 +23,23 @@ export default {
             to: 'static/',
         },
     ],
+    externals: {
+        'react': 'window.React',
+        'react-dom': 'window.ReactDOM',
+        'lodash': 'window._',
+        'pixi.js': 'window.PIXI',
+    },
     plugins: [
         [
             'umi-plugin-react',
             {
+                chunks: ['pinball', 'vendors', 'umi'],
                 antd: false,
                 dva: {
                     immer: true,
                 },
+                hash: true,
+                hardSource: true,
                 dynamicImport: true,
                 routes: {
                     exclude: [

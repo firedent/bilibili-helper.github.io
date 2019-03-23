@@ -29,8 +29,8 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
     bottom: 20px;
     left: -20px;
     border-radius: 3px;
-    background-color: rgba(85, 85, 85, 0.1);
-    color: var(--content-color);
+    background-color: rgba(85, 85, 85, 0.75);
+    color: var(--pure-white);
     user-select: none;
     z-index: 1;
   }
@@ -342,16 +342,17 @@ class CommentEditor extends React.Component {
     render() {
         const {on, emojiNavigation, tempMessage} = this.state;
         const {start, length, pid, current} = emojiNavigation;
-        const {comments, name, user, emoji, global} = this.props;
+        const {comments, name, user, emoji, global, able = true} = this.props;
         const {error, sending} = comments.status.editor;
         const {optionJSON} = emoji;
         const canUse = !!user.info;
         const {face, uid} = user.info || {};
         return (
             <CommentEditorWrapper canUse={canUse}>
-                {(!canUse || sending) && (
+                {(!canUse || sending || !able) && (
                     <div className="mask">
                         <span>~
+                            {!able && '评论功能功能被禁止'}
                             {!global.status.connected && '未连接助手'}
                             {!canUse && global.status.connected && '尚未登录'}
                             {sending && '发送中'}

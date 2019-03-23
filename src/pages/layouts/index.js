@@ -18,7 +18,9 @@ import {
     WebsiteUpdateArea,
     Page,
     FeedArea,
+    PinballArea,
 } from 'Components';
+
 const GlobalStyleSheet = createGlobalStyle`
   html {
     --background-color: #fafafa;

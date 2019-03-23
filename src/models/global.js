@@ -25,8 +25,9 @@ export default {
                         if (data.code === 0) {
                             switch (sign) {
                                 case 'connect': {
-                                    dispatch({type: 'fetchConfig'});
-                                    dispatch({type: 'comments/loadVoteConfig'}).then(() => dispatch({type: 'comments/fetchVotes'}));
+                                    dispatch({type: 'comments/loadCommentMap'})
+                                    .then(() => dispatch({type: 'comments/loadVoteConfig'})
+                                    .then(() => dispatch({type: 'comments/fetchVotes'})));
                                     dispatch({type: 'user/fetchUser'});
                                     dispatch({type: 'user/fetchCsrf'});
                                     dispatch({type: 'initApp', payload: {...data.data, initializing: false}});
@@ -71,7 +72,7 @@ export default {
         updateWebsiteUpdateConfig(state, {payload}) {
             state.websiteUpdate = payload;
             return state;
-        }
+        },
     },
     effects: {
         * connectHelper({}, {put}) {
@@ -80,32 +81,32 @@ export default {
             yield put({type: 'updateTryConnect'});
         },
         * fetchConfig({}, {put, call}) {
-            const configResponse = yield call(fetch,'../static/json/config.json');
+            const configResponse = yield call(fetch, '../static/json/config.json');
             if (configResponse.status === 200) {
                 const config = yield configResponse.json();
                 yield put({type: 'updateAppConfig', payload: config});
             }
         },
         * fetchDownloadsConfig({}, {put, call}) {
-            const downloadsResponse = yield call(fetch,'../static/json/downloads.json');
+            const downloadsResponse = yield call(fetch, '../static/json/downloads.json');
             if (downloadsResponse.status === 200) {
                 const config = yield downloadsResponse.json();
                 yield put({type: 'updateDownloadsConfig', payload: config});
             }
         },
         * fetchFeedsConfig({}, {put, call}) {
-            const feedsResponse = yield call(fetch,'../static/json/feed.json');
+            const feedsResponse = yield call(fetch, '../static/json/feed.json');
             if (feedsResponse.status === 200) {
                 const config = yield feedsResponse.json();
                 yield put({type: 'updateFeedsConfig', payload: config});
             }
         },
         * fetchWebsiteUpdateConfig({}, {put, call}) {
-            const updateResponse = yield call(fetch,'../static/json/websiteUpdate.json');
+            const updateResponse = yield call(fetch, '../static/json/websiteUpdate.json');
             if (updateResponse.status === 200) {
                 const config = yield updateResponse.json();
                 yield put({type: 'updateWebsiteUpdateConfig', payload: config});
             }
-        }
+        },
     },
 };

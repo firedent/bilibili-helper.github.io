@@ -6,10 +6,9 @@
 import React from 'react';
 import {connect} from 'dva';
 import styled from 'styled-components';
+import Page from 'Components/Page';
 
-const VoteAreaWrapper = styled.div`
-  width: 800px;
-  margin: 10px auto 30px;
+const VoteAreaWrapper = styled(Page)`
   h3 {
     margin: 15px 0 20px;
     font-size: 16px;

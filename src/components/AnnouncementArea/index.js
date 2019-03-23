@@ -7,12 +7,11 @@ import _ from 'lodash';
 import React from 'react';
 import {connect} from 'dva';
 import styled from 'styled-components';
+import Page from 'Components/Page';
 
 //import sliderImage1 from 'Static/slider/1.png';
 
-const AnnouncementWrapper = styled.div`
-  width: 800px;
-  margin: 10px auto;
+const AnnouncementWrapper = styled(Page)`
   h3 {
     margin: 15px 0 10px;
     font-size: 16px;

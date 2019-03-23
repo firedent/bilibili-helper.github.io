@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import {Header} from 'Components/Header';
 import Page from 'Components/Page';
 
-const DownloadAreaWrapper = styled.div`
+const DownloadAreaWrapper = styled(Page)`
   ol {
     //height: 180px;
     //border: 10px solid var(--border-color);
@@ -292,68 +292,66 @@ class DownloadArea extends React.Component {
             restVersion,
         } = this.state;
         return (
-            <Page>
-                <DownloadAreaWrapper id="downloadArea">
-                    <Header>
-                        下载助手 ~ DOWNLOAD
-                        <a href="https://www.bilibili.com/video/av44808808" target="_blank">功能介绍</a>
-                        <a href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85"
-                           target="_blank">安装方法</a>
-                        <p className="sub-title">旧版本不提供下载地址哟~</p>
-                    </Header>
-                    <div className="tab-bar">
-                        <div className="versions">
-                            {downloadThree && downloadThree.map(({version, sign, url}) => (
-                                url && (
-                                    <DownloadButton
-                                        key={version}
-                                        className={`download-btn ${version === tabVersion && 'active'}`}
-                                        onClick={() => this.handleOnClickTab(version)}
-                                    >
-                                        <span>{this.getVersionTypeString(sign)} {version}</span>
-                                        {version === tabVersion && (
-                                            <a href={url}>
-                                                <i className="download-btn">Click here to download</i>
-                                            </a>)}
-                                    </DownloadButton>
-                                )
-                            ))}
-                        </div>
-                        <div className="more-version-box">
-                            <button className={`more-version-btn ${showMoreVersion && 'active'}`} onClick={this.handleOnClickMoreVersion}>More Version</button>
-                            {showMoreVersion && <ul>
-                                {restVersion && restVersion.map(({version, url, sign}) => (
+            <DownloadAreaWrapper id="downloadArea">
+                <Header>
+                    下载助手 ~ DOWNLOAD
+                    <a href="https://www.bilibili.com/video/av44808808" target="_blank">功能介绍</a>
+                    <a href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85"
+                       target="_blank">安装方法</a>
+                    <p className="sub-title">旧版本不提供下载地址哟~</p>
+                </Header>
+                <div className="tab-bar">
+                    <div className="versions">
+                        {downloadThree && downloadThree.map(({version, sign, url}) => (
+                            url && (
+                                <DownloadButton
+                                    key={version}
+                                    className={`download-btn ${version === tabVersion && 'active'}`}
+                                    onClick={() => this.handleOnClickTab(version)}
+                                >
+                                    <span>{this.getVersionTypeString(sign)} {version}</span>
+                                    {version === tabVersion && (
+                                        <a href={url}>
+                                            <i className="download-btn">Click here to download</i>
+                                        </a>)}
+                                </DownloadButton>
+                            )
+                        ))}
+                    </div>
+                    <div className="more-version-box">
+                        <button className={`more-version-btn ${showMoreVersion && 'active'}`} onClick={this.handleOnClickMoreVersion}>More Version</button>
+                        {showMoreVersion && <ul>
+                            {restVersion && restVersion.map(({version, url, sign}) => (
 
-                                    <li
-                                        className={`${version === tabVersion && 'active'}`}
-                                        key={version} onClick={() => this.handleOnClickTab(version)}
-                                    >
-                                        {this.getVersionTypeIcon(sign)}
-                                        {version}
-                                    </li>
-                                ))}
-                            </ul>}
-                        </div>
+                                <li
+                                    className={`${version === tabVersion && 'active'}`}
+                                    key={version} onClick={() => this.handleOnClickTab(version)}
+                                >
+                                    {this.getVersionTypeIcon(sign)}
+                                    {version}
+                                </li>
+                            ))}
+                        </ul>}
                     </div>
-                    <div className="tab-contents">
-                        {global.downloads && global.downloads.map(({version, url, info}) => (
-                            tabVersion === version && (<ol key={version}>
-                                {info.map((line, index) => (
-                                    <div className="info-item" key={index}>
-                                        <li dangerouslySetInnerHTML={{__html: line[1]}}/>
-                                        {line[2] !== undefined && (
-                                            <a
-                                                target="_blank"
-                                                href={`https://github.com/bilibili-helper/bilibili-helper/issues/${line[2]}`}
-                                            >#{line[2]}</a>
-                                        )}
-                                    </div>
-                                ))}
-                            </ol>)),
-                        )}
-                    </div>
-                </DownloadAreaWrapper>
-            </Page>
+                </div>
+                <div className="tab-contents">
+                    {global.downloads && global.downloads.map(({version, url, info}) => (
+                        tabVersion === version && (<ol key={version}>
+                            {info.map((line, index) => (
+                                <div className="info-item" key={index}>
+                                    <li dangerouslySetInnerHTML={{__html: line[1]}}/>
+                                    {line[2] !== undefined && (
+                                        <a
+                                            target="_blank"
+                                            href={`https://github.com/bilibili-helper/bilibili-helper/issues/${line[2]}`}
+                                        >#{line[2]}</a>
+                                    )}
+                                </div>
+                            ))}
+                        </ol>)),
+                    )}
+                </div>
+            </DownloadAreaWrapper>
         );
     }
 }

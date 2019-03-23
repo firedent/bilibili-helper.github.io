@@ -19,11 +19,8 @@ import {cumulativeOffset} from 'Utils/functions';
 
 moment.locale('zh-cn');
 
-const CommentListArea = styled.div.attrs({className: 'comment-area'})`
+const CommentListArea = styled(Page).attrs({className: 'comment-area'})`
   position: relative;
-  margin: 10px auto 50px;
-  
-  width: 800px;
   .no-reply {
     color: var(--content-color);
   }
@@ -145,6 +142,7 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
           display: inline-block;
           user-select: none;
           span {
+            line-height: 16px;
             margin-right: 20px;
             cursor: pointer;
             &.like:hover, &[on='1'] {
@@ -300,6 +298,43 @@ const PageNavigation = styled.div.attrs({className: 'page-navigation'})`
     }
   }
 `;
+const CommentMapWrapper = styled.div`
+  position: absolute;
+  top: 210px;
+  bottom: 0;
+  left: 100%;
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+`;
+const CommentMap = styled.div`
+  position: sticky;
+  top: 210px;
+  text-align: right;
+  i {
+    font-style: normal;
+    font-size: 12px;
+    text-align: center;
+    display: block;
+    color: var(--content-color);
+    opacity: 0.3;
+  }
+  .nav-item {
+    line-height: 20px;
+    font-size: 14px;
+    border-right: 1px solid var(--bilibili-pink);
+    margin-bottom: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+    &.on {
+      background-color: var(--bilibili-pink);
+      color: var(--pure-white);
+      cursor: default;
+    }
+  }
+`;
 
 class CommentArea extends React.Component {
     constructor(props) {
@@ -310,22 +345,25 @@ class CommentArea extends React.Component {
         };
     }
 
-    componentDidMount() {
-        this.load();
-    }
-
     componentDidUpdate(prevProps) {
+        const {commentMap, config} = this.props.comments;
         if (this.props.location.query.page !== prevProps.location.query.page && prevProps.location.query.ptype === '0') {
             this.load();
+        } else if (commentMap.length !== prevProps.comments.commentMap.length || (commentMap.length > 0 && !config)) {
+            commentMap.length > 0 && this.load(commentMap[0]);
         }
     }
 
-    load = () => {
+    load = (comment) => {
         const {comments, dispatch, location} = this.props;
-        const {config} = comments;
-        const {oid = config.oid, page = 1, ptype = 0, type} = location.query;
+        let config = comment.config;
+        if (!config && comments.config) {
+            comment = comments.config;
+            config = comment.config;
+        }
+        const {oid = config.oid, page = 1, ptype = 0, type = config.type} = location.query;
         const query = {oid, [+ptype ? 'ps' : 'pn']: page, type};
-        dispatch({type: 'comments/load', payload: {query, ptype: +ptype}});
+        dispatch({type: 'comments/load', payload: {comment, query, ptype: +ptype}});
     };
 
     calculateNavigationPageIndex = (num, pages) => {
@@ -378,6 +416,10 @@ class CommentArea extends React.Component {
         this.props.dispatch({type: 'comments/setHate', payload: {action, rpid}});
     };
 
+    handleOnClickCommentNav = (comment) => {
+        this.load(comment);
+    };
+
     // 处理评论的表情
     renderContent = (content) => {
         const emojiRegex = new RegExp(/(\[.*?\])/g);
@@ -395,7 +437,7 @@ class CommentArea extends React.Component {
     };
 
     renderLine = ({rpid, top}) => {
-        const {config, status} = this.props.comments;
+        const {config: currentComment, status} = this.props.comments;
         const replyData = this.props.comments.replyMap[rpid];
         const {action, content, member, floor, ctime, like, oid, root} = replyData.self;
         const {uname: replyUname, rpid: replyRpid} = this.state;
@@ -440,7 +482,11 @@ class CommentArea extends React.Component {
                                     onClick={() => this.handleOnClickHate(Number(action !== 2), rpid)}
                                 >HATE</span>
                             </div>
-                            <button className="reply" on={showRootEditor ? '1' : '0'} onClick={() => this.handleOnClickReply({uname, rpid})}>REPLY</button>
+                            {currentComment.canComment && <button
+                                className="reply"
+                                on={showRootEditor ? '1' : '0'}
+                                onClick={() => this.handleOnClickReply({uname, rpid})}
+                            >REPLY</button>}
                         </div>
                     </div>
                     {showRootEditor && <CommentEditor root={root || rpid} parent={rpid} name={replyUname}/>}
@@ -452,7 +498,14 @@ class CommentArea extends React.Component {
                             {showLoadMore && replyData.page.num === 1 &&
                             (<HR onClick={() => this.handleOnClickLoadMoreReplies({root: rpid, oid})}>~ LOAD MORE ~</HR>)}
                             {!showLoadMore && replyData.pages > 1 &&
-                            this.renderPageNavigation({oid: config.oid, pageIndex, num: replyData.page.num, pages: replyData.pages, root: rpid, ptype: 1})}
+                            this.renderPageNavigation({
+                                oid: currentComment.config.oid,
+                                pageIndex,
+                                num: replyData.page.num,
+                                pages: replyData.pages,
+                                root: rpid,
+                                ptype: 1,
+                            })}
                             {status.comment.loadingRpid === rpid && (
                                 <div className="loading-page-mask">
                                     <Image url={LOADING_IMAGE_URL} sign="loading-gif"/>
@@ -498,73 +551,92 @@ class CommentArea extends React.Component {
     render = () => {
         const {comments, user, global} = this.props;
         const {mid, uname} = this.state;
-        const {data, config, status} = comments;
+        const {data, config: currentComment, status, commentMap} = comments;
         const {page, hots, top, replies = []} = data;
         const {count, size, acount, num} = page;
         const pages = Math.ceil(count / size) || 1;
         const pageIndex = this.calculateNavigationPageIndex(num, pages);
         return (
-            <Page>
-                <CommentListArea>
-                    {/* header */}
-                    <Header>
-                        {`${acount} 评论`}
-                        <p>
-                            本评论区来自哔哩哔哩弹幕网的评论系统，原地址为:
-                            <a target="_blank" href="https://h.bilibili.com/16116344#canvas-detail-comment-ctnr">h16116344</a>
-                            ，如果无法链接助手，可以前往该页面进行留言
-                            <br/>请遵守相关法律法规并共同维护秩序</p>
-                    </Header>
+            <CommentListArea>
+                {/* header */}
+                <Header>
+                    {`${acount} 评论`}
+                    {currentComment === null && <p>尚未加载评论区</p>}
+                    {currentComment && <p>
+                        本评论区来自哔哩哔哩弹幕网的评论系统，原地址为:
+                        <a
+                            target="_blank"
+                            href={`https://h.bilibili.com/${currentComment.config.oid}#canvas-detail-comment-ctnr`}
+                        >h{currentComment.config.oid}</a>，如果无法链接助手，可以前往该页面进行留言
+                        <br/>请遵守相关法律法规并共同维护秩序
+                    </p>}
+                </Header>
 
-                    {/* send box */}
-                    <CommentEditor global receiver={{mid, uname}}/>
+                {/* send box */}
+                {currentComment && <CommentEditor global receiver={{mid, uname}} able={currentComment.canComment}/>}
 
-                    {global.status.connected && (<React.Fragment>
-                        {/* empty */}
-                        {acount === 0 && !top && !hots && !replies && !status.comment.loadPage &&
-                        (<div className="no-reply">没有留言，{!user.info && '登陆后'}开始评论吧~</div>)}
+                {global.status.connected && currentComment && (<React.Fragment>
+                    {/* empty */}
+                    {acount === 0 && !top && !hots && !replies && !status.comment.loadPage &&
+                    (<div className="no-reply">没有留言，{!user.info && '登陆后'}开始评论吧~</div>)}
 
-                        {/* not empty */}
-                        {acount !== 0 && (top || hots || replies || status.comment.loadPage) &&
-                        (<div className="more-comment-list-wrapper" ref={i => this.moreCommentListWrapper = i}>
-                            {/* top */}
-                            {num === 1 && top && (
-                                <div className="wrapper">
-                                    <div id="top" className="comment-list">{this.renderLine({...top, top: true})}</div>
-                                    <HR disabled>IT'S A TOP COMMENT ABOVE</HR>
+                    {/* not empty */}
+                    {acount !== 0 && (top || hots || replies || status.comment.loadPage) &&
+                    (<div className="more-comment-list-wrapper" ref={i => this.moreCommentListWrapper = i}>
+                        {/* top */}
+                        {num === 1 && top && (
+                            <div className="wrapper">
+                                <div id="top" className="comment-list">{this.renderLine({...top, top: true})}</div>
+                                <HR disabled>IT'S A TOP COMMENT ABOVE</HR>
+                            </div>
+                        )}
+
+                        {/* hots */}
+                        {num === 1 && hots && (
+                            <div className="list-wrapper">
+                                <div id="hots" className="comment-list">
+                                    {hots.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
                                 </div>
-                            )}
+                                <HR onClick={this.handleOnClickHots}>LOAD MORE HOT COMMENTS</HR>
+                            </div>
+                        )}
 
-                            {/* hots */}
-                            {num === 1 && hots && (
-                                <div className="list-wrapper">
-                                    <div id="hots" className="comment-list">
-                                        {hots.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
-                                    </div>
-                                    <HR onClick={this.handleOnClickHots}>LOAD MORE HOT COMMENTS</HR>
+                        {/* normal replies */}
+                        {replies && (
+                            <div className="list-wrapper">
+                                <div id="comments" className="comment-list">
+                                    {replies.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
                                 </div>
-                            )}
+                                {this.renderPageNavigation({oid: currentComment.config.oid, pageIndex, num, pages})}
+                            </div>
+                        )}
 
-                            {/* normal replies */}
-                            {replies && (
-                                <div className="list-wrapper">
-                                    <div id="comments" className="comment-list">
-                                        {replies.map((comment) => top ? comment.rpid !== top.rpid && this.renderLine(comment) : this.renderLine(comment))}
-                                    </div>
-                                    {this.renderPageNavigation({oid: config.oid, pageIndex, num, pages})}
-                                </div>
-                            )}
-
-                            {/* loading mask */}
-                            {status.comment.loadPage && (
-                                <div className="loading-page-mask">
-                                    <Image url={LOADING_IMAGE_URL} sign="loading-gif"/>
-                                </div>
-                            )}
-                        </div>)}
-                    </React.Fragment>)}
-                </CommentListArea>
-            </Page>
+                        {/* loading mask */}
+                        {status.comment.loadPage && (
+                            <div className="loading-page-mask">
+                                <Image url={LOADING_IMAGE_URL} sign="loading-gif"/>
+                            </div>
+                        )}
+                    </div>)}
+                </React.Fragment>)}
+                {commentMap && currentComment && (
+                    <CommentMapWrapper>
+                        <CommentMap>
+                            {commentMap.map((comment) => {
+                                const {config: thisConfig, name} = comment;
+                                const {oid} = thisConfig;
+                                const on = oid === currentComment.config.oid;
+                                return (<div
+                                    key={oid}
+                                    className={`nav-item ${on ? 'on' : ''}`}
+                                    onClick={!on ? () => this.handleOnClickCommentNav(comment) : null}
+                                >{name}</div>);
+                            })}
+                            <i>切换评论区</i>
+                        </CommentMap>
+                    </CommentMapWrapper>
+                )}
+            </CommentListArea>
         );
     };
 }

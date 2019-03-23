@@ -15,3 +15,4 @@ export VoteArea from 'Components/VoteArea';
 export Page from 'Components/Page';
 export FeedArea from 'Components/FeedArea';
 export {Header} from 'Components/Header';
+export {PinballArea} from 'Components/Pinball';

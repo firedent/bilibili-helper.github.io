@@ -1,4 +1,4 @@
-import Image from 'Components/Image';
+
 
 /**
  * Author: DrowsyFlesh
@@ -9,6 +9,7 @@ import React from 'react';
 import {connect} from 'dva';
 import styled from 'styled-components';
 import {Header} from 'Components/Header';
+import Image from 'Components/Image';
 import Page from 'Components/Page';
 import {List} from 'react-virtualized';
 

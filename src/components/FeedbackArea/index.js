@@ -6,10 +6,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Header} from 'Components/Header';
+import Page from 'Components/Page';
 
-const FeedbackWrapper = styled.div`
-  width: 800px;
-  margin: 10px auto;
+const FeedbackWrapper = styled(Page)`
   a {
     display: inline-block;
     margin: 3px 5px;

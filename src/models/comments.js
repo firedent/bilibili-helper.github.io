@@ -47,7 +47,8 @@ export default {
         },
         members: {},
         replyMap: {},
-        config: targetConfig,
+        config: null,
+        commentMap: [],
         voteConfig: null,
         status: {
             comment: {
@@ -55,7 +56,7 @@ export default {
                 loadingRpid: null,
             },
             vote: {
-              voting: false,
+                voting: false,
             },
             editor: {
                 getting: false,
@@ -155,11 +156,15 @@ export default {
             };
             return state;
         },
-        updateConfig: (state, {type, payload}) => {
+        updateConfig: (state, {payload}) => { // 更新当前显示的评论区的配置
             state.config = {...state.config, ...payload};
             return state;
         },
-        updateReplayData: (state, {type, payload}) => {
+        updateCommentMap: (state, {payload}) => {
+            state.commentMap = payload;
+            return state;
+        },
+        updateReplayData: (state, {payload}) => {
             const calcReply = (reply) => {
                 const {rpid, replies, rcount, member, content} = reply;
                 reply.content.message = content.message
@@ -284,26 +289,33 @@ export default {
         updateVoteConfig: (state, {payload}) => {
             state.voteConfig = payload;
             return state;
-        }
+        },
     },
     effects: {
-        * loadVoteConfig ({payload}, {put, call}) {
+        * loadVoteConfig({payload}, {put, call}) {
             const configResponse = yield call(fetch, '../static/json/votes.json');
             if (configResponse.status === 200) {
                 const config = yield configResponse.json();
                 yield put({type: 'updateVoteConfig', payload: config});
             }
         },
-        * load({payload}, {put, select}) {
-            const {oid, pn, sort, type} = yield select(({comments}) => comments.config);
-            const {oid: queryOid, pn: queryPn, ps: queryPs, root, type: queryType} = payload.query;
+        * loadCommentMap({payload}, {put, call}) {
+            const configResponse = yield call(fetch, '../static/json/comments.json');
+            if (configResponse.status === 200) {
+                const config = yield configResponse.json();
+                yield put({type: 'updateCommentMap', payload: config});
+            }
+        },
+        * load({payload}, {put}) {
+            yield put({type: 'updateConfig', payload: payload.comment});
+            const {oid, pn, ps, root, type, sort} = payload.query;
             if (payload.ptype) yield put({
                 type: 'fetchReply',
-                payload: _.pickBy({oid: queryOid || oid, ps: queryPs, sort, type: queryType || type}, _.identity),
+                payload: _.pickBy({oid, ps, sort: sort || payload.comment.config.sort, type}, _.identity),
             });
             else yield put({
                 type: 'fetchComment',
-                payload: _.pickBy({oid: queryOid || oid, pn: queryPn || pn, sort, type: queryType || type, root}, _.identity),
+                payload: _.pickBy({oid, pn, sort: sort || payload.comment.config.sort, type, root}, _.identity),
             });
         },
         * fetchComment({payload}, {put, select}) {

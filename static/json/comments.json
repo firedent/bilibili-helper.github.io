@@ -1,0 +1,32 @@
+[
+    {
+        "name": "主评论区",
+        "config": {
+            "oid": 16116344,
+            "type": 11,
+            "sort": 0,
+            "pn": 1
+        },
+        "canComment": true
+    },
+    {
+        "name": "RPG Pinball",
+        "config": {
+            "oid": 18059443,
+            "type": 11,
+            "sort": 0,
+            "pn": 1
+        },
+        "canComment": true
+    },
+    {
+        "name": "投票区",
+        "config": {
+            "oid": 16877351,
+            "type": 11,
+            "sort": 0,
+            "pn": 1
+        },
+        "canComment": false
+    }
+]

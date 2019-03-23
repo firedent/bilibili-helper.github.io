@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import {Header} from 'Components/Header';
 import Page from 'Components/Page';
 
-const WebsiteUpdateAreaWrapper = styled.div`
+const WebsiteUpdateAreaWrapper = styled(Page)`
   ol {
     //height: 180px;
     //border: 10px solid var(--border-color);
@@ -130,21 +130,19 @@ class WebsiteUpdateArea extends React.Component {
     render() {
         const {global} = this.props;
         return (
-            <Page>
-                <WebsiteUpdateAreaWrapper id="downloadArea">
-                    <Header>
-                        网站动态 ~ DYNAMIC FOR WEBSITE
-                        <p className="sub-title">这里会不定期列出网站的更新动态~</p>
-                    </Header>
-                    <ol className="tab-contents">
-                        {global.websiteUpdate && global.websiteUpdate.map((html, index) => (
-                            <div className="info-item" key={index}>
-                                <li dangerouslySetInnerHTML={{__html: html}}/>
-                            </div>
-                        ))}
-                    </ol>
-                </WebsiteUpdateAreaWrapper>
-            </Page>
+            <WebsiteUpdateAreaWrapper>
+                <Header>
+                    网站动态 ~ DYNAMIC FOR WEBSITE
+                    <p className="sub-title">这里列出最新的10条网站动态~</p>
+                </Header>
+                <ol className="tab-contents">
+                    {global.websiteUpdate && global.websiteUpdate.slice(0, 10).map((html, index) => (
+                        <div className="info-item" key={index}>
+                            <li dangerouslySetInnerHTML={{__html: html}}/>
+                        </div>
+                    ))}
+                </ol>
+            </WebsiteUpdateAreaWrapper>
         );
     }
 }

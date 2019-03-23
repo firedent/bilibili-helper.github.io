@@ -12,6 +12,7 @@ module.exports = () => {
         resolve: {
             alias: {
                 'Utils': path.resolve(srcPath, 'utils'),
+                'Pinball': path.resolve(srcPath, 'components', 'Pinball'),
                 'Components': path.resolve(srcPath, 'components'),
                 'Modules': path.resolve(srcPath, 'models'),
                 'Pages': path.resolve(srcPath, 'pages'),

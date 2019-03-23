@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 const PageWrapper = styled.div`
     width: 800px;
-    margin: 10px auto;
+    margin: 10px auto 30px;
     padding: 0px 10px;
 `;
 
