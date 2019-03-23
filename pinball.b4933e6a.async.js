@@ -1,0 +1,103 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([[1],{Amhr:function(t,i,e){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),i.Rect=void 0;var s=e("8BX1");class h{constructor(t){var i=t.app,e=t.color,s=void 0===e?16777215:e,h=t.alpha,a=void 0===h?1:h,r=t.length,o=t.thick,n=t.width,l=t.height,c=t.radius;this.color=s,this.alpha=a,this.width=n||r,this.height=l||o,this.radius=c,this.item=null,this.app=i,i&&this.init(i)}set length(t){this.width=t}get length(){return this.width}set thick(t){this.height=t}get thick(){return this.height}init(t){this.app=t;var i=this.width-2*this.radius,e=this.height-2*this.radius;this.item=new s.Container;var h=(new s.Graphics).beginFill(this.color,this.alpha).drawRect(this.radius,0,i,this.height);if(this.item.addChild(h),this.radius>0){var a=(new s.Graphics).beginFill(this.color,this.alpha).drawRect(0,this.radius,this.width,e);this.item.addChild(a);var r=(new s.Graphics).beginFill(this.color,this.alpha).drawCircle(this.radius,this.radius,this.radius);this.item.addChild(r);var o=(new s.Graphics).beginFill(this.color,this.alpha).drawCircle(this.width-this.radius,this.radius,this.radius);this.item.addChild(o);var n=(new s.Graphics).beginFill(this.color,this.alpha).drawCircle(this.radius,this.height-this.radius,this.radius);this.item.addChild(n);var l=(new s.Graphics).beginFill(this.color,this.alpha).drawCircle(this.width-this.radius,this.height-this.radius,this.radius);this.item.addChild(l)}return this}}i.Rect=h},FLqt:function(t,i,e){"use strict";var s=e("svvH");Object.defineProperty(i,"__esModule",{value:!0}),i.Block=void 0;var h=s(e("jUZP")),a=e("dZpX"),r=e("lLD3");class o{constructor(t){var i=t.app,e=t.color,s=void 0===e?16777215:e,a=t.width,o=t.height,n=t.radius,l=void 0===n?0:n,c=t.hp,d=void 0===c?1:c,u=t.position,p=void 0===u?new r.Vector2(0,0):u,m=(0,h.default)(t,["app","color","width","height","radius","hp","position"]);this.color=s,this.hp=d,this.width=a,this.height=o,this.radius=l,this.position=p,this.app=i,Object.assign(this,m),i&&this.init(i)}init(t){return this.app=t,this.rect=new a.Rect(this),this.item=this.rect.item,this.setPosition(this.position),this}setPosition(t,i){return void 0!==t&&void 0!==i?(this.item.x=t,this.item.y=i):t instanceof r.Vector2&&(this.item.x=t.x,this.item.y=t.y),this}}i.Block=o},Lcdb:function(t,i,e){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),i.Vector2=void 0;class s{constructor(t,i){this.x=t||0,this.y=i||0}get isVector2(){return!0}get height(){return this.y}get width(){return this.x}set(t,i){"number"===typeof t&&"number"===typeof i?(this.x=t,this.y=i):t instanceof s&&(this.x=t.x,this.y=t.y)}setX(t){"number"===typeof t?this.x=t:t instanceof s&&(this.x=t.x)}setY(t){"number"===typeof t?this.y=t:t instanceof s&&(this.y=t.y)}clone(){return new s(this.x,this.y)}copy(t){return this.x=t.x,this.y=t.y,this}add(t){return this.x+=t.x,this.y+=t.y,this}addScalar(t){return this.x+=t,this.y+=t,this}sub(t){return this.x-=t.x,this.y-=t.y,this}subScalar(t){return this.addScalar(-t)}multiply(t){return this.x*=t.x,this.y*=t.y,this}multiplyScalar(t){return this.x*=t,this.y*=t,this}divide(t){return this.x/=t.x,this.y/=t.y,this}divideScalar(t){return this.multiplyScalar(1/t)}floor(){return this.x=Math.floor(this.x),this.y=Math.floor(this.y),this}ceil(){return this.x=Math.ceil(this.x),this.y=Math.ceil(this.y),this}round(){return this.x=Math.round(this.x),this.y=Math.round(this.y),this}negate(){return this.x=-this.x,this.y=-this.y,this}negateX(){return this.x=-this.x,this}negateY(){return this.y=-this.y,this}length(){return Math.sqrt(this.x*this.x+this.y*this.y)}normalize(){return this.divideScalar(this.length()||1)}distanceToSquared(t){var i=this.x-t.x,e=this.y-t.y;return i*i+e*e}distanceTo(t){return Math.sqrt(this.distanceToSquared(t))}setLength(t){return this.normalize().multiplyScalar(t)}equals(t){return t.x===this.x&&t.y===this.y}rad(){var t=Math.atan2(this.y,this.x);return t<0&&(t+=2*Math.PI),t}angle(){return 180*this.rad()/Math.PI}flip(){return this.x=this.y+this.x,this.y=this.x-this.y,this.x=this.x-this.y,this}rotateAround(t,i){var e=Math.cos(i),s=Math.sin(i),h=this.x-t.x,a=this.y-t.y;return this.x=h*e-a*s+t.x,this.y=h*s+a*e+t.y,this}rotate(t){return this.rotateAround(this,t)}toArray(){return[this.x,this.y]}dot(t){return this.x*t.x+this.y*t.y}radWithVector(t){var i=this.length()*t.length(),e=this.dot(t.normalize());return(e/i>1||e/i<-1)&&(t=t.clone().negate(),e=this.dot(t)),Math.acos(e/i)}angleWithVector(t){return 180*this.radWithVector(t)/Math.PI}radWithLine(t){var i=this.radWithVector(t);return i>Math.PI/2?Math.PI-i:i}angleWithLine(t){return 180*this.radWithLine(t)/Math.PI}projectionWithLine(t){var i=this.radWithLine(t);i>Math.PI/2&&(i=Math.PI/2-this.radWithLine(t));var e=2*this.length()*Math.sin(i),s=t.normal().setLength(e),h=s.dot(this),a=t.clone();return a.sub(s.multiplyScalar(2*h)).setLength(this.length())}projectionWithNormal(t){var i=this.radWithLine(t),e=2*this.length()*Math.sin(i),s=t.setLength(e),h=s.dot(this),a=t.normal();return a.sub(s.multiplyScalar(2*h)).setLength(this.length())}normal(){return new s(this.y/this.x,-1).normalize()}}i.Vector2=s},LdXD:function(t,i,e){"use strict";var s=e("g2Oz"),h=e("svvH");Object.defineProperty(i,"__esModule",{value:!0}),i.PinballArea=void 0;var a=h(e("cDcd")),r=s(e("vOnD")),o=(e("YAsm"),700),n=700,l=300,c=300,d=r.keyframes`
+  0% {
+    top: 0px;
+  }
+  100% {
+    top: 10px;
+  }
+`,u=r.default.span`
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 16px;
+  margin-left: 10px;
+  border-bottom: 1px solid var(--pure-white);
+  cursor: pointer;
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: calc(50% - 2.5px);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: var(--pure-white);
+    animation: 0.25s ${d} cubic-bezier(0.5,-0.2, 1, 1) infinite alternate;
+  }
+`,p=r.default.div`
+  display: ${t=>{var i=t.show;return i?"block":"none"}};
+  position: fixed;
+  top: calc(50% - ${n/2}px);
+  left: calc(50% - ${o/2}px);
+  width: ${o}px;
+  height:  ${n}px;
+  padding: 30px;
+  box-sizing: border-box;
+  border: 2px solid var(--bilibili-pink);
+  border-radius: 20px;
+  background-color: var(--background-color);
+  z-index: 1000;
+  canvas {
+    position: absolute;
+    top: calc(50% - ${c/2}px);
+    right: calc(50% - ${l/2}px);
+    width: ${l}px;
+    height: ${c}px;
+    border-radius: 10px;
+    background-color: var(--bilibili-pink);
+    cursor: pointer!important;
+  }
+`,m=r.default.div`
+  display: block;
+  position: absolute;
+  top: calc(50% - ${c/2}px);
+  right: calc(50% - ${l/2}px);
+  width: ${l}px;
+  height: ${c}px;
+  z-index: 1;
+  background-color: var(--pure-white);
+  opacity: 0.5;
+`,v=r.default.header`
+  margin: 20px 0;
+  font-size: 30px;
+  font-family: monospace;
+  text-align: center;
+  color: var(--bilibili-pink);
+`,g=r.default.p`
+  font-size: 16px;
+  text-align: center;
+  color: var(--content-color);
+`,y=r.default.button`
+  position: absolute;
+  top: 25px;
+  right: 30px;
+  border: none;
+  background-color: transparent;
+  font-size: 20px;
+  font-family: monospace;
+  color: var(--bilibili-pink);
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  &:hover {
+    opacity: 0.7;
+  }
+`,x=r.default.button`
+  display: block;
+  position: absolute;
+  top: calc(50% - 35px);
+  left: calc(50% - 75px);
+  width: 150px;
+  height: 70px;
+  padding: 10px;
+  font-size: 20px;
+  border: 2px solid var(--pure-white);
+  border-radius: 7px;
+  background-color: var(--bilibili-pink);
+  color: var(--pure-white);
+  z-index: 10;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+`;class w extends a.default.Component{constructor(t){super(t),this.handleOnClickPinball=(()=>{var t=this;Promise.resolve().then(e.t.bind(null,"YAsm",7)).then(i=>{var e=i.createApp;this.app||(this.app=e(l,c)),this.app&&this.view.appendChild(this.app.view),this.app.view.addEventListener("click",function(i){i.preventDefault(),t.handlePause(i)}),this.app.stop(),document.body.style.overflow="hidden",this.setState({show:!this.state.show})})}),this.handleOnClickCloseBtn=(t=>{t.preventDefault(),this.setState({show:!1}),this.handlePause(t),document.body.style.overflow=""}),this.handleOnScroll=(t=>{return t.preventDefault(),!1}),this.handleStart=(t=>{t.preventDefault(),this.setState({play:!0,pause:!1}),this.app.start()}),this.handlePause=(t=>{t.preventDefault(),this.setState({play:!1,pause:!0}),this.app.stop()}),this.app=null,this.state={show:!1,play:!1,pause:!1}}render(){var t=this.state,i=t.play,e=t.pause;return a.default.createElement(a.default.Fragment,null,a.default.createElement(u,{className:"pinball",onClick:this.handleOnClickPinball}),a.default.createElement(p,{ref:t=>this.view=t,show:this.state.show,onScroll:this.handleOnScroll},a.default.createElement(v,null,"RPG Pinball"),a.default.createElement(g,null,"\u4e00\u6b3e\u53ef\u4ee5\u6253\u602a\u5347\u7ea7\u7684RPG\u6253\u7816\u5757\u6e38\u620f~ \u5f00\u53d1\u4e2d~"),a.default.createElement(y,{onClick:this.handleOnClickCloseBtn},"Close"),!i&&!e&&a.default.createElement(x,{onClick:this.handleStart},"Start"),!i&&e&&a.default.createElement(x,{onClick:this.handleStart},"Play"),!i&&a.default.createElement(m,null)))}}i.PinballArea=w},RUDJ:function(t,i,e){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),i.Baffle=void 0;var s=e("dZpX"),h=e("lLD3"),a=e("8BX1");class r{constructor(t){var i=t.color,e=void 0===i?16777215:i,s=t.alpha,a=void 0===s?1:s,r=t.length,o=void 0===r?100:r,n=t.width,l=void 0===n?100:n,c=t.thick,d=void 0===c?10:c,u=t.height,p=void 0===u?10:u,m=t.speed,v=void 0===m?1:m,g=t.position,y=void 0===g?new h.Vector2(0,0):g,x=t.acceleration,w=void 0===x?new h.Vector2(.001,.001):x,b=t.radius,f=void 0===b?0:b;this._radius=0,this.color=e,this.alpha=a,this.length=o||l,this.thick=d||p,this.speed=v,this.radius=f,this.position=y,this.acceleration=w,this.maxAcceleration=new h.Vector2(.07*o,.1*d),this.canMove=!0}get radius(){return this._radius}set radius(t){var i=Math.min(this.thick,this.length);this._radius=t<i/2?t:i/2}get width(){return this.length}set width(t){return this.length=t,this}get height(){return this.thick}set height(t){return this.thick=t,this}init(t){this.app=t;var i=new a.Container,e=new s.Rect(this).init(t);return i.addChild(e.item),i.x=this.position.x,i.y=this.position.y,this.item=i,this.bindKeyboard(),this}setX(t){return this.item.x=t,this.position.setX(t),this}setY(t){return this.item.y=t,this.position.setY(t),this}createBall(t){return t.position=new h.Vector2(this.position.x+this.width/2,this.position.y-t.radius),this.app.createBall(t)}bindKeyboard(){var t=this.app.bindKey(document,38),i=this.app.bindKey(document,40),e=this.app.bindKey(document,37),s=this.app.bindKey(document,39);this.app.addTicker(h=>{!t.down&&!i.down&&!e.down&&!s.down&&this.stopMove(),t.down&&this.moveUp(),i.down&&this.moveDown(),e.down&&this.moveLeft(),s.down&&this.moveRight(),(t.down||i.down||e.down||s.down)&&this.collisionCheckWithBox(this.app.width,this.app.height)})}moveUp(){return Object.is(this.acceleration.y,NaN)&&(this.acceleration.y=this.maxAcceleration.y),this.acceleration.y<this.maxAcceleration.y&&(this.acceleration.y+=(this.acceleration.y+.5)*this.speed),this.setY(this.item.y-this.acceleration.y)}moveDown(){return Object.is(this.acceleration.y,NaN)&&(this.acceleration.y=this.maxAcceleration.y),this.acceleration.y<this.maxAcceleration.y&&(this.acceleration.y+=(this.acceleration.y+.5)*this.speed),this.setY(this.item.y+this.acceleration.y)}moveLeft(){return Object.is(this.acceleration.x,NaN)&&(this.acceleration.x=this.maxAcceleration.x),this.acceleration.x<this.maxAcceleration.x&&(this.acceleration.x+=(this.acceleration.x+.5)*this.speed),this.setX(this.item.x-this.acceleration.x)}moveRight(){return Object.is(this.acceleration.x,NaN)&&(this.acceleration.x=this.maxAcceleration.x),this.acceleration.x<this.maxAcceleration.x&&(this.acceleration.x+=(this.acceleration.x+.5)*this.speed),this.setX(this.item.x+this.acceleration.x)}stopMove(){return this.acceleration.set(0,0),this}collisionCheckWithBox(t,i){return this.position.x<0?this.setX(0):this.position.x+this.width>t&&this.setX(t-this.width),this.position.y<0?this.setY(0):this.position.y+this.height>i&&this.setY(i-this.height),this}}i.Baffle=r},YAsm:function(t,i,e){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),i.createApp=void 0;var s=e("lLD3"),h=(t,i)=>{var e=(new s.Game).create(t,i),h=e.createBaffle({color:14540253,position:new s.Vector2(100,i-50),length:100,radius:50});return h.createBall({radius:10,acceleration:new s.Vector2(1,-1),speed:3}),e.createMap({width:t,height:i/2,rows:2,columns:5,gap:10,padding:40}).createBlock({row:0,column:0,radius:3,width:10,height:10}).createBlock({row:0,column:1,radius:3,width:20,height:20}).createBlock({row:1,column:0,radius:3,width:30,height:30}).createBlock({row:1,column:1,radius:3,width:40,height:10}),e.addTicker(s=>{e.ballsMap.forEach(s=>{for(var a in s.move(),s.collisionCheckRoundedRect(h),e.blockMap.map)s.collisionCheckRoundedRect(e.blockMap.map[a]);s.collisionCheckWithMap(t,i)})}),e.app};i.createApp=h},awJ8:function(t,i,e){"use strict";var s=e("svvH");Object.defineProperty(i,"__esModule",{value:!0}),i.Game=void 0;var h=s(e("quD3")),a=s(e("jUZP")),r=e("dZpX"),o=e("Lcdb"),n=e("8BX1");class l{constructor(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{outputLevel:"debug"},i=t.outputLevel,e=void 0===i?"debug":i;this.app=null,this.width=0,this.height=0,this.outputLevel=e,this.ballsContainer=new n.Container,this.ballsMap=[],this.baffle=null,this.blockMap=null}create(t,i){this.width=t,this.height=i;var e=new n.Application({width:t,height:i,antialias:!0,transparent:!0});return this.app=e,this}addTicker(t){return this.app.ticker.add(t),this}createBall(t){var i=t.color,e=void 0===i?16777215:i,s=t.radius,n=void 0===s?10:s,l=t.speed,c=void 0===l?1:l,d=t.position,u=void 0===d?new o.Vector2(0,0):d,p=t.acceleration,m=void 0===p?new o.Vector2(0,0):p,v=(0,a.default)(t,["color","radius","speed","position","acceleration"]),g=new r.Ball((0,h.default)({color:e,speed:c,radius:n,position:u,acceleration:m.multiplyScalar(c)},v)).init(this);return this.ballsMap.push(g),this.ballsContainer.addChild(g.item),this.app.stage.addChild(this.ballsContainer),g}createBaffle(t){var i=t.color,e=t.length,s=t.thick,o=t.speed,n=t.position,l=t.radius,c=(0,a.default)(t,["color","length","thick","speed","position","radius"]);return this.baffle=new r.Baffle((0,h.default)({color:i,length:e,thick:s,speed:o,position:n,radius:l},c)).init(this),this.app.stage.addChild(this.baffle.item),this.baffle}createMap(t){return this.blockMap=new r.BlockMap(t).init(this),this.app.stage.addChild(this.blockMap.item),this.blockMap}bindKey(t,i){var e={down:!1,downHandle:()=>{},upHandle:()=>{}},s=function(t){t.preventDefault(),t.keyCode===i&&(e.down=!0,e.downHandle())},h=function(t){t.preventDefault(),t.keyCode===i&&(e.down=!1,e.upHandle())};return t.addEventListener("keydown",s,!1),t.addEventListener("keyup",h,!1),e}}i.Game=l},dZpX:function(t,i,e){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),Object.defineProperty(i,"Ball",{enumerable:!0,get:function(){return s.Ball}}),Object.defineProperty(i,"Baffle",{enumerable:!0,get:function(){return h.Baffle}}),Object.defineProperty(i,"Rect",{enumerable:!0,get:function(){return a.Rect}}),Object.defineProperty(i,"Block",{enumerable:!0,get:function(){return r.Block}}),Object.defineProperty(i,"BlockMap",{enumerable:!0,get:function(){return o.BlockMap}});var s=e("fQG3"),h=e("RUDJ"),a=e("Amhr"),r=e("FLqt"),o=e("yDoK")},fQG3:function(t,i,e){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),i.Ball=void 0;var s=e("lLD3"),h=e("8BX1");class a{constructor(t){var i=t.color,e=void 0===i?16777215:i,h=t.radius,a=void 0===h?10:h,r=t.speed,o=t.position,n=void 0===o?new s.Vector2(0,0):o,l=t.acceleration,c=void 0===l?new s.Vector2(r,r):l;this.topS=(t=>t.item.y-this.item.y),this.bottomS=(t=>this.item.y-t.item.y-t.height),this.leftS=(t=>t.item.x-this.item.x),this.rightS=(t=>this.item.x-t.item.x-t.width),this.color=e,this.radius=a,this.speed=r,this.position=n,this.acceleration=c}init(t){this.app=t;var i=new h.Graphics;return i.beginFill(this.color),i.drawCircle(0,0,this.radius),i.endFill(),i.x=this.position.x,i.y=this.position.y,this.item=i,this}move(){var t=new s.Vector2(this.item.x,this.item.y),i=this.acceleration.clone().add(t);return this.setPosition(i.x,i.y)}setPosition(t,i){return this.position.set(t,i),"number"===typeof t&&"number"===typeof i?(this.item.x=t,this.item.y=i):t instanceof s.Vector2&&(this.item.x=t.x,this.item.y=t.y),this}collisionCheckWithMap(t,i){return this.item.x<this.radius?(this.item.x=this.radius,this.acceleration.negateX()):this.item.x+this.radius>t&&(this.item.x=t-this.radius,this.acceleration.negateX()),this.item.y<this.radius?(this.item.y=this.radius,this.acceleration.negateY()):this.item.y+this.radius>i&&(this.item.y=i-this.radius,this.acceleration.negateY()),this}collisionCheckRoundedRect(t){var i=this.topS(t);if(!(i>this.radius)){var e=this.bottomS(t);if(!(e>this.radius)){var h=this.leftS(t);if(!(h>this.radius)){var a=this.rightS(t);if(!(a>this.radius)){var r=!1,o=this.item.x>=t.item.x+t.radius&&this.item.x<=t.item.x+t.width-t.radius;o&&(Math.abs(i)<Math.abs(e)?i<this.radius&&(this.acceleration.negateY(),this.item.y-=this.radius-i,r=!0):e<this.radius&&(this.acceleration.negateY(),this.item.y+=this.radius-e,r=!0));var n=this.item.y>=t.item.y+t.radius&&this.item.y<=t.item.y+t.height-t.radius;return n&&(Math.abs(h)<Math.abs(a)?h<this.radius&&(this.acceleration.negateX(),this.item.x-=this.radius-h,r=!0):a<this.radius&&(this.acceleration.negateX(),this.item.x+=this.radius-a,r=!0)),r?this:this.collisionCheckAtCornerCircle({target:t,point:t.position.clone().addScalar(t.radius)})?this:this.collisionCheckAtCornerCircle({target:t,point:new s.Vector2(t.position.x+t.width-t.radius,t.position.y+t.radius)})?this:this.collisionCheckAtCornerCircle({target:t,point:new s.Vector2(t.item.x+t.radius,t.item.y+t.height-t.radius)})?this:(this.collisionCheckAtCornerCircle({target:t,point:new s.Vector2(t.item.x+t.width-t.radius,t.item.y+t.height-t.radius)}),this)}}}}}collisionCheckAtCornerCircle(t){var i=t.target,e=t.point,s=this.position.distanceTo(e);if(s<this.radius+i.radius){var h=e.sub(this.position),a=h.angle();window.angle=a;var r=h.length(),o=h.clone().setLength(Math.abs(this.radius+i.radius-r));this.position.sub(o),this.setPosition(this.position);var n=this.acceleration.projectionWithNormal(h);return this.acceleration.copy(n),!0}}}i.Ball=a},lLD3:function(t,i,e){"use strict";Object.defineProperty(i,"__esModule",{value:!0}),Object.defineProperty(i,"Vector2",{enumerable:!0,get:function(){return s.Vector2}}),Object.defineProperty(i,"Game",{enumerable:!0,get:function(){return h.Game}});var s=e("Lcdb"),h=e("awJ8")},yDoK:function(t,i,e){"use strict";var s=e("svvH");Object.defineProperty(i,"__esModule",{value:!0}),i.BlockMap=void 0;var h=s(e("quD3")),a=s(e("jUZP")),r=e("8BX1"),o=e("lLD3"),n=e("dZpX");class l{constructor(t){var i=t.app,e=t.width,s=t.height,h=t.rows,a=t.columns,o=t.gap,n=void 0===o?0:o,l=t.padding,c=void 0===l?0:l,d=t.mapData;this.width=e,this.height=s,this.rows=h,this.columns=a,this.maxNumber=this.rows*this.columns,this.padding=c,this.gap=n,this.mapData=d,this.map={},this.app=i,this.item=new r.Container,this.calculate(),i&&this.init(i)}setGap(t){var i=(this.width-2*this.padding)/(this.columns-1),e=(this.height-2*this.padding)/(this.rows-1);this.gap=i>=t&&e>=t?t:Math.min(i,e)}init(t){return this.app=t,this}calculate(){return this.columnWidth=(this.width-2*this.padding-(this.columns-1)*this.gap)/this.columns,this.rowHeight=(this.height-2*this.padding-(this.rows-1)*this.gap)/this.rows,this}createBlock(t){var i,e=t.color,s=t.index,r=t.row,l=t.column,c=t.hp,d=t.radius,u=t.width,p=void 0===u?this.columnWidth:u,m=t.height,v=void 0===m?this.rowHeight:m,g=(0,a.default)(t,["color","index","row","column","hp","radius","width","height"]);if(void 0!==s){if(s>this.maxNumber)return console.error(`The index ${s} is bigger than ${this.maxNumber}`),this;i=this.getPositionByCoordinate(Math.ceil(s/this.columns)-1,s%this.columns-1)}else void 0!==r&&void 0!==l&&(i=this.getPositionByCoordinate(r,l));var y=new o.Vector2((this.columnWidth-p)/2,(this.rowHeight-v)/2),x=i.add(y),w=new n.Block((0,h.default)({color:e,app:this.app,hp:c,radius:d,width:p,height:v,position:x},g));return this.map[`${r}:${l}`]=w,this.item.addChild(w.item),this}getPositionByCoordinate(t,i){return new o.Vector2(this.padding+i*(this.gap+this.columnWidth),this.padding+t*(this.gap+this.rowHeight))}}i.BlockMap=l}}]);
