@@ -16,16 +16,23 @@ export class Vector2 {
     get width() {return this.x;}
 
     set(x, y) {
-        this.x = x;
-        this.y = y;
+        if (typeof x === 'number' && typeof y === 'number') {
+            this.x = x;
+            this.y = y;
+        } else if (x instanceof Vector2) {
+            this.x = x.x;
+            this.y = x.y;
+        }
     }
 
     setX(x) {
-        this.x = x;
+        if (typeof x === 'number') this.x = x;
+        else if (x instanceof Vector2) this.x = x.x;
     }
 
     setY(y) {
-        this.y = y;
+        if (typeof y === 'number') this.y = y;
+        else if (y instanceof Vector2) this.y = y.y;
     }
 
     clone() {
@@ -146,7 +153,7 @@ export class Vector2 {
     rad() {
         let radian = Math.atan2(this.y, this.x);
         if (radian < 0) radian += 2 * Math.PI;
-        return 2 * Math.PI - radian; // 转化为笛卡尔坐标系内的方向
+        return radian; // 转化为笛卡尔坐标系内的方向
     }
 
     angle() {

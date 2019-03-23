@@ -1,4 +1,4 @@
-import {Baffle, Ball} from 'Components/Pinball/game/items';
+import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/items';
 import {Vector2} from 'Components/Pinball/game/lib/Vector2';
 
 /**
@@ -11,16 +11,18 @@ import {Application, Container, Graphics} from 'pixi.js';
 export class Game {
     constructor() {
         this.app = null;
+        this.width = 0;
+        this.height = 0;
+
         this.ballsContainer = new Container();
         this.ballsMap = [];
         this.baffle = null;
-        this.collisionNormalLine = null;
-        this.collisionInputLine = null;
-        this.collisionOutputLine = null;
-        this.collisionLine = null;
+        this.blockMap = null;
     }
 
     create(width, height) {
+        this.width = width;
+        this.height = height;
         const app = new Application({
             width,
             height,
@@ -28,63 +30,12 @@ export class Game {
             transparent: true,
         });
         this.app = app;
-        //this.createCollisionNormalLine(width, height);
-        //this.createCollisionInputLine(width, height);
-        //this.createCollisionOutputLine(width, height);
-        //this.createCollisionLine(width, height);
-        return this;
-    }
-
-    createCollisionNormalLine(width, height) {
-        let collisionNormalLine = new Graphics();
-        collisionNormalLine.beginFill(0xff0000);
-        collisionNormalLine.drawRect(0, 0, width, 1);
-        collisionNormalLine.endFill();
-        collisionNormalLine.x = width / 2;
-        collisionNormalLine.y = height / 2;
-        this.collisionNormalLine = collisionNormalLine;
-        this.app.stage.addChild(collisionNormalLine);
-        return this;
-    }
-
-    createCollisionInputLine(width, height) {
-        let collisionInputLine = new Graphics();
-        collisionInputLine.beginFill(0x00ff00);
-        collisionInputLine.drawRect(0, 0, width, 1);
-        collisionInputLine.endFill();
-        collisionInputLine.x = width / 2;
-        collisionInputLine.y = height / 2;
-        this.collisionInputLine = collisionInputLine;
-        this.app.stage.addChild(collisionInputLine);
-        return this;
-    }
-
-    createCollisionOutputLine(width, height) {
-        let collisionOutputLine = new Graphics();
-        collisionOutputLine.beginFill(0x0000ff);
-        collisionOutputLine.drawRect(0, 0, width, 1);
-        collisionOutputLine.endFill();
-        collisionOutputLine.x = width / 2;
-        collisionOutputLine.y = height / 2;
-        this.collisionOutputLine = collisionOutputLine;
-        this.app.stage.addChild(collisionOutputLine);
-        return this;
-    }
-
-    createCollisionLine(width, height) {
-        let collisionLine = new Graphics();
-        collisionLine.beginFill(0xdddddd);
-        collisionLine.drawRect(0, 0, width, 1);
-        collisionLine.endFill();
-        collisionLine.x = width / 2;
-        collisionLine.y = height / 2;
-        this.collisionLine = collisionLine;
-        this.app.stage.addChild(collisionLine);
         return this;
     }
 
     addTicker(tickFunc) {
         this.app.ticker.add(tickFunc);
+        return this;
     }
 
     createBall({color = 0xffffff, radius = 10, speed = 1, position = new Vector2(0, 0), acceleration = new Vector2(0, 0), ...rest}) {
@@ -95,11 +46,16 @@ export class Game {
         return ball;
     }
 
-    createBaffle({color = 0xffffff, length = 100, thick = 7, speed = 0.4, position = new Vector2(0, 0), radius = 0, ...rest}) {
-        let baffle = new Baffle({color, length, thick, speed, position, radius, ...rest}).init(this);
-        this.baffle = baffle;
-        this.app.stage.addChild(baffle.item);
-        return baffle;
+    createBaffle({color, length, thick, speed, position, radius, ...rest}) {
+        this.baffle =  new Baffle({color, length, thick, speed, position, radius, ...rest}).init(this);
+        this.app.stage.addChild(this.baffle.item);
+        return this.baffle;
+    }
+
+    createMap(options) {
+        this.blockMap = new BlockMap(options).init(this);
+        this.app.stage.addChild(this.blockMap.item);
+        return this.blockMap;
     }
 
     bindKey(element, keyCode) {

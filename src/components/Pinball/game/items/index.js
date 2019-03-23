@@ -4,5 +4,8 @@
  * Description:
  */
 
-export {Ball} from './ball';
-export {Baffle} from './baffle';
+export {Ball} from './Ball';
+export {Baffle} from './Baffle';
+export {Rect} from './Rect';
+export {Block} from './Block';
+export {BlockMap} from './BlockMap';
