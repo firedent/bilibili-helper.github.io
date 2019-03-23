@@ -8,13 +8,13 @@ import {Game, Vector2} from 'Pinball/game/lib';
 export const createApp = (width, height) => {
     const game = new Game().create(width, height);
     game.createBall({
-        radius: 10,
+        radius: 50,
         position: new Vector2(50, 50),
         acceleration: new Vector2(1, 1),
         speed: 1,
     });
     game.createBaffle({
-        position: new Vector2(100, 250),
+        position: new Vector2(100, 100),
         length: 100,
         radius: 10,
     });
@@ -26,7 +26,7 @@ export const createApp = (width, height) => {
     const gameLoop = (delta) => {
         game.ballsMap.forEach((ball) => {
             ball.collisionCheckWithMap(width, height);
-            ball.collisionCheckWithBaffle(game.baffle);
+            ball.collisionCheckRoundedRect(game.baffle);
             ball.move(delta);
         });
 

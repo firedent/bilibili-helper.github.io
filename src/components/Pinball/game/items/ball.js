@@ -59,10 +59,6 @@ export class Ball {
         return this;
     }
 
-    collisionCheckWithBaffle(baffle) {
-        this.collisionCheckRoundedRect(baffle);
-    }
-
     collisionCheckRoundedRect(target) {
         let topS = this.topS(target);
         if (topS > this.radius) return;
@@ -74,47 +70,29 @@ export class Ball {
         if (rightS > this.radius) return;
 
         // 弹板角落回弹处理
-        const angle = this.acceleration.angle();
-
         //top left
-        const topLeftRes = this.collisionCheckAtCornerCircle({
+        if (this.collisionCheckAtCornerCircle({
             target,
             point: target.position.clone().addScalar(target.radius),
-            firstCheck: (angle >= 0 && angle <= 45) || (angle >= 225 && angle <= 360),
-            secondCheck: angle >= 180 && angle <= 225,
-            thirdCheck: angle >= 45 && angle <= 90,
-        });
-        if (topLeftRes) return this;
+        })) return this;
 
         // top right
-        const topRightRes = this.collisionCheckAtCornerCircle({
+        if(this.collisionCheckAtCornerCircle({
             target,
             point: new Vector2(target.position.x + target.width - target.radius, target.position.y + target.radius),
-            firstCheck: angle >= 135 && angle <= 315,
-            secondCheck: (angle >= 315 && angle <= 360) || angle === 0,
-            thirdCheck: angle >= 90 && angle <= 135,
-        });
-        if (topRightRes) return this;
+        })) return this;
 
         // bottom left
-        const bottomLeftRes = this.collisionCheckAtCornerCircle({
+        if(this.collisionCheckAtCornerCircle({
             target,
             point: new Vector2(target.item.x + target.radius, target.item.y + target.height - target.radius),
-            firstCheck: (angle <= 135 && angle >= 0) || angle >= 315,
-            secondCheck: angle >= 135 && angle <= 180,
-            thirdCheck: angle >= 270 && angle <= 315,
-        });
-        if (bottomLeftRes) return this;
+        })) return this;
 
         // bottom right
-        const bottomRightRes = this.collisionCheckAtCornerCircle({
+        if (this.collisionCheckAtCornerCircle({
             target,
             point: new Vector2(target.item.x + target.width - target.radius, target.item.y + target.height - target.radius),
-            firstCheck: angle >= 45 && angle <= Math.PI * 225,
-            secondCheck: angle >= 0 && angle <= 45,
-            thirdCheck: angle >= 225 && angle < 270,
-        });
-        if (bottomRightRes) return this;
+        })) return this;
 
         // 弹板四面回弹处理
         const atUpOrDown = this.item.x > target.item.x + target.radius && this.item.x < target.item.x + target.width - target.radius;
@@ -126,18 +104,13 @@ export class Ball {
             this.acceleration.negateX();
         }
         return this;
-
     }
 
-    collisionCheckAtCornerCircle({target, point, firstCheck, secondCheck, thirdCheck}) {
+    collisionCheckAtCornerCircle({target, point}) {
         const distance = this.position.distanceTo(point);
         if (distance < this.radius + target.radius) {
-            if (firstCheck) {
-                const normalVector = point.sub(this.position);
-                this.setBallAcceleration(this, normalVector);
-            }
-            else if (secondCheck) this.acceleration.negateY(); // 5
-            else if (thirdCheck) this.acceleration.negateX(); // 4
+            const normalVector = point.sub(this.position);
+            this.setBallAcceleration(this, normalVector);
             return true;
         }
     }
