@@ -321,12 +321,15 @@ const CommentMap = styled.div`
     opacity: 0.3;
   }
   .nav-item {
+    display: block;
     line-height: 20px;
-    font-size: 14px;
-    border-right: 1px solid var(--bilibili-pink);
     margin-bottom: 10px;
     padding: 10px;
     box-sizing: border-box;
+    font-size: 14px;
+    border-right: 1px solid var(--bilibili-pink);
+    text-decoration: none;
+    color: var(--content-color);
     cursor: pointer;
     transition: all 0.15s;
     &:hover {
@@ -349,10 +352,13 @@ class CommentArea extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const {commentMap, config} = this.props.comments;
-        if (this.props.location.query.page !== prevProps.location.query.page && prevProps.location.query.ptype === '0') {
-            this.load();
-        } else if (commentMap.length !== prevProps.comments.commentMap.length || (commentMap.length > 0 && !config)) {
+        const {comments, location} = this.props;
+        const {commentMap, config} = comments;
+        if ((location.query.page !== prevProps.location.query.page && prevProps.location.query.ptype === '0') ||
+            (location.query.oid !== prevProps.location.query.oid && commentMap.length > 0)) {
+            const currentComment = _.find(commentMap, (comment) => comment.config.oid === +location.query.oid);
+            this.load(currentComment);
+        } else if ((config && commentMap.length !== prevProps.comments.commentMap.length) || (commentMap.length > 0 && !config)) {
             commentMap.length > 0 && this.load(commentMap[0]);
         }
     }
@@ -628,12 +634,8 @@ class CommentArea extends React.Component {
                             {commentMap.map((comment) => {
                                 const {config: thisConfig, name} = comment;
                                 const {oid} = thisConfig;
-                                const on = oid === currentComment.config.oid;
-                                return (<div
-                                    key={oid}
-                                    className={`nav-item ${on ? 'on' : ''}`}
-                                    onClick={!on ? () => this.handleOnClickCommentNav(comment) : null}
-                                >{name}</div>);
+                                const on = +oid === +currentComment.config.oid;
+                                return <Link key={oid} to={`?oid=${oid}&page=${1}&ptype=${0}`} className={`nav-item ${on ? 'on' : ''}`}>{name}</Link>;
                             })}
                             <i>切换评论区</i>
                         </CommentMap>
