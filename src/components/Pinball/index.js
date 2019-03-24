@@ -138,17 +138,19 @@ export class PinballArea extends React.Component {
         };
     }
 
-    //componentDidMount() {
-    //    this.handleOnClickPinball();
-    //    this.setState({play: true, pause: false});
-    //    this.app.start();
-    //}
+    // 调试的时候用
+    componentDidMount() {
+        this.handleOnClickPinball().then(() => {
+            this.setState({play: true, pause: false});
+            this.app.start();
+        });
+    }
 
     handleOnClickPinball = () => {
         const that = this;
-        import('./game').then(({createApp}) => {
+        return import('./game').then(({createApp}) => {
             if (!this.app) this.app = createApp(canvasWidth, canvasHeight);
-            if (this.app) this.view.appendChild(this.app.view);
+            this.view.appendChild(this.app.view);
             this.app.view.addEventListener('click', function(e) {
                 e.preventDefault();
                 that.handlePause(e);
@@ -158,7 +160,6 @@ export class PinballArea extends React.Component {
 
             this.setState({show: !this.state.show});
         });
-
     };
 
     handleOnClickCloseBtn = (e) => {

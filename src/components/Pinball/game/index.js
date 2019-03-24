@@ -18,18 +18,20 @@ export const createApp = (width, height) => {
         acceleration: new Vector2(1, -1),
         speed: 3,
     });
+    const [rows, columns, gap, padding] = [2, 5, 10, 10];
+    const columnWidth = (width - 2 * padding - (columns - 1) * gap) / columns;
     game.createMap({
-            width,
-            height: height / 2,
-            rows: 2,
-            columns: 5,
-            gap: 10,
-            padding: 40,
-        })
-        .createBlock({row: 0, column: 0, radius: 3, width: 10, height: 10})
-        .createBlock({row: 0, column: 1, radius: 3, width: 20, height: 20})
-        .createBlock({row: 1, column: 0, radius: 3, width: 30, height: 30})
-        .createBlock({row: 1, column: 1, radius: 3, width: 40, height: 10});
+        width,
+        height: 2 * padding + rows * (columnWidth + gap) - gap,
+        rows,
+        columns,
+        gap,
+        padding,
+        blockOption: {
+            color: 0xffffff,
+            radius: 3,
+        },
+    }).fillAll();
 
     game.addTicker((delta) => {
         game.ballsMap.forEach((ball) => {
