@@ -353,12 +353,13 @@ class CommentArea extends React.Component {
 
     componentDidUpdate(prevProps) {
         const {comments, location} = this.props;
-        const {commentMap, config} = comments;
-        if ((location.query.page !== prevProps.location.query.page && prevProps.location.query.ptype === '0') ||
-            (location.query.oid !== prevProps.location.query.oid && commentMap.length > 0)) {
+        const {commentMap} = comments;
+        if ((location.query.page !== prevProps.location.query.page && prevProps.location.query.ptype === '0') || // 换页
+            (location.query.oid !== prevProps.location.query.oid) || // 切换评论区
+            (prevProps.location.query.oid !== undefined && !prevProps.comments.config)) { // 从地址初始化评论区
             const currentComment = _.find(commentMap, (comment) => comment.config.oid === +location.query.oid);
             this.load(currentComment);
-        } else if ((config && commentMap.length !== prevProps.comments.commentMap.length) || (commentMap.length > 0 && !config)) {
+        } else if (!prevProps.comments.config && commentMap.length >= prevProps.comments.commentMap.length && !location.query.oid) {
             commentMap.length > 0 && this.load(commentMap[0]);
         }
     }
@@ -425,10 +426,6 @@ class CommentArea extends React.Component {
         this.props.dispatch({type: 'comments/setHate', payload: {action, rpid}});
     };
 
-    handleOnClickCommentNav = (comment) => {
-        this.load(comment);
-    };
-
     // 处理评论的表情
     renderContent = (content) => {
         const emojiRegex = new RegExp(/(\[.*?\])/g);
@@ -441,6 +438,7 @@ class CommentArea extends React.Component {
             tempIndex = index + name.length;
             finalContent.push(<Emoji key={index} sign={name}/>);
         }
+        if (content.substr(tempIndex)) finalContent.push(content.substr(tempIndex));
         if (finalContent.length === 0) finalContent.push(content);
         return finalContent;
     };

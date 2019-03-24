@@ -23,12 +23,6 @@ export default {
             to: 'static/',
         },
     ],
-    externals: {
-        'react': 'window.React',
-        'react-dom': 'window.ReactDOM',
-        'lodash': 'window._',
-        'pixi.js': 'window.PIXI',
-    },
     plugins: [
         [
             'umi-plugin-react',
