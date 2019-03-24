@@ -25,7 +25,7 @@ export default {
                         pinball: {
                             name: 'pinball',
                             test: /[\\/]Pinball[\\/]/,
-                            chunks: 'async',
+                            chunks: 'all',
                             minChunks: 1,
                         },
                         vendors: {

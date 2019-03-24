@@ -570,12 +570,12 @@ class CommentArea extends React.Component {
                     {`${acount} 评论`}
                     {currentComment === null && <p>尚未加载评论区</p>}
                     {currentComment && <p>
-                        本评论区来自哔哩哔哩弹幕网的评论系统，原地址为:
-                        <a
+                        本评论区来自哔哩哔哩弹幕网的评论系统，请遵守相关法律法规并共同维护秩序
+                        {currentComment.canComment && <React.Fragment>，原地址为:<a
                             target="_blank"
                             href={`https://h.bilibili.com/${currentComment.config.oid}#canvas-detail-comment-ctnr`}
-                        >h{currentComment.config.oid}</a>，如果无法链接助手，可以前往该页面进行留言
-                        <br/>请遵守相关法律法规并共同维护秩序
+                        >h{currentComment.config.oid}</a></React.Fragment>}
+
                     </p>}
                 </Header>
 
