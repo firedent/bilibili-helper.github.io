@@ -100,7 +100,7 @@ class FeedArea extends React.Component {
         return (
             <FeedAreaWrapper>
                 <Header>
-                    投喂区鸭 ~ FEEDS
+                    投喂区鸭 ~ SPONSORS
                     <p>感谢大家的支持鸭~mua~</p>
                 </Header>
                 <FeedList

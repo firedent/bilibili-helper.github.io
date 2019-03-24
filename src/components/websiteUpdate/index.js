@@ -132,7 +132,7 @@ class WebsiteUpdateArea extends React.Component {
         return (
             <WebsiteUpdateAreaWrapper>
                 <Header>
-                    网站动态 ~ DYNAMIC FOR WEBSITE
+                    网站动态 ~ WHAT&apos;S NEW
                     <p className="sub-title">这里列出最新的10条网站动态~</p>
                 </Header>
                 <ol className="tab-contents">

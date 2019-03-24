@@ -32,7 +32,6 @@ export default {
                 dva: {
                     immer: true,
                 },
-                hash: true,
                 hardSource: true,
                 dynamicImport: true,
                 routes: {

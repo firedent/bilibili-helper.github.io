@@ -61,7 +61,7 @@ class AnnouncementArea extends React.Component {
         const {announcements} = this.props;
         return (
             <AnnouncementWrapper id="announcement">
-                <h3>重要公告 ~ ANNOUNCEMENTS</h3>
+                <h3>重要公告 ~ NOTICES</h3>
                 {_.map(announcements.config, (info, title) => (
                     title === '功能删除须知' && <div className="item" key={title}>
                         <ul className="content">{info.map((text, index) => <li key={index} dangerouslySetInnerHTML={{__html: text}}/>)}</ul>
