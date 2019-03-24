@@ -29,7 +29,7 @@ export const createApp = (width, height) => {
         padding,
         blockOption: {
             color: 0xffffff,
-            radius: 3,
+            radius: 10,
         },
     }).fillAll();
 

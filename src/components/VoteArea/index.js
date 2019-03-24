@@ -78,7 +78,6 @@ const VoteLine = styled.div`
     justify-content: space-between;
     align-items: center;
     user-select: none;
-    cursor: pointer;
     z-index: 1;
     button {
       margin-right: 20px;

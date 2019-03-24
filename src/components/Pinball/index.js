@@ -139,12 +139,12 @@ export class PinballArea extends React.Component {
     }
 
     // 调试的时候用
-    //componentDidMount() {
-    //    this.handleOnClickPinball().then(() => {
-    //        this.setState({play: true, pause: false});
-    //        this.app.start();
-    //    });
-    //}
+    componentDidMount() {
+        this.handleOnClickPinball().then(() => {
+            this.setState({play: true, pause: false});
+            this.app.start();
+        });
+    }
 
     handleOnClickPinball = () => {
         const that = this;

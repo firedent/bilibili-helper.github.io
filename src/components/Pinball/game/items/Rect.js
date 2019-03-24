@@ -38,6 +38,7 @@ export class Rect {
         const width = this.width - 2 * this.radius;
         const height = this.height - 2 * this.radius;
         this.item = new Container();
+        //this.item.pivot.set(this.width / 2, this.height / 2);
         const r1 = new Graphics().beginFill(this.color, this.alpha).drawRect(this.radius, 0, width, this.height);
         this.item.addChild(r1);
         if (this.radius > 0) {
