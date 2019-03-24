@@ -168,7 +168,7 @@ class VoteArea extends React.Component {
         return (
             <VoteAreaWrapper>
                 <h3>
-                    新功能投票 ~ VOTE FOR NEW FEATURE
+                    新功能投票 ~ FEATURE REQUESTS
                     <p>为希望添加进助手的功能点赞吧~</p>
                 </h3>
                 <div className="votes-list">
