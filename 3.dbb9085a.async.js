@@ -703,9 +703,12 @@
     padding: 10px;
     box-sizing: border-box;
     cursor: pointer;
+    transition: all 0.15s;
+    &:hover {
+      color: var(--bilibili-pink);
+    }
     &.on {
-      background-color: var(--bilibili-pink);
-      color: var(--pure-white);
+      color: var(--bilibili-pink);
       cursor: default;
     }
   }
