@@ -20,7 +20,7 @@ export default {
                     cacheGroups: {
                         pinball: {
                             name: 'pinball',
-                            test: /[\\/]Pinball[\\/]/,
+                            test: /[\\/]Pinball\/game[\\/]/,
                             chunks: 'async',
                             minChunks: 1,
                         },

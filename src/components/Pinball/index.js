@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import styled, {keyframes} from 'styled-components';
-import {createApp} from './game';
+import {createApp} from 'Pinball/game';
 
 const panelWidth = 700;
 const panelHeight = 700;
