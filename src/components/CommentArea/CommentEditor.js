@@ -352,7 +352,7 @@ class CommentEditor extends React.Component {
                 {(!canUse || sending || !able) && (
                     <div className="mask">
                         <span>~
-                            {!able && '评论功能功能被禁止'}
+                            {!able && '评论功能已被禁止'}
                             {!global.status.connected && '未连接助手'}
                             {!canUse && global.status.connected && '尚未登录'}
                             {sending && '发送中'}
