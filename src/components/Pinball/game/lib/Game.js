@@ -39,7 +39,7 @@ export class Game {
     }
 
     createBall({color = 0xffffff, radius = 10, speed = 1, position = new Vector2(0, 0), acceleration = new Vector2(0, 0), ...rest}) {
-        let ball = new Ball({color, speed, radius, position, acceleration: acceleration.multiplyScalar(speed), ...rest}).init(this);
+        let ball = new Ball({app: this, color, speed, radius, position, acceleration: acceleration.multiplyScalar(speed), ...rest});
         this.ballsMap.push(ball);
         this.ballsContainer.addChild(ball.item);
         this.app.stage.addChild(this.ballsContainer);
@@ -47,7 +47,7 @@ export class Game {
     }
 
     createBaffle({color, length, thick, speed, position, radius, ...rest}) {
-        this.baffle = new Baffle({color, length, thick, speed, position, radius, ...rest}).init(this);
+        this.baffle = new Baffle({app: this, color, length, thick, speed, position, radius, ...rest});
         this.app.stage.addChild(this.baffle.item);
         return this.baffle;
     }

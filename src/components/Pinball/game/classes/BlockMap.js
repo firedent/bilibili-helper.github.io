@@ -25,11 +25,8 @@ export class BlockMap {
         this.map = {};
         this.app = app;
         this.item = new Container();
+        this.blockOption = blockOption;
         this.calculate();
-        this.blockOption = mergeNew(blockOption, {
-            width: this.columnWidth,
-            height: this.rowHeight,
-        });
         if (app) this.init(app);
     }
 
@@ -48,10 +45,12 @@ export class BlockMap {
     calculate() {
         this.columnWidth = (this.width - 2 * this.padding - (this.columns - 1) * this.gap) / this.columns;
         this.rowHeight = (this.height - 2 * this.padding - (this.rows - 1) * this.gap) / this.rows;
+        if (this.blockOption.width === undefined) this.blockOption.width = this.columnWidth;
+        if (this.blockOption.height === undefined) this.blockOption.height = this.rowHeight;
         return this;
     }
 
-    createBlock({index, row, column, width, height, ...rest}) {
+    createBlock({index, row, column, width = this.blockOption.width, height = this.blockOption.height, ...rest}) {
         if (width > this.columnWidth) {
             console.warn('block\'s width is larger than column width');
         }
@@ -64,8 +63,7 @@ export class BlockMap {
                 console.error(`The index ${index} is bigger than ${this.maxNumber}`);
                 return this;
             }
-
-            boxPosition = this.getPositionByCoordinate(Math.ceil(index / this.columns) - 1, index % this.columns - 1);
+            boxPosition = this.getPositionByCoordinate(Math.ceil(index / this.columns), index % this.columns);
         } else if (row !== undefined && column !== undefined) { // 查询所传坐标位于哪个目标框内
             boxPosition = this.getPositionByCoordinate(row, column);
         }

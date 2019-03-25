@@ -4,9 +4,9 @@
  * Description:
  */
 export class Vector2 {
-    constructor(x, y) {
-        this.x = x || 0;
-        this.y = y || 0;
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
     }
 
     get isVector2() {return true;}
@@ -150,14 +150,14 @@ export class Vector2 {
     }
 
     // computes the angle in radians with respect to the positive x-axis
-    rad() {
+    radian() {
         let radian = Math.atan2(this.y, this.x);
         if (radian < 0) radian += 2 * Math.PI;
         return radian; // 转化为笛卡尔坐标系内的方向
     }
 
     angle() {
-        return this.rad() * 180 / Math.PI;
+        return this.radian() * 180 / Math.PI;
     }
 
     flip() {
@@ -167,8 +167,8 @@ export class Vector2 {
         return this;
     }
 
-    rotateAround(center, angle) {
-        const c = Math.cos(angle), s = Math.sin(angle);
+    rotateAround(center, radian) {
+        const c = Math.cos(radian), s = Math.sin(radian);
 
         const x = this.x - center.x;
         const y = this.y - center.y;
@@ -179,8 +179,13 @@ export class Vector2 {
         return this;
     }
 
-    rotate(angle) {
-        return this.rotateAround(this, angle);
+    rotate(radian) {
+        return this.rotateAround(new Vector2(0, 0), radian);
+    }
+
+    setRadian(radian) {
+        this.rotate(radian - this.radian());
+        return this;
     }
 
     toArray() {
@@ -191,16 +196,12 @@ export class Vector2 {
         return this.x * v.x + this.y * v.y;
     }
 
+    // Positive or negative depends on whether this angle is bigger than target's angle
     radWithVector(v) {
-        const m = this.length() * v.length();
-        let dot = this.dot(v.normalize());
-        if (dot / m > 1 || dot / m < -1) {
-            v = v.clone().negate();
-            dot = this.dot(v);
-        }
-        return Math.acos(dot / m);
+        return this.radian() - v.radian();
     }
 
+    // Positive or negative depends on whether this angle is bigger than target's angle
     angleWithVector(v) {
         return this.radWithVector(v) * 180 / Math.PI;
     }
@@ -217,22 +218,13 @@ export class Vector2 {
     }
 
     projectionWithLine(line) {
-        let theta = this.radWithLine(line);
-        if (theta > Math.PI / 2) theta = Math.PI / 2 - this.radWithLine(line);
-        const NormalLength = 2 * this.length() * Math.sin(theta);
-        const Normal = line.normal().setLength(NormalLength);
-        const NormalLineDot = Normal.dot(this);
-        const res = line.clone();
-        return res.sub(Normal.multiplyScalar(2 * NormalLineDot)).setLength(this.length());
+        let deltaRadian = this.radWithLine(line) * 2;
+        return this.setRadian(deltaRadian);
     }
 
     projectionWithNormal(normal) {
-        const theta = this.radWithLine(normal);
-        const NormalLength = 2 * this.length() * Math.sin(theta);
-        const Normal = normal.setLength(NormalLength);
-        const NormalLineDot = Normal.dot(this);
-        const res = normal.normal();
-        return res.sub(Normal.multiplyScalar(2 * NormalLineDot)).setLength(this.length());
+        let deltaRadian = (Math.PI - this.radWithVector(normal)) * 2;
+        return this.setRadian(deltaRadian);
     }
 
     // return the normal vector
@@ -240,3 +232,5 @@ export class Vector2 {
         return new Vector2(this.y / this.x, -1).normalize();
     }
 }
+
+window.Vector2 = Vector2;

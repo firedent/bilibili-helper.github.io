@@ -3,12 +3,13 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Rect} from 'Pinball/game/classes';
+import {Block, Rect} from 'Pinball/game/classes';
 import {Vector2} from 'Pinball/game/lib';
 import {Container} from 'pixi.js';
 
 export class Baffle {
     constructor({
+        app,
         color = 0xffffff,
         alpha = 1,
         length = 100,
@@ -19,6 +20,8 @@ export class Baffle {
         position = new Vector2(0, 0),
         acceleration = new Vector2(0.001, 0.001),
         radius = 0,
+        rotation,
+        ...rest
     }) {
         this._radius = 0;
 
@@ -29,9 +32,11 @@ export class Baffle {
         this.speed = speed;
         this.radius = radius;
         this.position = position;
+        this.rotation = rotation;
         this.acceleration = acceleration;
         this.maxAcceleration = new Vector2(length * 0.07, thick * 0.1);
-
+        Object.assign(this, rest);
+        if (app) this.init(app);
         this.canMove = true;
     }
 
@@ -64,12 +69,8 @@ export class Baffle {
 
     init(app) {
         this.app = app;
-        let item = new Container();
-        const rect = new Rect(this).init(app);
-        item.addChild(rect.item);
-        item.x = this.position.x;
-        item.y = this.position.y;
-        this.item = item;
+        const rect = new Block(this);
+        this.item = rect.item;
         this.bindKeyboard();
         return this;
     }
@@ -90,8 +91,8 @@ export class Baffle {
 
     createBall(options) {
         options.position = new Vector2(
-            this.position.x + this.width / 2,
-            this.position.y - options.radius,
+            this.position.x + this.width / 2 + options.position.x,
+            this.position.y - options.radius + options.position.y,
         );
         return this.app.createBall(options);
     }
@@ -103,35 +104,35 @@ export class Baffle {
         const right = this.app.bindKey(document, 39);
         this.app.addTicker(delta => {
             !up.down && !down.down && !left.down && !right.down && this.stopMove();
-            if (up.down) this.moveUp();
-            if (down.down) this.moveDown();
-            if (left.down) this.moveLeft();
-            if (right.down) this.moveRight();
+            if (up.down) this.moveUp(delta);
+            if (down.down) this.moveDown(delta);
+            if (left.down) this.moveLeft(delta);
+            if (right.down) this.moveRight(delta);
             if (up.down || down.down || left.down || right.down) this.collisionCheckWithBox(this.app.width, this.app.height);
         });
     }
 
-    moveUp() {
+    moveUp(delta) {
         if (Object.is(this.acceleration.y, NaN)) this.acceleration.y = this.maxAcceleration.y;
-        if (this.acceleration.y < this.maxAcceleration.y) this.acceleration.y += (this.acceleration.y + 0.5) * this.speed;
+        if (this.acceleration.y < this.maxAcceleration.y) this.acceleration.y += (this.acceleration.y + 0.5) * this.speed * delta;
         return this.setY(this.item.y - this.acceleration.y);
     }
 
-    moveDown() {
+    moveDown(delta) {
         if (Object.is(this.acceleration.y, NaN)) this.acceleration.y = this.maxAcceleration.y;
-        if (this.acceleration.y < this.maxAcceleration.y) this.acceleration.y += (this.acceleration.y + 0.5) * this.speed;
+        if (this.acceleration.y < this.maxAcceleration.y) this.acceleration.y += (this.acceleration.y + 0.5) * this.speed * delta;
         return this.setY(this.item.y + this.acceleration.y);
     }
 
-    moveLeft() {
+    moveLeft(delta) {
         if (Object.is(this.acceleration.x, NaN)) this.acceleration.x = this.maxAcceleration.x;
-        if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed;
+        if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed * delta;
         return this.setX(this.item.x - this.acceleration.x);
     }
 
-    moveRight() {
+    moveRight(delta) {
         if (Object.is(this.acceleration.x, NaN)) this.acceleration.x = this.maxAcceleration.x;
-        if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed;
+        if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed * delta;
         return this.setX(this.item.x + this.acceleration.x);
     }
 

@@ -16,16 +16,10 @@ export class Block {
         this.position = position;
         this.app = app;
         Object.assign(this, rest);
-        if (app) this.init(app);
-    }
-
-    init(app) {
-        this.app = app;
 
         this.rect = new Rect(this);
         this.item = this.rect.item;
         this.setPosition(this.position);
-        return this;
     }
 
     setPosition(x, y) {
