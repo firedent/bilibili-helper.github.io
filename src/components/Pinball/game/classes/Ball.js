@@ -1,10 +1,9 @@
-import {Vector2} from 'Components/Pinball/game/lib';
-
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/22
  * Description:
  */
+import {Vector2} from 'Components/Pinball/game/lib';
 import {Graphics} from 'pixi.js';
 
 export class Ball {

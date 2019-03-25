@@ -3,7 +3,7 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Rect} from 'Pinball/game/items';
+import {Rect} from 'Pinball/game/classes';
 import {Vector2} from 'Pinball/game/lib';
 import {Container} from 'pixi.js';
 

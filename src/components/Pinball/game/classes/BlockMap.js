@@ -5,12 +5,12 @@
  */
 import {Container} from 'pixi.js';
 import {Vector2} from 'Pinball/game/lib';
-import {Block} from 'Pinball/game/items';
+import {Block} from 'Pinball/game/classes';
 
 // 在旧值上加新值，如果新值为undefined时使用旧值
 const useNewByOldFunc = (oldValue, newValue) => (newValue !== undefined) ? newValue : oldValue;
 
-const mergeNew = (oldObject, newObject, useNewByOldFunc) => _.mergeWith(oldObject, newObject, useNewByOldFunc);
+const mergeNew = (oldObject, newObject, func = useNewByOldFunc) => _.mergeWith(oldObject, newObject, func);
 
 export class BlockMap {
     constructor({app, width, height, rows, columns, gap = 0, padding = 0, mapData, blockOption = {}}) {
