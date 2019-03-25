@@ -217,14 +217,10 @@ export class Vector2 {
         return this.radWithLine(v) * 180 / Math.PI;
     }
 
-    projectionWithLine(line) {
-        let deltaRadian = this.radWithLine(line) * 2;
-        return this.setRadian(deltaRadian);
-    }
-
     projectionWithNormal(normal) {
-        let deltaRadian = (Math.PI - this.radWithVector(normal)) * 2;
-        return this.setRadian(deltaRadian);
+        let deltaRadian = normal.radian() - this.radWithVector(normal) * 2;
+
+        return this.setRadian(deltaRadian).negate();
     }
 
     // return the normal vector

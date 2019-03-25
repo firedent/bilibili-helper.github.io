@@ -102,7 +102,6 @@ export class Ball {
         if (atUpOrDown) {
             if (Math.abs(topS) < Math.abs(bottomS)) {
                 if (topS < this.radius) {
-                    //const projectionVelocity = this.velocity.projectionWithLine(new Vector2(target.length, 0));
                     this.velocity.negateY();
                     this.acceleration.negateY();
                     this.setPositionY(this.item.y - (this.radius - topS));
@@ -152,32 +151,20 @@ export class Ball {
             target,
             point: new Vector2(target.position.x + target.radius, target.position.y + target.height - target.radius),
         })) return this;
-
         // bottom right
         if (this.collisionCheckWithCornerCircle({
             target,
             point: new Vector2(target.position.x + target.width - target.radius, target.position.y + target.height - target.radius),
         })) return this;
-
-        return this;
     }
-
-    collisionCheckWithLineSegment = (segmentPosition, length, circlePosition, radius) => {
-        //const k = lineSegmentVector.y / lineSegmentVector.x;
-        //const b = lineSegmentPoint1.y - k * lineSegmentPoint1.x;
-        if (segmentPosition.y < circlePosition.y + radius &&
-            circlePosition.x >= segmentPosition.x &&
-            circlePosition.x <= segmentPosition.x + length
-        ) {
-            return segmentPosition.y - circlePosition.y;
-        } else return false;
-    };
 
     collisionCheckWithCornerCircle({target, point}) {
         const distance = this.position.distanceTo(point);
         if (distance < this.radius + target.radius) {
-            const normalVector = point.sub(this.position);
+            let normalVector = point.clone().sub(this.position);
+            //console.log(this.velocity.angle(), normalVector.angle());
 
+            // 嵌入时位置调整
             const delta = normalVector.length();
             const deltaVector = normalVector.clone().setLength(this.radius + target.radius - delta);
 
@@ -186,6 +173,7 @@ export class Ball {
 
             let projectionVector = this.velocity.clone().projectionWithNormal(normalVector);
             this.velocity.setRadian(projectionVector.radian());
+            //console.log(this.velocity.angle());
             this.acceleration.setRadian(projectionVector.radian());
             return true;
         }
