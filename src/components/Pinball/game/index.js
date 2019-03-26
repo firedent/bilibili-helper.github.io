@@ -14,12 +14,12 @@ export const createApp = (width, height) => {
         radius: 50,
         //rotation: Math.PI,
     });
-    const speed = 0.7;
+    const speed = 1;
     baffle.createBall({
-        radius: 50,
-        velocity: new Vector2(0 * speed, 1 * speed),
-        //acceleration: new Vector2(10,10),
-        position: new Vector2(-20, -120),
+        radius: 5,
+        velocity: new Vector2(1 * speed, 1 * speed),
+        acceleration: new Vector2(0, 0.3),
+        position: new Vector2(-120, -120),
     });
     const [rows, columns, gap, padding] = [1, 1, 30, 120];
     const columnWidth = (width - 2 * padding - (columns - 1) * gap) / columns;
@@ -37,8 +37,8 @@ export const createApp = (width, height) => {
             //height: 10,
             alpha: 0.5,
         },
-    })//.createBlock({index: 0});
-    .fillAll();
+    });//.createBlock({index: 0});
+    //.fillAll();
 
     game.addTicker((delta) => {
         game.ballsMap.forEach((ball) => {

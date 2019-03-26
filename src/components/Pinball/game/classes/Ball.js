@@ -13,12 +13,15 @@ export class Ball {
         radius = 10,
         position = new Vector2(0, 0),
         velocity = new Vector2(0, 0),
+        maxVelocity = 5,
+        maxAcceleration = 5,
         acceleration = new Vector2(0, 0),
     }) {
         this.color = color;
         this.radius = radius;
         this.position = position;
         this.velocity = velocity;
+        this.maxVelocity = maxVelocity;
         this.acceleration = acceleration;
         if (app) this.init(app);
     }
@@ -36,9 +39,15 @@ export class Ball {
     }
 
     move(delta) {
-        const currentVelocity = this.velocity.clone().add(this.acceleration).multiplyScalar(delta);
+        const newVelocity = this.velocity.add(this.acceleration);
+        if (this.maxVelocity < newVelocity.length()) {
+            this.velocity.setLength(this.maxVelocity);
+        }
+        window.newAcceleration = this.acceleration;
+        window.newVelocitySize = this.velocity.length();
+        window.newVelocity = this.velocity;
         //console.log(delta);
-        const currentPosition = this.position.clone().add(currentVelocity);
+        const currentPosition = this.position.clone().add(this.velocity.multiplyScalar(delta));
         return this.setPosition(currentPosition);
     }
 
@@ -67,20 +76,16 @@ export class Ball {
         if (this.position.x < this.radius) {
             this.position.x = this.radius;
             this.velocity.negateX();
-            this.acceleration.negateX();
         } else if (this.position.x + this.radius > width) {
             this.position.x = width - this.radius;
             this.velocity.negateX();
-            this.acceleration.negateX();
         }
         if (this.position.y < this.radius) {
             this.position.y = this.radius;
             this.velocity.negateY();
-            this.acceleration.negateY();
         } else if (this.position.y + this.radius > height) {
             this.position.y = height - this.radius;
             this.velocity.negateY();
-            this.acceleration.negateY();
         }
         return this;
     }
@@ -103,13 +108,11 @@ export class Ball {
             if (Math.abs(topS) < Math.abs(bottomS)) {
                 if (topS < this.radius) {
                     this.velocity.negateY();
-                    this.acceleration.negateY();
                     this.setPositionY(this.item.y - (this.radius - topS));
                     modified = true;
                 }
             } else if (bottomS < this.radius) {
                 this.velocity.negateY();
-                this.acceleration.negateY();
                 this.setPositionY(this.item.y + (this.radius - bottomS));
                 modified = true;
             }
@@ -120,13 +123,11 @@ export class Ball {
             if (Math.abs(leftS) < Math.abs(rightS)) {
                 if (leftS < this.radius) {
                     this.velocity.negateX();
-                    this.acceleration.negateX();
                     this.setPositionX(this.item.x - (this.radius - leftS));
                     modified = true;
                 }
             } else if (rightS < this.radius) {
                 this.velocity.negateX();
-                this.acceleration.negateX();
                 this.setPositionX(this.item.x + (this.radius - rightS));
                 modified = true;
             }
