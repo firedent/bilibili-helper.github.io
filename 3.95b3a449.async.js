@@ -116,12 +116,8 @@
   }
 `;class d extends r.default.Component{constructor(e){super(e)}render(){var e=this.props.global;return r.default.createElement(c,null,r.default.createElement(n.Header,null,"\u7f51\u7ad9\u52a8\u6001 ~ WHAT'S NEW",r.default.createElement("p",{className:"sub-title"},"\u8fd9\u91cc\u5217\u51fa\u6700\u65b0\u768410\u6761\u7f51\u7ad9\u52a8\u6001~")),r.default.createElement("ol",{className:"tab-contents"},e.websiteUpdate&&e.websiteUpdate.slice(0,10).map((e,t)=>r.default.createElement("div",{className:"info-item",key:t},r.default.createElement("li",{dangerouslySetInnerHTML:{__html:e}})))))}}var p=(0,i.connect)(e=>{var t=e.global;return{global:t}})(d);t.default=p},"1ZZj":function(e,t,a){"use strict";var o=a("svvH");Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var r=o(a("cDcd")),i=a("MuoO"),l=o(a("vOnD")),n=a("rY4l"),s=o(a("RXmK")),c=(0,l.default)(s.default)`
   ol {
-    //height: 180px;
-    //border: 10px solid var(--border-color);
     padding: 10px;
     border-radius: 3px;
-    //box-shadow: rgba(20,20,20,0.1) 0px 0px 10px;
-    //background-color: var(--border-color);
   }
   .tab-bar {
     display: flex;
@@ -189,23 +185,22 @@
   .tab-contents {}
   .info-item {
     position: relative;
-    margin-left: 20px;
-    padding: 5px 0 5px 5px;
+    padding: 5px 0 5px 30px;
     font-size: 12px;
     border-radius: 3px;
     //border-bottom: 1px solid var(--pure-white);
     border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.15s;
     &:last-of-type {
       border:none;
     }
-    //&:hover, &.active {
-    //  background-color: var(--bilibili-blue);
-    //  color: var(--pure-white);
-    //}
+    &:hover, &.active {
+      background-color: #eee;
+    }
     i {
       margin: 0 3px;
       font-style: normal;
-      color: var(--content-color);
+      color: var(--bilibili-pink);
     }
     li {
       padding-left: 5px;
@@ -220,7 +215,7 @@
     a {
       position: absolute;
       top: 5px;
-      right: calc(100% + 25px);
+      right: calc(100% + 5px);
       color: var(--bilibili-blue);
       text-decoration: none;
     }
@@ -308,7 +303,7 @@
       background-color: #eee;
     }
   }
-`;class p extends r.default.Component{constructor(e){super(e),this.updateDownloads=(e=>{var t=_.find(e,e=>{e.version;var t=e.url;return t}).version,a=[],o=[],r=0;_.forEach(e,e=>{var t=e.url;t&&r<3?(r+=1,a.push(e)):o.push(e)}),this.setState({tabVersion:t,downloadThree:a,restVersion:o})}),this.handleOnClickTab=(e=>{this.setState({tabVersion:e})}),this.handleOnClickMoreVersion=(()=>{this.setState({showMoreVersion:!this.state.showMoreVersion})}),this.getVersionTypeString=(e=>{switch(e){case"store":return"Google Web Store";case"test":return"\u6d4b\u8bd5\u7248";default:return""}}),this.getVersionTypeIcon=(e=>{switch(e){case"store":return r.default.createElement("img",{src:"../static/icons/google_favicon.ico"});case"test":return"test ";default:return""}}),this.state={tabVersion:null,showMoreVersion:!1,downloadThree:null,restVersion:null}}componentDidMount(){var e=this.props.global,t=this.state,a=t.firstVersion,o=t.downloadThree,r=t.restVersion;!e.downloads||a||o||r||this.updateDownloads(e.downloads)}componentDidUpdate(e,t){var a=this.props.global,o=this.state,r=o.firstVersion,i=o.downloadThree,l=o.restVersion;!a.downloads||r||i||l||this.updateDownloads(a.downloads)}render(){var e=this.props.global,t=this.state,a=t.tabVersion,o=t.showMoreVersion,i=t.downloadThree,l=t.restVersion;return r.default.createElement(c,{id:"downloadArea"},r.default.createElement(n.Header,null,"\u4e0b\u8f7d\u52a9\u624b ~ DOWNLOAD",r.default.createElement("a",{href:"https://www.bilibili.com/video/av44808808",target:"_blank"},"\u529f\u80fd\u4ecb\u7ecd"),r.default.createElement("a",{href:"https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85",target:"_blank"},"\u5b89\u88c5\u65b9\u6cd5"),r.default.createElement("p",{className:"sub-title"},"\u65e7\u7248\u672c\u4e0d\u63d0\u4f9b\u4e0b\u8f7d\u5730\u5740\u54df~")),r.default.createElement("div",{className:"tab-bar"},r.default.createElement("div",{className:"versions"},i&&i.map(e=>{var t=e.version,o=e.sign,i=e.url;return i&&r.default.createElement(d,{key:t,className:`download-btn ${t===a&&"active"}`,onClick:()=>this.handleOnClickTab(t)},r.default.createElement("span",null,this.getVersionTypeString(o)," ",t),t===a&&r.default.createElement("a",{href:i},r.default.createElement("i",{className:"download-btn"},"Click here to download")))})),r.default.createElement("div",{className:"more-version-box"},r.default.createElement("button",{className:`more-version-btn ${o&&"active"}`,onClick:this.handleOnClickMoreVersion},"More Version"),o&&r.default.createElement("ul",null,l&&l.map(e=>{var t=e.version,o=(e.url,e.sign);return r.default.createElement("li",{className:`${t===a&&"active"}`,key:t,onClick:()=>this.handleOnClickTab(t)},this.getVersionTypeIcon(o),t)})))),r.default.createElement("div",{className:"tab-contents"},e.downloads&&e.downloads.map(e=>{var t=e.version,o=(e.url,e.info);return a===t&&r.default.createElement("ol",{key:t},o.map((e,t)=>r.default.createElement("div",{className:"info-item",key:t},r.default.createElement("li",{dangerouslySetInnerHTML:{__html:e[1]}}),void 0!==e[2]&&r.default.createElement("a",{target:"_blank",href:`https://github.com/bilibili-helper/bilibili-helper/issues/${e[2]}`},"#",e[2]))))})))}}var u=(0,i.connect)(e=>{var t=e.global;return{global:t}})(p);t.default=u},"5BdJ":function(e,t,a){"use strict";var o=a("svvH");Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var r=o(a("cDcd")),i=a("MuoO"),l=o(a("vOnD")),n=o(a("RXmK")),s=(0,l.default)(n.default)`
+`;class p extends r.default.Component{constructor(e){super(e),this.updateDownloads=(e=>{var t=_.find(e,e=>{e.version;var t=e.url;return t}).version,a=[],o=[],r=0;_.forEach(e,e=>{var t=e.url;t&&r<3?(r+=1,a.push(e)):o.push(e)}),this.setState({tabVersion:t,downloadThree:a,restVersion:o})}),this.handleOnClickTab=(e=>{this.setState({tabVersion:e})}),this.handleOnClickMoreVersion=(()=>{this.setState({showMoreVersion:!this.state.showMoreVersion})}),this.getVersionTypeString=(e=>{switch(e){case"store":return"Google Web Store";case"test":return"\u6d4b\u8bd5\u7248";default:return""}}),this.getVersionTypeIcon=(e=>{switch(e){case"store":return r.default.createElement("img",{src:"../static/icons/google_favicon.ico"});case"test":return"test ";default:return""}}),this.state={tabVersion:null,showMoreVersion:!1,downloadThree:null,restVersion:null}}componentDidMount(){var e=this.props.global,t=this.state,a=t.firstVersion,o=t.downloadThree,r=t.restVersion;!e.downloads||a||o||r||this.updateDownloads(e.downloads)}componentDidUpdate(e,t){var a=this.props.global,o=this.state,r=o.firstVersion,i=o.downloadThree,l=o.restVersion;!a.downloads||r||i||l||this.updateDownloads(a.downloads)}render(){var e=this.props.global,t=this.state,a=t.tabVersion,o=t.showMoreVersion,i=t.downloadThree,l=t.restVersion;return r.default.createElement(c,{id:"downloadArea"},r.default.createElement(n.Header,null,"\u4e0b\u8f7d\u52a9\u624b ~ DOWNLOAD",r.default.createElement("a",{href:"https://www.bilibili.com/video/av44808808",target:"_blank"},"\u529f\u80fd\u4ecb\u7ecd"),r.default.createElement("a",{href:"https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85",target:"_blank"},"\u5b89\u88c5\u65b9\u6cd5"),r.default.createElement("p",{className:"sub-title"},"\u65e7\u7248\u672c\u4e0d\u63d0\u4f9b\u4e0b\u8f7d\u5730\u5740\u54df~")),r.default.createElement("div",{className:"tab-bar"},r.default.createElement("div",{className:"versions"},i&&i.map(e=>{var t=e.version,o=e.sign,i=e.url;return i&&r.default.createElement(d,{key:t,className:`download-btn ${t===a&&"active"}`,onClick:()=>this.handleOnClickTab(t)},r.default.createElement("span",null,this.getVersionTypeString(o)," ",t),t===a&&r.default.createElement("a",{href:i},r.default.createElement("i",{className:"download-btn"},"Click here to download")))})),r.default.createElement("div",{className:"more-version-box"},r.default.createElement("button",{className:`more-version-btn ${o&&"active"}`,onClick:this.handleOnClickMoreVersion},"More Version"),o&&r.default.createElement("ul",null,l&&l.map(e=>{var t=e.version,o=(e.url,e.sign);return r.default.createElement("li",{className:`${t===a&&"active"}`,key:t,onClick:()=>this.handleOnClickTab(t)},this.getVersionTypeIcon(o),t)})))),r.default.createElement("div",{className:"tab-contents"},e.downloads&&e.downloads.map(e=>{var t=e.version,o=(e.url,e.info);return a===t&&r.default.createElement("ol",{key:t},o.map((e,t)=>r.default.createElement("div",{className:`info-item ${e[0]}`,key:t},r.default.createElement("li",{dangerouslySetInnerHTML:{__html:e[1]}}),void 0!==e[2]&&r.default.createElement("a",{target:"_blank",href:`https://github.com/bilibili-helper/bilibili-helper/issues/${e[2]}`},"#",e[2]))))})))}}var u=(0,i.connect)(e=>{var t=e.global;return{global:t}})(p);t.default=u},"5BdJ":function(e,t,a){"use strict";var o=a("svvH");Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var r=o(a("cDcd")),i=a("MuoO"),l=o(a("vOnD")),n=o(a("RXmK")),s=(0,l.default)(n.default)`
   h3 {
     margin: 15px 0 20px;
     font-size: 16px;
@@ -1084,6 +1079,13 @@
     font-size: 16px;
     color: #212121;
   }
+  header {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .item {
+    padding-left: 10px;
+  }
   ul {
     padding: 5px 1px;
     border-radius: 3px;
@@ -1114,10 +1116,16 @@
       i {
         margin: 0 3px;
         font-style: normal;
+        color: var(--bilibili-pink);
+      }
+      a {
+        right: calc(100% + 25px);
+        color: var(--bilibili-blue);
+        text-decoration: none;
       }
     }
   }
-`;class d extends i.default.Component{constructor(e){super(e)}render(){var e=this.props.announcements;return i.default.createElement(c,{id:"announcement"},i.default.createElement("h3",null,"\u91cd\u8981\u516c\u544a ~ NOTICES"),r.default.map(e.config,(e,t)=>"\u529f\u80fd\u5220\u9664\u987b\u77e5"===t&&i.default.createElement("div",{className:"item",key:t},i.default.createElement("ul",{className:"content"},e.map((e,t)=>i.default.createElement("li",{key:t,dangerouslySetInnerHTML:{__html:e}}))))))}}var p=(0,l.connect)(e=>{var t=e.announcements;return{announcements:t}})(d);t.default=p},jbW3:function(e,t,a){"use strict";var o=a("svvH");Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var r=o(a("cDcd")),i=a("MuoO"),l=o(a("vOnD")),n=a("LdXD"),s=l.default.div.attrs({className:"header-box"})`
+`;class d extends i.default.Component{constructor(e){super(e)}render(){var e=this.props.announcements;return i.default.createElement(c,{id:"announcement"},i.default.createElement("h3",null,"\u91cd\u8981\u516c\u544a ~ NOTICES"),r.default.map(e.config,(e,t)=>i.default.createElement("div",{className:"item",key:t},i.default.createElement("header",null,t),i.default.createElement("ul",{className:"content"},e.map((e,t)=>i.default.createElement("li",{key:t,dangerouslySetInnerHTML:{__html:e}}))))))}}var p=(0,l.connect)(e=>{var t=e.announcements;return{announcements:t}})(d);t.default=p},jbW3:function(e,t,a){"use strict";var o=a("svvH");Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var r=o(a("cDcd")),i=a("MuoO"),l=o(a("vOnD")),n=a("LdXD"),s=l.default.div.attrs({className:"header-box"})`
   position: relative;
   flex-shrink: 0;
   margin-bottom: 40px;
@@ -1298,7 +1306,7 @@
       box-sizing: border-box;
     }
   }
-`,p=()=>i.default.createElement(i.default.Fragment,null,i.default.createElement(d,null),i.default.createElement(c.HeaderArea,null),i.default.createElement(c.DownloadArea,null),i.default.createElement(c.WebsiteUpdateArea,null),i.default.createElement(c.VoteArea,null),i.default.createElement(c.AnnouncementArea,null),i.default.createElement(c.FeedbackArea,null),i.default.createElement(c.FeedArea,null),i.default.createElement(c.BadgeArea,null),i.default.createElement(c.CommentArea,null)),u=(0,s.default)((0,l.connect)(e=>e)(p));t.default=u},rY4l:function(e,t,a){"use strict";var o=a("svvH");Object.defineProperty(t,"__esModule",{value:!0}),t.Header=void 0;var r=o(a("cDcd")),i=o(a("vOnD")),l=i.default.h3`
+`,p=()=>i.default.createElement(i.default.Fragment,null,i.default.createElement(d,null),i.default.createElement(c.HeaderArea,null),i.default.createElement(c.DownloadArea,null),i.default.createElement(c.AnnouncementArea,null),i.default.createElement(c.WebsiteUpdateArea,null),i.default.createElement(c.VoteArea,null),i.default.createElement(c.FeedbackArea,null),i.default.createElement(c.FeedArea,null),i.default.createElement(c.BadgeArea,null),i.default.createElement(c.CommentArea,null)),u=(0,s.default)((0,l.connect)(e=>e)(p));t.default=u},rY4l:function(e,t,a){"use strict";var o=a("svvH");Object.defineProperty(t,"__esModule",{value:!0}),t.Header=void 0;var r=o(a("cDcd")),i=o(a("vOnD")),l=i.default.h3`
   align-items: center;
   margin: 15px 0 20px;
   font-size: 16px;

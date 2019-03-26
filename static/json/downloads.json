@@ -1,8 +1,8 @@
 [
     {
-        "version": "1.2.1.11",
+        "version": "1.2.1.13",
         "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.11.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.1/bilibilihelper_1.2.1.beta.13.crx",
         "info": [
             ["fix", "修复<i>去污粉</i>关闭后仍然启用的bug"],
             ["fix", "修复由于<i>跨区域限制解锁</i>功能导致的部分页面和功能无法正常使用的问题", 567],
@@ -25,7 +25,7 @@
             ["add", "增加对<i>稍后再看</i>页面的支持，该页面也会加载助手了，但暂不支持<i>夜间模式</i>功能"],
             ["add", "增加<i>专栏图片保存</i>功能，点击'下载图片'按钮后会弹出另存为窗口，暂时不做一键全部下载功能"],
             ["add", "增加<i>关闭动态页面小视频自动播放</i>功能，功能启用后页面中的视频不会对滚动事件做出自动暂停和播放的响应", 561],
-            ["add", "增加<i>去污粉</i>功能项目，现在可以将2233娘屏蔽掉了，这是一个弹幕的过滤项"]
+            ["add", "增加<i>去污粉</i>功能项目，现在可以将2233娘屏蔽掉了，这是一个新增的过滤项"]
         ]
     },
     {
