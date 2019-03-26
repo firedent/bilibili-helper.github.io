@@ -4,8 +4,7 @@
  * Description:
  */
 import {Container} from 'pixi.js';
-import {Vector2} from 'Pinball/game/lib';
-import {Block} from 'Pinball/game/classes';
+import {Vector2,Block} from 'Pinball/game/lib';
 
 // 在旧值上加新值，如果新值为undefined时使用旧值
 const useNewByOldFunc = (oldValue, newValue) => (newValue !== undefined) ? newValue : oldValue;

@@ -3,11 +3,10 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Rect} from 'Pinball/game/classes';
-import {Vector2} from 'Pinball/game/lib';
+import {Vector2,Rect} from 'Pinball/game/lib';
 
 export class Block {
-    constructor({app, color = 0xffffff, width, height, radius = 0, hp = 1, position = new Vector2(0, 0), ...rest}) {
+    constructor({app, color = 0xffffff, width, height, radius = 0, hp = 1, position = new Vector2(0, 0), friction = 0, ...rest}) {
         this.color = color;
         this.hp = hp;
         this.width = width;
@@ -15,6 +14,7 @@ export class Block {
         this.radius = radius;
         this.position = position;
         this.app = app;
+        this.friction = friction;
         Object.assign(this, rest);
 
         this.rect = new Rect(this);

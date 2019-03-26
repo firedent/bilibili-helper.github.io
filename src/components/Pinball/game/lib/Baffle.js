@@ -3,9 +3,7 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Block, Rect} from 'Pinball/game/classes';
-import {Vector2} from 'Pinball/game/lib';
-import {Container} from 'pixi.js';
+import {Vector2, Block, Rect} from 'Pinball/game/lib';
 
 export class Baffle {
     constructor({
@@ -70,6 +68,7 @@ export class Baffle {
     init(app) {
         this.app = app;
         const rect = new Block(this);
+        this.block = rect;
         this.item = rect.item;
         this.bindKeyboard();
         return this;

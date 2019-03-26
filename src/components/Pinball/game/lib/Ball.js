@@ -43,11 +43,10 @@ export class Ball {
         if (this.maxVelocity < newVelocity.length()) {
             this.velocity.setLength(this.maxVelocity);
         }
-        window.newAcceleration = this.acceleration;
         window.newVelocitySize = this.velocity.length();
         window.newVelocity = this.velocity;
         //console.log(delta);
-        const currentPosition = this.position.clone().add(this.velocity.multiplyScalar(delta));
+        const currentPosition = this.position.clone().add(this.velocity);
         return this.setPosition(currentPosition);
     }
 
@@ -132,7 +131,11 @@ export class Ball {
                 modified = true;
             }
         }
-        if (modified) return this;
+
+        if (modified) {
+            //if (target.block.friction) this.velocity.multiplyScalar(target.block.friction); // 摩擦力
+            return this;
+        }
 
         // 弹板角落回弹处理
         //top left
@@ -174,8 +177,7 @@ export class Ball {
 
             let projectionVector = this.velocity.clone().projectionWithNormal(normalVector);
             this.velocity.setRadian(projectionVector.radian());
-            //console.log(this.velocity.angle());
-            this.acceleration.setRadian(projectionVector.radian());
+            //if (target.block.friction) this.velocity.multiplyScalar(target.block.friction); // 摩擦力
             return true;
         }
     }

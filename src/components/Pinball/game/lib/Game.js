@@ -3,7 +3,7 @@
  * Create: 2019/3/23
  * Description:
  */
-import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/classes';
+import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/lib';
 import {Vector2} from 'Components/Pinball/game/lib/Vector2';
 import {Application, Container} from 'pixi.js';
 

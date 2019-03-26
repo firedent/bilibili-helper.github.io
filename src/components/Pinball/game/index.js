@@ -12,14 +12,15 @@ export const createApp = (width, height) => {
         position: new Vector2(100, /*height - 50*/ 150),
         length: 100,
         radius: 50,
+        friction: 0.99,
         //rotation: Math.PI,
     });
     const speed = 1;
     baffle.createBall({
-        radius: 5,
-        velocity: new Vector2(1 * speed, 1 * speed),
-        acceleration: new Vector2(0, 0.3),
-        position: new Vector2(-120, -120),
+        radius: 50,
+        velocity: new Vector2(0 * speed, 1 * speed),
+        //acceleration: new Vector2(0, 0),
+        position: new Vector2(-45, -120),
     });
     const [rows, columns, gap, padding] = [1, 1, 30, 120];
     const columnWidth = (width - 2 * padding - (columns - 1) * gap) / columns;
