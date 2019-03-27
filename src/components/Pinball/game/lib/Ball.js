@@ -18,16 +18,20 @@ export class Ball extends MovableCircle {
         if (this.position.x < this.radius) {
             this.position.x = this.radius;
             this.velocity.negateX();
+            //this.acceleration.setY(1);
         } else if (this.position.x + this.radius > width) {
             this.position.x = width - this.radius;
             this.velocity.negateX();
+            //this.acceleration.setY(1);
         }
         if (this.position.y < this.radius) {
             this.position.y = this.radius;
             this.velocity.negateY();
+            this.acceleration.setY(0);
         } else if (this.position.y + this.radius > height) {
             this.position.y = height - this.radius;
             this.velocity.negateY();
+            this.acceleration.setY(0);
         }
         return this;
     }

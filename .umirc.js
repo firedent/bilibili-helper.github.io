@@ -32,7 +32,7 @@ export default {
                 dva: {
                     immer: true,
                 },
-                hardSource: true,
+                //hardSource: true,
                 dynamicImport: true,
                 routes: {
                     exclude: [

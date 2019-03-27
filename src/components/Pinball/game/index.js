@@ -21,11 +21,11 @@ export const createApp = (width, height) => {
     const speed = 10;
     baffle.createBall({
         radius: 10,
-        velocity: new Vector2(0 * speed, 1 * speed),
+        velocity: new Vector2(1 * speed, -1 * speed),
         //acceleration: new Vector2(-1 * speed, -1 * speed),
         position: new Vector2(-45, -120),
     });
-    const [rows, columns, gap, padding] = [1, 1, 30, 120];
+    const [rows, columns, gap, padding] = [3, 3, 50, 50];
     const columnWidth = (width - 2 * padding - (columns - 1) * gap) / columns;
     game.createMap({
         width,
@@ -39,10 +39,10 @@ export const createApp = (width, height) => {
             radius: 10,
             //width: 10,
             //height: 10,
-            alpha: 0.5,
+            //alpha: 0.5,
         },
-    });//.createBlock({index: 0});
-    //.fillAll();
+    })//.createBlock({index: 0});
+    .fillAll();
 
     game.addTicker((delta) => {
         game.ballsMap.forEach((ball) => {
