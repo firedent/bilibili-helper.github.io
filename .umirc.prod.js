@@ -12,7 +12,6 @@ export default {
         'react': 'window.React',
         'react-dom': 'window.ReactDOM',
         'lodash': 'window._',
-        'pixi.js': 'window.PIXI',
     },
     chainWebpack: function(config, {webpack}) {
         config.merge({
