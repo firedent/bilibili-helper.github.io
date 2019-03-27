@@ -3,72 +3,15 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Vector2} from 'Components/Pinball/game/lib';
-import {Graphics} from 'pixi.js';
+import {Vector2, MovableCircle} from 'Components/Pinball/game/lib';
 
-export class Ball {
-    constructor({
-        app,
-        color = 0xffffff,
-        radius = 10,
-        position = new Vector2(0, 0),
-        velocity = new Vector2(0, 0),
-        maxVelocity = 5,
-        maxAcceleration = 5,
-        acceleration = new Vector2(0, 0),
-    }) {
-        this.color = color;
-        this.radius = radius;
-        this.position = position;
-        this.velocity = velocity;
-        this.maxVelocity = maxVelocity;
-        this.acceleration = acceleration;
-        if (app) this.init(app);
-    }
-
-    init(app) {
-        this.app = app;
-        let item = new Graphics();
-        item.beginFill(this.color);
-        item.drawCircle(0, 0, this.radius);
-        item.endFill();
-        item.x = this.position.x;
-        item.y = this.position.y;
-        this.item = item;
-        return this;
-    }
-
-    move(delta) {
-        const newVelocity = this.velocity.add(this.acceleration);
-        if (this.maxVelocity < newVelocity.length()) {
-            this.velocity.setLength(this.maxVelocity);
-        }
-        window.newVelocitySize = this.velocity.length();
-        window.newVelocity = this.velocity;
-        //console.log(delta);
-        const currentPosition = this.position.clone().add(this.velocity);
-        return this.setPosition(currentPosition);
-    }
-
-    setPositionX(x) {
-        this.position.setX(x);
-        this.item.x = x;
-    }
-
-    setPositionY(y) {
-        this.position.setY(y);
-        this.item.y = y;
-    }
-
-    setPosition(x, y) {
-        if (typeof x === 'number' && typeof y === 'number') {
-            this.setPositionX(x);
-            this.setPositionY(y);
-        } else if (x instanceof Vector2) {
-            this.setPositionX(x.x);
-            this.setPositionY(x.y);
-        }
-        return this;
+export class Ball extends MovableCircle {
+    constructor(options = {}) {
+        options = Object.assign(options, {
+            maxVelocity: 5,
+            maxAcceleration: 5,
+        });
+        super(options);
     }
 
     collisionCheckWithMap(width, height) {
@@ -102,38 +45,37 @@ export class Ball {
         let modified = false;
 
         // 弹板四面回弹处理
-        const atUpOrDown = this.item.x >= target.item.x + target.radius && this.item.x <= target.item.x + target.width - target.radius;
+        const atUpOrDown = this.position.x >= target.position.x + target.radius && this.position.x <= target.position.x + target.width - target.radius;
         if (atUpOrDown) {
             if (Math.abs(topS) < Math.abs(bottomS)) {
-                if (topS < this.radius) {
+                if (topS <= this.radius) {
                     this.velocity.negateY();
-                    this.setPositionY(this.item.y - (this.radius - topS));
+                    this.setY(this.position.y - (this.radius - topS));
                     modified = true;
                 }
-            } else if (bottomS < this.radius) {
+            } else if (bottomS <= this.radius) {
                 this.velocity.negateY();
-                this.setPositionY(this.item.y + (this.radius - bottomS));
+                this.setY(this.position.y + (this.radius - bottomS));
                 modified = true;
             }
         }
 
-        const atLeftOrRight = this.item.y >= target.item.y + target.radius && this.item.y <= target.item.y + target.height - target.radius;
+        const atLeftOrRight = this.position.y >= target.position.y + target.radius && this.position.y <= target.position.y + target.height - target.radius;
         if (atLeftOrRight) {
             if (Math.abs(leftS) < Math.abs(rightS)) {
-                if (leftS < this.radius) {
+                if (leftS <= this.radius) {
                     this.velocity.negateX();
-                    this.setPositionX(this.item.x - (this.radius - leftS));
+                    this.setX(this.position.x - (this.radius - leftS));
                     modified = true;
                 }
-            } else if (rightS < this.radius) {
+            } else if (rightS <= this.radius) {
                 this.velocity.negateX();
-                this.setPositionX(this.item.x + (this.radius - rightS));
+                this.setX(this.position.x + (this.radius - rightS));
                 modified = true;
             }
         }
 
         if (modified) {
-            //if (target.block.friction) this.velocity.multiplyScalar(target.block.friction); // 摩擦力
             return this;
         }
 
@@ -164,10 +106,8 @@ export class Ball {
 
     collisionCheckWithCornerCircle({target, point}) {
         const distance = this.position.distanceTo(point);
-        if (distance < this.radius + target.radius) {
+        if (distance <= this.radius + target.radius) {
             let normalVector = point.clone().sub(this.position);
-            //console.log(this.velocity.angle(), normalVector.angle());
-
             // 嵌入时位置调整
             const delta = normalVector.length();
             const deltaVector = normalVector.clone().setLength(this.radius + target.radius - delta);
@@ -177,13 +117,12 @@ export class Ball {
 
             let projectionVector = this.velocity.clone().projectionWithNormal(normalVector);
             this.velocity.setRadian(projectionVector.radian());
-            //if (target.block.friction) this.velocity.multiplyScalar(target.block.friction); // 摩擦力
             return true;
         }
     }
 
-    topS = (target) => target.item.y - this.item.y;
-    bottomS = (target) => this.item.y - target.item.y - target.height;
-    leftS = (target) => target.item.x - this.item.x;
-    rightS = (target) => this.item.x - target.item.x - target.width;
+    topS = (target) => target.position.y - this.position.y;
+    bottomS = (target) => this.position.y - target.position.y - target.height;
+    leftS = (target) => target.position.x - this.position.x;
+    rightS = (target) => this.position.x - target.position.x - target.width;
 };

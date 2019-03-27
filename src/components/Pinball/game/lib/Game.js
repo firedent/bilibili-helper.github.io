@@ -38,16 +38,16 @@ export class Game {
         return this;
     }
 
-    createBall({color = 0xffffff, radius = 10, speed = 1, position = new Vector2(0, 0), acceleration = new Vector2(0, 0), ...rest}) {
-        let ball = new Ball({app: this, color, speed, radius, position, acceleration: acceleration.multiplyScalar(speed), ...rest});
+    createBall(options) {
+        let ball = new Ball({app: this, ...options});
         this.ballsMap.push(ball);
         this.ballsContainer.addChild(ball.item);
         this.app.stage.addChild(this.ballsContainer);
         return ball;
     }
 
-    createBaffle({color, length, thick, speed, position, radius, ...rest}) {
-        this.baffle = new Baffle({app: this, color, length, thick, speed, position, radius, ...rest});
+    createBaffle(options) {
+        this.baffle = new Baffle({app: this, ...options});
         this.app.stage.addChild(this.baffle.item);
         return this.baffle;
     }

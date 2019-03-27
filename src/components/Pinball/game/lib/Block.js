@@ -3,43 +3,13 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Vector2,Rect} from 'Pinball/game/lib';
+import {MovableRect} from './index';
 
-export class Block {
-    constructor({app, color = 0xffffff, width, height, radius = 0, hp = 1, position = new Vector2(0, 0), friction = 0, ...rest}) {
-        this.color = color;
-        this.hp = hp;
-        this.width = width;
-        this.height = height;
-        this.radius = radius;
-        this.position = position;
-        this.app = app;
+export class Block extends MovableRect {
+    friction; // 摩擦力
+
+    constructor({friction = 0, ...options}) {
+        super(options);
         this.friction = friction;
-        Object.assign(this, rest);
-
-        this.rect = new Rect(this);
-        this.item = this.rect.item;
-        this.setPosition(this.position);
-    }
-
-    setPositionX(x) {
-        this.position.setX(x);
-        this.item.x = x;
-    }
-
-    setPositionY(y) {
-        this.position.setY(y);
-        this.item.y = y;
-    }
-
-    setPosition(x, y) {
-        if (typeof x === 'number' && typeof y === 'number') {
-            this.setPositionX(x);
-            this.setPositionY(y);
-        } else if (x instanceof Vector2) {
-            this.setPositionX(x.x);
-            this.setPositionY(x.y);
-        }
-        return this;
     }
 }

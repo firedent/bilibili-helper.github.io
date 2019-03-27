@@ -8,9 +8,9 @@ import styled, {keyframes} from 'styled-components';
 import {createApp} from 'Pinball/game';
 
 const panelWidth = 700;
-const panelHeight = 700;
+const panelHeight = 800;
 const canvasWidth = 300;
-const canvasHeight = 300;
+const canvasHeight = 600;
 
 const PinballDownAnimate = keyframes`
   0% {
@@ -57,7 +57,7 @@ const PinballView = styled.div`
   z-index: 1000;
   canvas {
     position: absolute;
-    top: calc(50% - ${canvasHeight / 2}px);
+    top: calc(50% - ${canvasHeight / 2 - 50}px);
     right: calc(50% - ${canvasWidth / 2}px);
     width: ${canvasWidth}px;
     height: ${canvasHeight}px;

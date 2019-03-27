@@ -4,9 +4,10 @@
  * Description:
  */
 export {Vector2} from './Vector2';
-export {Game} from './Game';
+export * from './Movable';
+export * from './Shapes';
+export {Block} from './Block';
 export {Ball} from './Ball';
 export {Baffle} from './Baffle';
-export {Rect} from './Rect';
-export {Block} from './Block';
 export {BlockMap} from './BlockMap';
+export {Game} from './Game';

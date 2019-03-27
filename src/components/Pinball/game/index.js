@@ -5,21 +5,24 @@
  */
 import {Game, Vector2} from 'Pinball/game/lib';
 
+
 export const createApp = (width, height) => {
     const game = new Game().create(width, height);
     const baffle = game.createBaffle({
         color: 0xdddddd,
-        position: new Vector2(100, /*height - 50*/ 150),
-        length: 100,
+        position: new Vector2(100, height - 50),
+        width: 100,
+        height: 10,
         radius: 50,
         friction: 0.99,
+        maxVelocity: 3,
         //rotation: Math.PI,
     });
-    const speed = 1;
+    const speed = 10;
     baffle.createBall({
-        radius: 50,
+        radius: 10,
         velocity: new Vector2(0 * speed, 1 * speed),
-        //acceleration: new Vector2(0, 0),
+        //acceleration: new Vector2(-1 * speed, -1 * speed),
         position: new Vector2(-45, -120),
     });
     const [rows, columns, gap, padding] = [1, 1, 30, 120];

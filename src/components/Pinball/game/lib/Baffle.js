@@ -3,89 +3,31 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Vector2, Block, Rect} from 'Pinball/game/lib';
+import BezierEasing from 'bezier-easing';
+import {Vector2, Block} from 'Pinball/game/lib';
 
-export class Baffle {
-    constructor({
-        app,
-        color = 0xffffff,
-        alpha = 1,
-        length = 100,
-        width = 100,
-        thick = 10,
-        height = 10,
-        speed = 1,
-        position = new Vector2(0, 0),
-        acceleration = new Vector2(0.001, 0.001),
-        radius = 0,
-        rotation,
-        ...rest
-    }) {
-        this._radius = 0;
+const baffleAccelerationBezierEasing = BezierEasing(1, 0, 0, 1);
 
-        this.color = color;
-        this.alpha = alpha;
-        this.length = length || width;
-        this.thick = thick || height;
+export class Baffle extends Block {
+    canMove = true;
+
+    constructor(options = {}) {
+        const {speed = 1} = options;
+        Object.assign(options, {
+            width: 100,
+            height: 10,
+        });
+        super(options);
         this.speed = speed;
-        this.radius = radius;
-        this.position = position;
-        this.rotation = rotation;
-        this.acceleration = acceleration;
-        this.maxAcceleration = new Vector2(length * 0.07, thick * 0.1);
-        Object.assign(this, rest);
-        if (app) this.init(app);
-        this.canMove = true;
-    }
-
-    get radius() {
-        return this._radius;
-    }
-
-    set radius(value) {
-        const shorter = Math.min(this.thick, this.length);
-        this._radius = value < shorter / 2 ? value : shorter / 2;
-    }
-
-    get width() {
-        return this.length;
-    }
-
-    set width(value) {
-        this.length = value;
-        return this;
-    }
-
-    get height() {
-        return this.thick;
-    }
-
-    set height(value) {
-        this.thick = value;
-        return this;
-    }
-
-    init(app) {
-        this.app = app;
-        const rect = new Block(this);
-        this.block = rect;
-        this.item = rect.item;
+        this.maxVelocity = new Vector2(this.width * 0.07, this.height * 0.1);
+        this.maxAcceleration = new Vector2(this.width * 0.7, this.height * 0.1);
+        this.accelerationTween = function(a) {
+            a.multiplyScalar(baffleAccelerationBezierEasing(a.length() / this.maxAcceleration) * this.speed);
+        };
+        this.velocityTween = function(v) {
+            v.multiplyScalar(1 - baffleAccelerationBezierEasing((this.maxVelocity - v.length()) / this.maxVelocity) * 30 / this.speed);
+        };
         this.bindKeyboard();
-        return this;
-    }
-
-    setX(n) {
-        this.item.x = n;
-        this.position.setX(n);
-        //window.x = this.position.x;
-        return this;
-    }
-
-    setY(n) {
-        this.item.y = n;
-        this.position.setY(n);
-        //window.y = this.position.y;
-        return this;
     }
 
     createBall(options) {
@@ -102,43 +44,48 @@ export class Baffle {
         const left = this.app.bindKey(document, 37);
         const right = this.app.bindKey(document, 39);
         this.app.addTicker(delta => {
-            !up.down && !down.down && !left.down && !right.down && this.stopMove();
-            if (up.down) this.moveUp(delta);
-            if (down.down) this.moveDown(delta);
+            !up.down && !down.down && !left.down && !right.down && this.move();
+            //if (up.down) this.moveUp(delta);
+            //if (down.down) this.moveDown(delta);
             if (left.down) this.moveLeft(delta);
             if (right.down) this.moveRight(delta);
-            if (up.down || down.down || left.down || right.down) this.collisionCheckWithBox(this.app.width, this.app.height);
+            if (this.velocity.length() > 0) this.collisionCheckWithBox(this.app.width, this.app.height);
         });
     }
 
-    moveUp(delta) {
-        if (Object.is(this.acceleration.y, NaN)) this.acceleration.y = this.maxAcceleration.y;
-        if (this.acceleration.y < this.maxAcceleration.y) this.acceleration.y += (this.acceleration.y + 0.5) * this.speed * delta;
-        return this.setY(this.item.y - this.acceleration.y);
-    }
-
-    moveDown(delta) {
-        if (Object.is(this.acceleration.y, NaN)) this.acceleration.y = this.maxAcceleration.y;
-        if (this.acceleration.y < this.maxAcceleration.y) this.acceleration.y += (this.acceleration.y + 0.5) * this.speed * delta;
-        return this.setY(this.item.y + this.acceleration.y);
-    }
-
-    moveLeft(delta) {
-        if (Object.is(this.acceleration.x, NaN)) this.acceleration.x = this.maxAcceleration.x;
-        if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed * delta;
-        return this.setX(this.item.x - this.acceleration.x);
-    }
-
-    moveRight(delta) {
-        if (Object.is(this.acceleration.x, NaN)) this.acceleration.x = this.maxAcceleration.x;
-        if (this.acceleration.x < this.maxAcceleration.x) this.acceleration.x += (this.acceleration.x + 0.5) * this.speed * delta;
-        return this.setX(this.item.x + this.acceleration.x);
-    }
-
-    stopMove() {
-        this.acceleration.set(0, 0);
+    moveUp() {
+        this.acceleration.setY(-50);
+        this.move();
         return this;
     }
+
+    moveDown() {
+        this.acceleration.setY(50);
+        this.move();
+        return this;
+    }
+
+    moveLeft() {
+        this.acceleration.setX(-150);
+        this.move();
+        return this;
+    }
+
+    moveRight() {
+        this.acceleration.setX(150);
+        this.move();
+        return this;
+    }
+
+    //
+    //stopMove() {
+    //    //const baffleVelocity = baffleAccelerationBezierEasing((this.maxVelocity - this.velocity.length()) / this.maxVelocity);
+    //    //this.acceleration.multiplyScalar(baffleVelocity);
+    //    //this.velocity.multiplyScalar(baffleVelocity);
+    //    this.stopMove();
+    //    //window.baffleVelocity = baffleVelocity;
+    //    return this;
+    //}
 
     collisionCheckWithBox(width, height) {
         if (this.position.x < 0) {
