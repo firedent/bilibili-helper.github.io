@@ -17,6 +17,13 @@ const AnnouncementWrapper = styled(Page)`
     font-size: 16px;
     color: #212121;
   }
+  header {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .item {
+    padding-left: 10px;
+  }
   ul {
     padding: 5px 1px;
     border-radius: 3px;
@@ -47,6 +54,12 @@ const AnnouncementWrapper = styled(Page)`
       i {
         margin: 0 3px;
         font-style: normal;
+        color: var(--bilibili-pink);
+      }
+      a {
+        right: calc(100% + 25px);
+        color: var(--bilibili-blue);
+        text-decoration: none;
       }
     }
   }
@@ -63,7 +76,8 @@ class AnnouncementArea extends React.Component {
             <AnnouncementWrapper id="announcement">
                 <h3>重要公告 ~ NOTICES</h3>
                 {_.map(announcements.config, (info, title) => (
-                    title === '功能删除须知' && <div className="item" key={title}>
+                    <div className="item" key={title}>
+                        <header>{title}</header>
                         <ul className="content">{info.map((text, index) => <li key={index} dangerouslySetInnerHTML={{__html: text}}/>)}</ul>
                     </div>
                 ))}

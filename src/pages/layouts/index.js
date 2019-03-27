@@ -51,9 +51,9 @@ const Home = () => (
         <GlobalStyleSheet/>
         <HeaderArea/>
         <DownloadArea/>
+        <AnnouncementArea/>
         <WebsiteUpdateArea/>
         <VoteArea/>
-        <AnnouncementArea/>
         <FeedbackArea/>
         <FeedArea/>
         <BadgeArea/>

@@ -11,12 +11,8 @@ import Page from 'Components/Page';
 
 const DownloadAreaWrapper = styled(Page)`
   ol {
-    //height: 180px;
-    //border: 10px solid var(--border-color);
     padding: 10px;
     border-radius: 3px;
-    //box-shadow: rgba(20,20,20,0.1) 0px 0px 10px;
-    //background-color: var(--border-color);
   }
   .tab-bar {
     display: flex;
@@ -84,23 +80,22 @@ const DownloadAreaWrapper = styled(Page)`
   .tab-contents {}
   .info-item {
     position: relative;
-    margin-left: 20px;
-    padding: 5px 0 5px 5px;
+    padding: 5px 0 5px 30px;
     font-size: 12px;
     border-radius: 3px;
     //border-bottom: 1px solid var(--pure-white);
     border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.15s;
     &:last-of-type {
       border:none;
     }
-    //&:hover, &.active {
-    //  background-color: var(--bilibili-blue);
-    //  color: var(--pure-white);
-    //}
+    &:hover, &.active {
+      background-color: #eee;
+    }
     i {
       margin: 0 3px;
       font-style: normal;
-      color: var(--content-color);
+      color: var(--bilibili-pink);
     }
     li {
       padding-left: 5px;
@@ -115,7 +110,7 @@ const DownloadAreaWrapper = styled(Page)`
     a {
       position: absolute;
       top: 5px;
-      right: calc(100% + 25px);
+      right: calc(100% + 5px);
       color: var(--bilibili-blue);
       text-decoration: none;
     }
@@ -338,7 +333,7 @@ class DownloadArea extends React.Component {
                     {global.downloads && global.downloads.map(({version, url, info}) => (
                         tabVersion === version && (<ol key={version}>
                             {info.map((line, index) => (
-                                <div className="info-item" key={index}>
+                                <div className={`info-item ${line[0]}`} key={index}>
                                     <li dangerouslySetInnerHTML={{__html: line[1]}}/>
                                     {line[2] !== undefined && (
                                         <a
