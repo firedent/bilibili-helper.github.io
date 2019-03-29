@@ -71,10 +71,13 @@ export class Game {
         for (let folderName in options) {
             const folder = this.gui.addFolder(folderName);
             for (let controllerName in options[folderName]) {
-                const {value, min,max,step} = options[folderName][controllerName];
-                folder.add({[controllerName]: value}, controllerName, min,max,step);
+                if (controllerName === 'open' && options[folderName][controllerName]) {
+                    folder.open();
+                } else {
+                    const {value, min, max, step} = options[folderName][controllerName];
+                    folder.add(value, controllerName, min, max, step);
+                }
             }
-            folder.open();
         }
     }
 

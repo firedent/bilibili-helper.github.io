@@ -8,29 +8,29 @@ import {Easing} from 'Pinball/game/lib/Math/Easing';
 import {TweenVector2} from 'Pinball/game/lib/Math/TweenVector2';
 
 const increaseAccelerationBezier = new Easing(
-    new LimitedVector2(.42, .22),
-    new LimitedVector2(.32, .94),
+    new LimitedVector2(.99,.22),
+    new LimitedVector2(.47,.84),
 );
 
 const decreaseAccelerationBezier = increaseAccelerationBezier.flip();
 const accelerationSpeed = 3;
 const acceleration = new TweenVector2(0, 0).setMinXY(-accelerationSpeed, 0).setMaxXY(accelerationSpeed, 0)  // baffle acceleration
                                            .setTween('increase', {
-                                               duration: 3, // fps * seconds
+                                               duration: 10, // fps * seconds
                                                bezier: increaseAccelerationBezier.bezier,
                                            })
                                            .setTween('decrease', {
-                                               duration: 5, // fps * seconds
+                                               duration: 4, // fps * seconds
                                                bezier: decreaseAccelerationBezier.bezier,
                                            });
 const velocitySpeed = 6;
 const velocity = new TweenVector2(0, 0).setMinXY(-velocitySpeed, 0).setMaxXY(velocitySpeed, 0) // baffle velocity
                                        .setTween('increase', {
-                                           duration: 3, // fps * seconds
+                                           duration: 6, // fps * seconds
                                            bezier: increaseAccelerationBezier.bezier,
                                        })
                                        .setTween('decrease', {
-                                           duration: 6, // fps * seconds
+                                           duration: 5, // fps * seconds
                                            bezier: decreaseAccelerationBezier.bezier,
                                        });
 
@@ -65,11 +65,11 @@ export class Baffle extends Block {
 
     updateSpeed(accelerationSpeed, velocitySpeed) {
         if (accelerationSpeed !== this.accelerationSpeed) {
-            this.accelerationSpeed = accelerationSpeed.value;
+            this.accelerationSpeed = accelerationSpeed.value.accelerationSpeed;
             this.movable.acceleration.setMinXY(-this.accelerationSpeed, 0).setMaxXY(this.accelerationSpeed, 0);
         }
         if (velocitySpeed !== this.velocitySpeed) {
-            this.velocitySpeed = velocitySpeed.value;
+            this.velocitySpeed = velocitySpeed.value.velocitySpeed;
             this.movable.velocity.setMinXY(-this.velocitySpeed, 0).setMaxXY(this.velocitySpeed, 0);
         }
     }
@@ -120,7 +120,7 @@ export class Baffle extends Block {
     moveLeft(delta) {
         if (this.app.keyMap.right.down) return this;
         //this.movable.acceleration.setX(-150);
-        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value).moveTo(this.leftBound);
+        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value.speed).moveTo(this.leftBound);
         window.bafflePosition = this.movable.position;
         return this;
     }
@@ -128,7 +128,7 @@ export class Baffle extends Block {
     moveRight(delta) {
         if (this.app.keyMap.left.down) return this;
         //this.movable.acceleration.setX(150);
-        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value).moveTo(this.rightBound);
+        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value.speed).moveTo(this.rightBound);
         window.bafflePosition = this.movable.position;
         return this;
     }

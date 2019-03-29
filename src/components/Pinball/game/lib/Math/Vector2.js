@@ -240,9 +240,7 @@ export class Vector2 {
     }
 
     projectionWithNormal(normal) {
-        let deltaRadian = normal.radian - this.radWithVector(normal) * 2;
-
-        return this.setRadian(deltaRadian).negate();
+        return normal.multiplyScalar(normal.dot(this) * 2).sub(this);
     }
 
     // return the normal vector

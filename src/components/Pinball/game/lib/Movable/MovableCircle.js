@@ -32,8 +32,8 @@ export class MovableCircle extends Circle {
         this.line.rotation = this.movable.velocity.radian;
     }
 
-    move(delta) {
-        this.movable.move(delta);
+    moveTo(delta, position) {
+        this.movable.setDelta(delta).setSpeed(this.app.guiController.ball.speed.value.speed).moveTo(position);
         this.drawDirection && this.drawMoveDirection();
     }
 

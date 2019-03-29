@@ -19,7 +19,7 @@ export class Movable {
 
     velocity = new LimitedVector2(0, 0);
 
-    resultVelocity = new LimitedVector2(0,0);
+    resultVelocity = new LimitedVector2(0, 0);
 
     gravitation;
     gravitationalPoint;
@@ -73,18 +73,24 @@ export class Movable {
      * @param position [LimitedVector2]
      */
     moveTo(position) {
-        if (this.position.equals(position)) this.brake(); // 到达目标后开始刹车
+        if (position && this.position.equals(position)) this.brake(); // 到达目标后开始刹车
         else this.move(position);
         return this;
     }
 
-
     move(position) {
-        const direction = position.clone().sub(this.position); // 获得目标方向
-
-        this.acceleration.setRadian(direction.radian); // 调整加速度方向
-        const accelerationMaxVector = this.acceleration.getMaxXYVector().setRadian(direction.radian);
-        this.acceleration.to(accelerationMaxVector, 'increase').checkXY(true); // 变加速，并校验是否超出边界
+        window.moveType = 'move';
+        window.acceleration = this.acceleration.length;
+        window.velocity = this.velocity.length;
+        if (position) {
+            const direction = position.clone().sub(this.position); // 获得目标方向
+            const targetRadian = direction.radian;
+            if (this.acceleration.radian !== targetRadian) {
+                this.acceleration.setRadian(targetRadian); // 调整加速度方向
+            }
+            const accelerationMaxVector = this.acceleration.getMaxXYVector().setRadian(targetRadian);
+            this.acceleration.to(accelerationMaxVector, 'increase').checkXY(true); // 变加速，并校验是否超出边界
+        }
 
         this.velocity.add(this.acceleration).checkXY(true); // 由加速度得到速度，并校验是否超出边界
         if (this.velocity.length <= EPSILON) return; // 设定速度小于多少不再移动，精度要求
@@ -97,6 +103,7 @@ export class Movable {
     }
 
     brake() {
+        window.moveType = 'brake';
         this.acceleration.to(ZERO_VECTOR.clone().sub(this.acceleration), 'decrease').checkXY(true); // 变加速，并校验是否超出边界
 
         this.velocity.add(this.acceleration).checkXY(true); // 由加速度得到速度，并校验是否超出边界
@@ -109,6 +116,7 @@ export class Movable {
 
         return this;
     }
+
     //
     //moveUnderGravitation(delta = 1) {
     //    this.gravitation = this.gravitationalPoint.sub(this.position);

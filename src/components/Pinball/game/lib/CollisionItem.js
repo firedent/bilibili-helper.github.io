@@ -4,7 +4,11 @@
  * Description:
  */
 export class CollisionItem {
-    constructor() {
+    constructor(movable) {
+        this.movable = movable;
+    }
 
+    checkBoundBox() {
+        
     }
 }
