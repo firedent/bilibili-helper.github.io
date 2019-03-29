@@ -82,15 +82,15 @@ export class Baffle extends Block {
         this.app.addTicker(delta => {
             const {accelerationSpeed, velocitySpeed} = this.app.guiController.baffle;
             this.updateSpeed(accelerationSpeed, velocitySpeed);
-            if (!up.down && !down.down && !left.down && !right.down) {
+            if ((!up.down && !down.down && !left.down && !right.down) || (left.down && right.down)) {
                 this.movable.brake(delta);
             }
 
             //if (up.down) this.moveUp(delta);
             //if (down.down) this.moveDown(delta);
 
-            if (left.down) this.moveLeft(delta);
-            if (right.down) this.moveRight(delta);
+            if (left.down && !right.down) this.moveLeft(delta);
+            if (right.down && !left.down) this.moveRight(delta);
 
             if (this.movable.velocity.length > 0) this.collisionCheckWithBox(this.app.width, this.app.height);
         });
