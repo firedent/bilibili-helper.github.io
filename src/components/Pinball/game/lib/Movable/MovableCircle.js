@@ -32,18 +32,14 @@ export class MovableCircle extends Circle {
         this.line.rotation = this.movable.velocity.radian;
     }
 
-    moveTo(delta, position) {
-        this.movable.setDelta(delta).setSpeed(this.app.guiController.ball.speed.value.speed).moveTo(position);
-        this.drawDirection && this.drawMoveDirection();
-    }
+    moveTo(position) {
+        const delta = this.app.app.ticker.deltaTime;
 
-    escapeFromGravitation(delta) {
-        this.movable.escapeFromGravitation(delta);
-        this.drawDirection && this.drawMoveDirection();
-    }
+        this.movable
+            .setDelta(delta)
+            .setSpeed(this.app.guiController.ball.speed.value.speed)
+            .runAndRestore(position);
 
-    moveUnderGravitation(delta) {
-        this.movable.moveUnderGravitation(delta);
         this.drawDirection && this.drawMoveDirection();
     }
 }

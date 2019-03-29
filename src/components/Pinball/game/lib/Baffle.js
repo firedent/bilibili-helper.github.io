@@ -8,13 +8,13 @@ import {Easing} from 'Pinball/game/lib/Math/Easing';
 import {TweenVector2} from 'Pinball/game/lib/Math/TweenVector2';
 
 const increaseAccelerationBezier = new Easing(
-    new LimitedVector2(.99,.22),
-    new LimitedVector2(.47,.84),
+    new LimitedVector2(.99, .22),
+    new LimitedVector2(.47, .84),
 );
 
 const decreaseAccelerationBezier = increaseAccelerationBezier.flip();
 const accelerationSpeed = 3;
-const acceleration = new TweenVector2(0, 0).setMinXY(-accelerationSpeed, 0).setMaxXY(accelerationSpeed, 0)  // baffle acceleration
+const acceleration = new TweenVector2(0, 0).setLengthLimited(-accelerationSpeed, accelerationSpeed)  // baffle acceleration
                                            .setTween('increase', {
                                                duration: 10, // fps * seconds
                                                bezier: increaseAccelerationBezier.bezier,
@@ -80,10 +80,12 @@ export class Baffle extends Block {
         const left = this.app.bindKey(document, 'left', 37);
         const right = this.app.bindKey(document, 'right', 39);
         this.app.addTicker(delta => {
+
             const {accelerationSpeed, velocitySpeed} = this.app.guiController.baffle;
             this.updateSpeed(accelerationSpeed, velocitySpeed);
+
             if ((!up.down && !down.down && !left.down && !right.down) || (left.down && right.down)) {
-                this.movable.brake(delta);
+                this.movable.brake();
             }
 
             //if (up.down) this.moveUp(delta);
@@ -96,14 +98,14 @@ export class Baffle extends Block {
         });
     }
 
-    attractBall(ball) {
-        const baffleUpCenter = this.center.sub(new Vector2(0, this.height / 2));
-        ball.movable.gravitationalPoint = baffleUpCenter;
-    }
-
-    unattarctBall(ball) {
-        ball.movable.gravitationalPoint = null;
-    }
+    //attractBall(ball) {
+    //    const baffleUpCenter = this.center.sub(new Vector2(0, this.height / 2));
+    //    ball.movable.gravitationalPoint = baffleUpCenter;
+    //}
+    //
+    //unattarctBall(ball) {
+    //    ball.movable.gravitationalPoint = null;
+    //}
 
     moveUp(delta) {
         //this.movable.acceleration.setY(-50);
@@ -119,29 +121,25 @@ export class Baffle extends Block {
 
     moveLeft(delta) {
         if (this.app.keyMap.right.down) return this;
-        //this.movable.acceleration.setX(-150);
-        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value.speed).moveTo(this.leftBound);
-        window.bafflePosition = this.movable.position;
+
+        this.movable
+            .setDelta(delta)
+            .setSpeed(this.app.guiController.global.speed.value.speed)
+            .runAndBrake(this.leftBound);
+
         return this;
     }
 
     moveRight(delta) {
         if (this.app.keyMap.left.down) return this;
-        //this.movable.acceleration.setX(150);
-        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value.speed).moveTo(this.rightBound);
-        window.bafflePosition = this.movable.position;
+
+        this.movable
+            .setDelta(delta)
+            .setSpeed(this.app.guiController.global.speed.value.speed)
+            .runAndBrake(this.rightBound);
+
         return this;
     }
-
-    //
-    //stopMove() {
-    //    //const baffleVelocity = baffleAccelerationBezierEasing((this.maxVelocity - this.velocity.length) / this.maxVelocity);
-    //    //this.acceleration.multiplyScalar(baffleVelocity);
-    //    //this.velocity.multiplyScalar(baffleVelocity);
-    //    this.stopMove();
-    //    //window.baffleVelocity = baffleVelocity;
-    //    return this;
-    //}
 
     collisionCheckWithBox(width, height) {
         if (this.movable.position.x < 0) {

@@ -8,9 +8,9 @@ import {LimitedVector2} from 'Pinball/game/lib/Math/LimitedVector2';
 import {Easing} from 'Pinball/game/lib/Math/Easing';
 
 export class TweenVector2 extends LimitedVector2 {
-    constructor(x, y) {
-        super(x, y);
-        this.tween = {
+    constructor(x, y, limit, tween, progress) {
+        super(x, y, limit);
+        this.tween = tween || {
             linear: {
                 duration: 1,
                 bezier: new Easing().bezier,
@@ -19,7 +19,21 @@ export class TweenVector2 extends LimitedVector2 {
                 complete: false,
             },
         };
-        this.progress = null;
+        this.progress = progress || null;
+    }
+
+    get isTweenVector2() {return true;}
+
+    clone() {
+        const v = new TweenVector2(this.x, this.y, this.limit, this.tween, this.progress);
+        return v;
+    }
+
+    copy(v) {
+        super.copy(v);
+        this.tween = v.tween;
+        this.progress = this.progress;
+        return this;
     }
 
     /**
@@ -59,15 +73,14 @@ export class TweenVector2 extends LimitedVector2 {
     }
 
     // 只能在一个时间执行一个to，不然会将其他的覆盖
-    to(vector, tweenType = 'linear') {
-        if (this.equals(vector)) return this;
-
-        const sign = vector.toString();
+    to(target, tweenType = 'linear') {
+        if (this.equals(target)) return this;
+        const sign = target.toString();
         let toInfo = this.progress;
         if (!toInfo || toInfo.sign !== sign) { // 没有移动到该点的事项
             this.progress = {
                 sign,
-                difference: vector.sub(this),
+                difference: target.sub(this),
                 tween: {...this.tween[tweenType]},
                 startPoint: this.clone(),
                 complete: false,
@@ -78,6 +91,28 @@ export class TweenVector2 extends LimitedVector2 {
         if (!tween.complete) {
             const delta = this.updateTween();
             this.copy(startPoint.clone().add(difference.clone().multiplyScalar(delta.y)));
+        } else this.progress = null;
+        return this;
+    }
+
+    toLength(targetLength, tweenType = 'linear') {
+        if (targetLength === this.length) return this;
+        const sign = targetLength;
+        let toInfo = this.progress;
+        if (!toInfo || toInfo.sign !== sign) { // 没有移动到该点的事项
+            this.progress = {
+                sign,
+                difference: targetLength - this.length,
+                tween: {...this.tween[tweenType]},
+                startLength: this.length,
+                complete: false,
+            };
+        }
+
+        const {difference, tween, startLength} = this.progress;
+        if (!tween.complete) {
+            const delta = this.updateTween();
+            this.length = startLength + difference * delta.y;
         } else this.progress = null;
         return this;
     }

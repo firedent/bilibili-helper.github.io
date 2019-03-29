@@ -120,16 +120,14 @@ export class Ball extends MovableCircle {
         const distance = thisPosition.distanceTo(point);
         if (distance - (this.radius + target.radius) <= EPSILON) {
             let normalVector = thisPosition.clone().sub(point);
-            window.angle = normalVector.angle;
+
             // 嵌入时位置调整
             const difference = normalVector.length;
-            const amendVector = normalVector.clone().setLength(this.radius + target.radius - difference); // 修正向量
+            const amendVector = normalVector.clone();
+            amendVector.length = this.radius + target.radius - difference; // 修正向量
 
             thisPosition.add(amendVector);
-            thisMov.setPosition(thisPosition);
-
-            let projectionVector = thisVelocity.negate().projectionWithNormal(normalVector);
-            thisVelocity.setRadian(projectionVector.radian);
+            thisVelocity.negate().projectWithNormal(normalVector);
             return true;
         } else return false;
     }

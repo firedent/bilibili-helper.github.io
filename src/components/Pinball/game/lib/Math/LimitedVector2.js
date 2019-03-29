@@ -6,9 +6,31 @@
 import {Vector2} from 'Pinball/game/lib/Math/Vector2';
 
 export class LimitedVector2 extends Vector2 {
-    constructor(x = 0, y = 0) {
+    constructor(x = 0, y = 0, limit) {
         super(x, y);
-        this.limit = {min: {}, max: {}};
+        this.limit = limit || {min: {}, max: {}};
+    }
+
+    get isLimitedVector2() {return true;}
+
+    clone() {
+        return new LimitedVector2(this.x, this.y, this.limit);
+    }
+
+    copy(v) {
+        super.copy(v);
+        this.limit = v.limit;
+        return this;
+    }
+
+    setLimit({min, max}) {
+        for (let key in min) {
+            this.setMin(key, min[key]);
+        }
+        for (let key in max) {
+            this.setMax(key, max[key]);
+        }
+        return this;
     }
 
     getMin(type) {
@@ -55,6 +77,12 @@ export class LimitedVector2 extends Vector2 {
 
     getMinXYVector() {
         return new Vector2(this.limit.min.x, this.limit.min.y);
+    }
+
+    setLengthLimited(min, max) {
+        this.limit.min.length = min;
+        this.limit.max.length = max;
+        return this;
     }
 
     checkXMin(correct) {
@@ -110,7 +138,7 @@ export class LimitedVector2 extends Vector2 {
         else {
             const res = this.length >= this.limit.min.length;
             if (!res && correct) {
-                this.setLength(this.limit.min.length);
+                this.length = this.limit.min.length;
             }
             return res;
         }
@@ -120,7 +148,7 @@ export class LimitedVector2 extends Vector2 {
         if (this.limit.max.length === undefined) return true;
         else {
             const res = this.length >= this.limit.max.length;
-            if (!res && correct) this.setLength(this.limit.max.length);
+            if (!res && correct) this.length = this.limit.max.length;
             return res;
         }
     }
@@ -128,113 +156,6 @@ export class LimitedVector2 extends Vector2 {
     checkLength(correct) {
         return this.checkLengthMin(correct) && this.checkLengthMax(correct);
     }
-
-    //
-    //set(x, y, correct) {
-    //    super.set(x, y);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //setX(x, correct) {
-    //    super.setX(x);
-    //    this.checkX(correct);
-    //    return this;
-    //}
-    //
-    //setY(y, correct) {
-    //    super.setY(y);
-    //    this.checkY(correct);
-    //    return this;
-    //}
-    //
-    //copy(v, correct) {
-    //    super.copy(v);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //add(v, correct) {
-    //    super.add(v);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //addScalar(scalar, correct) {
-    //    super.addScalar(scalar);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //sub(v, correct) {
-    //    super.sub(v);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //subScalar(scalar, correct) {
-    //    super.addScalar(-scalar);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //multiply(v, correct) {
-    //    super.multiply(v);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //multiplyScalar(scalar, correct) {
-    //    super.multiplyScalar(scalar);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //divide(v, correct) {
-    //    super.divide(v);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //divideScalar(scalar, correct) {
-    //    super.divideScalar(scalar);
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //floor(correct) {
-    //    super.floor();
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //ceil(correct) {
-    //    super.ceil();
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //round(correct) {
-    //    super.round();
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //negate(correct) {
-    //    super.negate();
-    //    this.checkXY(correct);
-    //    return this;
-    //}
-    //
-    //negateX(correct) {
-    //    super.negateX();
-    //    this.checkX(correct);
-    //    return this;
-    //}
-    //
-    //negateY(correct) {
-    //    super.negateY();
-    //    this.checkY(correct);
-    //    return this;
-    //}
 }
+
+window.LimitedVector2 = LimitedVector2;

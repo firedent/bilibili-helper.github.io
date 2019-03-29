@@ -7,12 +7,61 @@
 import {EPSILON} from 'Pinball/game/lib/Math/consts';
 
 export class Vector2 {
+    _x;
+    _y;
+
     constructor(x = 0, y = 0) {
         this.x = x;
         this.y = y;
     }
 
     get isVector2() {return true;}
+
+    get x() {
+        return this._x;
+    }
+
+    set x(n) {
+        this._x = this.setZeroIfTooSmall(n);
+    }
+
+    get y() {
+        return this._y;
+    }
+
+    set y(n) {
+        this._y = this.setZeroIfTooSmall(n);
+    }
+
+    get length() {
+        return this.setZeroIfTooSmall(Math.sqrt(this.x * this.x + this.y * this.y));
+    }
+
+    set length(length) {
+        if (this.length === 0) this.set(1, 1);
+        else if (Math.abs(length) < EPSILON) this.set(0, 0);
+        this.normalize().multiplyScalar(length);
+    }
+
+    // computes the angle in radians with respect to the positive x-axis
+    get radian() {
+        let radian = Math.atan2(this.y, this.x);
+        if (radian < 0) radian += 2 * Math.PI;
+        return radian; // 转化为笛卡尔坐标系内的方向
+    }
+
+    set radian(radian) {
+        if (this.radian === radian) return;
+        this.rotate(radian - this.radian);
+    }
+
+    get angle() {
+        return this.radian * 180 / Math.PI;
+    }
+
+    get array() {
+        return [this.x, this.y];
+    }
 
     valueOf() {
         return {x: this.x, y: this.y};
@@ -23,35 +72,34 @@ export class Vector2 {
     }
 
     setZeroIfTooSmall(n) {
-        if (Math.abs(n) < EPSILON) return 0;
-        else return n;
+        return Math.abs(n) < EPSILON ? 0 : n;
     }
 
     set(x, y) {
         if (typeof x === 'number' && typeof y === 'number') {
-            this.x = this.setZeroIfTooSmall(x);
-            this.y = this.setZeroIfTooSmall(y);
+            this.x = x;
+            this.y = y;
         } else if (x instanceof Vector2) {
-            this.x = this.setZeroIfTooSmall(x.x);
-            this.y = this.setZeroIfTooSmall(x.y);
+            this.x = x.x;
+            this.y = x.y;
         }
         return this;
     }
 
     setX(x) {
         if (typeof x === 'number') {
-            this.x = this.setZeroIfTooSmall(x);
+            this.x = x;
         } else if (x instanceof Vector2) {
-            this.x = this.setZeroIfTooSmall(x.x);
+            this.x = x.x;
         }
         return this;
     }
 
     setY(y) {
         if (typeof y === 'number') {
-            this.y = this.setZeroIfTooSmall(y);
+            this.y = y;
         } else if (y instanceof Vector2) {
-            this.y = this.setZeroIfTooSmall(y.y);
+            this.y = y.y;
         }
         return this;
     }
@@ -61,14 +109,14 @@ export class Vector2 {
     }
 
     copy(v) {
-        this.x = this.setZeroIfTooSmall(v.x);
-        this.y = this.setZeroIfTooSmall(v.y);
+        this.x = v.x;
+        this.y = v.y;
         return this;
     }
 
     add(v) {
-        this.x += this.setZeroIfTooSmall(v.x);
-        this.y += this.setZeroIfTooSmall(v.y);
+        this.x += v.x;
+        this.y += v.y;
         return this;
     }
 
@@ -79,8 +127,8 @@ export class Vector2 {
     }
 
     sub(v) {
-        this.x -= this.setZeroIfTooSmall(v.x);
-        this.y -= this.setZeroIfTooSmall(v.y);
+        this.x -= v.x;
+        this.y -= v.y;
         return this;
     }
 
@@ -89,14 +137,14 @@ export class Vector2 {
     }
 
     multiply(v) {
-        this.x *= this.setZeroIfTooSmall(v.x);
-        this.y *= this.setZeroIfTooSmall(v.y);
+        this.x *= v.x;
+        this.y *= v.y;
         return this;
     }
 
     multiplyScalar(scalar) {
-        this.x *= this.setZeroIfTooSmall(scalar);
-        this.y *= this.setZeroIfTooSmall(scalar);
+        this.x *= scalar;
+        this.y *= scalar;
         return this;
     }
 
@@ -144,10 +192,6 @@ export class Vector2 {
         return this;
     }
 
-    get length() {
-        return this.setZeroIfTooSmall(Math.sqrt(this.x * this.x + this.y * this.y));
-    }
-
     normalize() {
         return this.divideScalar(this.length || 1);
     }
@@ -162,24 +206,10 @@ export class Vector2 {
         return Math.sqrt(this.distanceToSquared(v));
     }
 
-    setLength(length) {
-        return this.normalize().multiplyScalar(length);
-    }
-
     // 近似比较，保留3位有效数字
     equals(v) {
+        if (v === undefined) return false;
         return (Math.abs(v.x - this.x) <= EPSILON) && (Math.abs(v.y - this.y) <= EPSILON);
-    }
-
-    // computes the angle in radians with respect to the positive x-axis
-    get radian() {
-        let radian = Math.atan2(this.y, this.x);
-        if (radian < 0) radian += 2 * Math.PI;
-        return radian; // 转化为笛卡尔坐标系内的方向
-    }
-
-    get angle() {
-        return this.radian * 180 / Math.PI;
     }
 
     flip() {
@@ -204,16 +234,6 @@ export class Vector2 {
     rotate(radian) {
         return this.rotateAround(new Vector2(0, 0), radian);
     }
-
-    setRadian(radian) {
-        this.rotate(radian - this.radian);
-        return this;
-    }
-
-    array() {
-        return [this.x, this.y];
-    }
-
     dot(v) {
         return this.x * v.x + this.y * v.y;
     }
@@ -239,8 +259,9 @@ export class Vector2 {
         return this.radWithLine(v) * 180 / Math.PI;
     }
 
-    projectionWithNormal(normal) {
-        return normal.multiplyScalar(normal.dot(this) * 2).sub(this);
+    projectWithNormal(normal) {
+        this.radian = normal.multiplyScalar(normal.dot(this) * 2).sub(this).radian;
+        return this;
     }
 
     // return the normal vector
