@@ -12,19 +12,19 @@ export const createApp = (width, height) => {
     game.initGUI({
         global: {
             speed: {
-                value: {speed: 1},
+                value: 1,
                 min: 0.1,
                 max: 5,
             },
         },
         baffle: {
             accelerationSpeed: {
-                value: {accelerationSpeed: 3},
+                value: 3,
                 min: 1,
                 max: 5,
             },
             velocitySpeed: {
-                value: {velocitySpeed: 6},
+                value: 6,
                 min: 1,
                 max: 9,
             },
@@ -44,7 +44,7 @@ export const createApp = (width, height) => {
 
     //baffle.createBall({
     //    radius: 10,
-    //    velocity: new Vector2(2 * game.guiController.global.speed, -2 * game.guiController.global.speed),
+    //    velocity: new Vector2(2 * game.guiController.global.speed.value.speed, -2 * game.guiController.global.speed),
     //    //velocityBezierEasing: baffleAccelerationBezierEasing,
     //    gravitationBezierEasing: baffleAccelerationBezierEasing,
     //    maxGravitation: 1,

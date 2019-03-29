@@ -65,11 +65,11 @@ export class Baffle extends Block {
 
     updateSpeed(accelerationSpeed, velocitySpeed) {
         if (accelerationSpeed !== this.accelerationSpeed) {
-            this.accelerationSpeed = accelerationSpeed.value.accelerationSpeed;
+            this.accelerationSpeed = accelerationSpeed.value;
             this.movable.acceleration.setMinXY(-this.accelerationSpeed, 0).setMaxXY(this.accelerationSpeed, 0);
         }
         if (velocitySpeed !== this.velocitySpeed) {
-            this.velocitySpeed = velocitySpeed.value.velocitySpeed;
+            this.velocitySpeed = velocitySpeed.value;
             this.movable.velocity.setMinXY(-this.velocitySpeed, 0).setMaxXY(this.velocitySpeed, 0);
         }
     }
@@ -120,7 +120,7 @@ export class Baffle extends Block {
     moveLeft(delta) {
         if (this.app.keyMap.right.down) return this;
         //this.movable.acceleration.setX(-150);
-        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value.speed).moveTo(this.leftBound);
+        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value).moveTo(this.leftBound);
         window.bafflePosition = this.movable.position;
         return this;
     }
@@ -128,7 +128,7 @@ export class Baffle extends Block {
     moveRight(delta) {
         if (this.app.keyMap.left.down) return this;
         //this.movable.acceleration.setX(150);
-        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value.speed).moveTo(this.rightBound);
+        this.movable.setDelta(delta).setSpeed(this.app.guiController.global.speed.value).moveTo(this.rightBound);
         window.bafflePosition = this.movable.position;
         return this;
     }
