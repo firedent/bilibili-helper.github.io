@@ -12,6 +12,7 @@ export class Rect extends Shape {
     constructor(options = {}) {
         const {color = 0xffffff, width, height, radius = 0, app, alpha} = options;
         super({app, color, alpha});
+
         this.width = width;
         this.height = height;
         this.radius = radius;

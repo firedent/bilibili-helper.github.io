@@ -3,6 +3,9 @@
  * Create: 2019/3/22
  * Description:
  */
+
+import {EPSILON} from 'Pinball/game/lib/Math/consts';
+
 export class Vector2 {
     constructor(x = 0, y = 0) {
         this.x = x;
@@ -11,28 +14,46 @@ export class Vector2 {
 
     get isVector2() {return true;}
 
-    get height() {return this.y;}
+    valueOf() {
+        return {x: this.x, y: this.y};
+    }
 
-    get width() {return this.x;}
+    toString() {
+        return `(${this.x}, ${this.y})`;
+    }
+
+    setZeroIfTooSmall(n) {
+        if (Math.abs(n) < EPSILON) return 0;
+        else return n;
+    }
 
     set(x, y) {
         if (typeof x === 'number' && typeof y === 'number') {
-            this.x = x;
-            this.y = y;
+            this.x = this.setZeroIfTooSmall(x);
+            this.y = this.setZeroIfTooSmall(y);
         } else if (x instanceof Vector2) {
-            this.x = x.x;
-            this.y = x.y;
+            this.x = this.setZeroIfTooSmall(x.x);
+            this.y = this.setZeroIfTooSmall(x.y);
         }
+        return this;
     }
 
     setX(x) {
-        if (typeof x === 'number') this.x = x;
-        else if (x instanceof Vector2) this.x = x.x;
+        if (typeof x === 'number') {
+            this.x = this.setZeroIfTooSmall(x);
+        } else if (x instanceof Vector2) {
+            this.x = this.setZeroIfTooSmall(x.x);
+        }
+        return this;
     }
 
     setY(y) {
-        if (typeof y === 'number') this.y = y;
-        else if (y instanceof Vector2) this.y = y.y;
+        if (typeof y === 'number') {
+            this.y = this.setZeroIfTooSmall(y);
+        } else if (y instanceof Vector2) {
+            this.y = this.setZeroIfTooSmall(y.y);
+        }
+        return this;
     }
 
     clone() {
@@ -40,14 +61,14 @@ export class Vector2 {
     }
 
     copy(v) {
-        this.x = v.x;
-        this.y = v.y;
+        this.x = this.setZeroIfTooSmall(v.x);
+        this.y = this.setZeroIfTooSmall(v.y);
         return this;
     }
 
     add(v) {
-        this.x += v.x;
-        this.y += v.y;
+        this.x += this.setZeroIfTooSmall(v.x);
+        this.y += this.setZeroIfTooSmall(v.y);
         return this;
     }
 
@@ -58,8 +79,8 @@ export class Vector2 {
     }
 
     sub(v) {
-        this.x -= v.x;
-        this.y -= v.y;
+        this.x -= this.setZeroIfTooSmall(v.x);
+        this.y -= this.setZeroIfTooSmall(v.y);
         return this;
     }
 
@@ -68,14 +89,14 @@ export class Vector2 {
     }
 
     multiply(v) {
-        this.x *= v.x;
-        this.y *= v.y;
+        this.x *= this.setZeroIfTooSmall(v.x);
+        this.y *= this.setZeroIfTooSmall(v.y);
         return this;
     }
 
     multiplyScalar(scalar) {
-        this.x *= scalar;
-        this.y *= scalar;
+        this.x *= this.setZeroIfTooSmall(scalar);
+        this.y *= this.setZeroIfTooSmall(scalar);
         return this;
     }
 
@@ -123,12 +144,12 @@ export class Vector2 {
         return this;
     }
 
-    length() {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
+    get length() {
+        return this.setZeroIfTooSmall(Math.sqrt(this.x * this.x + this.y * this.y));
     }
 
     normalize() {
-        return this.divideScalar(this.length() || 1);
+        return this.divideScalar(this.length || 1);
     }
 
     distanceToSquared(v) {
@@ -145,19 +166,20 @@ export class Vector2 {
         return this.normalize().multiplyScalar(length);
     }
 
+    // 近似比较，保留3位有效数字
     equals(v) {
-        return (v.x === this.x) && (v.y === this.y);
+        return (Math.abs(v.x - this.x) <= EPSILON) && (Math.abs(v.y - this.y) <= EPSILON);
     }
 
     // computes the angle in radians with respect to the positive x-axis
-    radian() {
+    get radian() {
         let radian = Math.atan2(this.y, this.x);
         if (radian < 0) radian += 2 * Math.PI;
         return radian; // 转化为笛卡尔坐标系内的方向
     }
 
-    angle() {
-        return this.radian() * 180 / Math.PI;
+    get angle() {
+        return this.radian * 180 / Math.PI;
     }
 
     flip() {
@@ -184,11 +206,11 @@ export class Vector2 {
     }
 
     setRadian(radian) {
-        this.rotate(radian - this.radian());
+        this.rotate(radian - this.radian);
         return this;
     }
 
-    toArray() {
+    array() {
         return [this.x, this.y];
     }
 
@@ -198,7 +220,7 @@ export class Vector2 {
 
     // Positive or negative depends on whether this angle is bigger than target's angle
     radWithVector(v) {
-        return this.radian() - v.radian();
+        return this.radian - v.radian;
     }
 
     // Positive or negative depends on whether this angle is bigger than target's angle
@@ -218,7 +240,7 @@ export class Vector2 {
     }
 
     projectionWithNormal(normal) {
-        let deltaRadian = normal.radian() - this.radWithVector(normal) * 2;
+        let deltaRadian = normal.radian - this.radWithVector(normal) * 2;
 
         return this.setRadian(deltaRadian).negate();
     }

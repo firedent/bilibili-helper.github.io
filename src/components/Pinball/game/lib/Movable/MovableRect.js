@@ -1,15 +1,20 @@
+import {LimitedVector2} from 'Pinball/game/lib';
+
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/27
  * Description:
  */
-import {MixClasses} from 'Pinball/game/utils/MixClasses';
 import {Movable} from './Movable';
 import {Rect} from 'Pinball/game/lib/Shapes/Rect';
 
-export class MovableRect extends MixClasses.mix(Rect, Movable) {
+export class MovableRect extends Rect {
     constructor(options) {
         super(options);
-        this.setPosition(options.position); // position属性跨越两个类，需要滞后设置
+        this.movable = new Movable({item: this.item, ...options});
+    }
+
+    get center() {
+        return new LimitedVector2(this.movable.position.x + this.width / 2, this.movable.position.y + this.height / 2);
     }
 }

@@ -6,6 +6,8 @@
     "dependencies": {
         "@tweenjs/tween.js": "^17.3.0",
         "bezier-easing": "^2.1.0",
+        "bezier-js": "^2.4.0",
+        "dat.gui": "^0.7.5",
         "dva": "^2.4.1",
         "egg": "^2.18.0",
         "html-webpack-plugin": "^3.2.0",

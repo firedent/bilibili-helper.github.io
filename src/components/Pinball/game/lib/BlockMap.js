@@ -4,7 +4,7 @@
  * Description:
  */
 import {Container} from 'pixi.js';
-import {Vector2,Block} from 'Pinball/game/lib';
+import {Vector2, LimitedVector2, Block} from 'Pinball/game/lib';
 
 // 在旧值上加新值，如果新值为undefined时使用旧值
 const useNewByOldFunc = (oldValue, newValue) => (newValue !== undefined) ? newValue : oldValue;
@@ -91,7 +91,7 @@ export class BlockMap {
     }
 
     getPositionByCoordinate(row, column) {
-        return new Vector2(
+        return new LimitedVector2(
             this.padding + (column) * (this.gap + this.columnWidth),
             this.padding + (row) * (this.gap + this.rowHeight),
         );

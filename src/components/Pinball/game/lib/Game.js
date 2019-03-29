@@ -4,7 +4,7 @@
  * Description:
  */
 import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/lib';
-import {Vector2} from 'Components/Pinball/game/lib/Vector2';
+import * as dat from 'dat.gui';
 import {Application, Container} from 'pixi.js';
 
 export class Game {
@@ -18,6 +18,12 @@ export class Game {
         this.ballsMap = [];
         this.baffle = null;
         this.blockMap = null;
+
+        this.gui = null;
+        this.guiController = {};
+        this.initGUI();
+
+        this.keyMap = {};
     }
 
     create(width, height) {
@@ -28,6 +34,7 @@ export class Game {
             height,
             antialias: true,
             transparent: true,
+            TARGET_FPMS: 0.03,
         });
         this.app = app;
         return this;
@@ -58,7 +65,20 @@ export class Game {
         return this.blockMap;
     }
 
-    bindKey(element, keyCode) {
+    initGUI(options) {
+        if (!this.gui) this.gui = new dat.GUI();
+        this.guiController = options;
+        for (let folderName in options) {
+            const folder = this.gui.addFolder(folderName);
+            for (let controllerName in options[folderName]) {
+                const {value, min,max,step} = options[folderName][controllerName];
+                folder.add(value, controllerName, min,max,step);
+            }
+            folder.open();
+        }
+    }
+
+    bindKey(element, keyName, keyCode) {
         const state = {
             down: false,
             downHandle: () => {},
@@ -81,6 +101,7 @@ export class Game {
         };
         element.addEventListener('keydown', __keyDownHandle, false);
         element.addEventListener('keyup', __keyUpHandle, false);
+        this.keyMap[keyName] = state;
         return state;
     };
 }

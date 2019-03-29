@@ -3,7 +3,8 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Vector2, MovableCircle} from 'Components/Pinball/game/lib';
+import {Vector2, MovableCircle, CollisionItem} from 'Components/Pinball/game/lib';
+import {MixClasses} from 'Pinball/game/utils/MixClasses';
 
 export class Ball extends MovableCircle {
     constructor(options = {}) {
@@ -15,23 +16,22 @@ export class Ball extends MovableCircle {
     }
 
     collisionCheckWithMap(width, height) {
-        if (this.position.x < this.radius) {
-            this.position.x = this.radius;
-            this.velocity.negateX();
-            //this.acceleration.setY(1);
-        } else if (this.position.x + this.radius > width) {
-            this.position.x = width - this.radius;
-            this.velocity.negateX();
-            //this.acceleration.setY(1);
+        const thisPosition = this.movable.position;
+        const thisVelocity = this.movable.velocity;
+
+        if (thisPosition.x < this.radius) {
+            thisPosition.x = this.radius;
+            thisVelocity.negateX();
+        } else if (thisPosition.x + this.radius > width) {
+            thisPosition.x = width - this.radius;
+            thisVelocity.negateX();
         }
-        if (this.position.y < this.radius) {
-            this.position.y = this.radius;
-            this.velocity.negateY();
-            this.acceleration.setY(0);
-        } else if (this.position.y + this.radius > height) {
-            this.position.y = height - this.radius;
-            this.velocity.negateY();
-            this.acceleration.setY(0);
+        if (thisPosition.y < this.radius) {
+            thisPosition.y = this.radius;
+            thisVelocity.negateY();
+        } else if (thisPosition.y + this.radius > height) {
+            thisPosition.y = height - this.radius;
+            thisVelocity.negateY();
         }
         return this;
     }
@@ -47,34 +47,39 @@ export class Ball extends MovableCircle {
         if (rightS > this.radius) return;
 
         let modified = false;
+        const targetMov = target.movable;
+        const thisMov = this.movable;
+        const targetPosition = targetMov.position;
+        const thisPosition = thisMov.position;
+        const thisVelocity = thisMov.velocity;
 
         // 弹板四面回弹处理
-        const atUpOrDown = this.position.x >= target.position.x + target.radius && this.position.x <= target.position.x + target.width - target.radius;
+        const atUpOrDown = thisPosition.x >= targetPosition.x + target.radius && thisPosition.x <= targetPosition.x + target.width - target.radius;
         if (atUpOrDown) {
             if (Math.abs(topS) < Math.abs(bottomS)) {
                 if (topS <= this.radius) {
-                    this.velocity.negateY();
-                    this.setY(this.position.y - (this.radius - topS));
+                    thisVelocity.negateY();
+                    thisMov.setY(thisPosition.y - (this.radius - topS));
                     modified = true;
                 }
             } else if (bottomS <= this.radius) {
-                this.velocity.negateY();
-                this.setY(this.position.y + (this.radius - bottomS));
+                thisVelocity.negateY();
+                thisMov.setY(thisPosition.y + (this.radius - bottomS));
                 modified = true;
             }
         }
 
-        const atLeftOrRight = this.position.y >= target.position.y + target.radius && this.position.y <= target.position.y + target.height - target.radius;
+        const atLeftOrRight = thisPosition.y >= targetPosition.y + target.radius && thisPosition.y <= targetPosition.y + target.height - target.radius;
         if (atLeftOrRight) {
             if (Math.abs(leftS) < Math.abs(rightS)) {
                 if (leftS <= this.radius) {
-                    this.velocity.negateX();
-                    this.setX(this.position.x - (this.radius - leftS));
+                    thisVelocity.negateX();
+                    thisMov.setX(thisPosition.x - (this.radius - leftS));
                     modified = true;
                 }
             } else if (rightS <= this.radius) {
-                this.velocity.negateX();
-                this.setX(this.position.x + (this.radius - rightS));
+                thisVelocity.negateX();
+                thisMov.setX(thisPosition.x + (this.radius - rightS));
                 modified = true;
             }
         }
@@ -87,46 +92,50 @@ export class Ball extends MovableCircle {
         //top left
         if (this.collisionCheckWithCornerCircle({
             target,
-            point: target.position.clone().addScalar(target.radius),
+            point: targetPosition.clone().addScalar(target.radius),
         })) return this;
 
         // top right
         if (this.collisionCheckWithCornerCircle({
             target,
-            point: new Vector2(target.position.x + target.width - target.radius, target.position.y + target.radius),
+            point: new Vector2(targetPosition.x + target.width - target.radius, targetPosition.y + target.radius),
         })) return this;
 
         // bottom left
         if (this.collisionCheckWithCornerCircle({
             target,
-            point: new Vector2(target.position.x + target.radius, target.position.y + target.height - target.radius),
+            point: new Vector2(targetPosition.x + target.radius, targetPosition.y + target.height - target.radius),
         })) return this;
         // bottom right
         if (this.collisionCheckWithCornerCircle({
             target,
-            point: new Vector2(target.position.x + target.width - target.radius, target.position.y + target.height - target.radius),
+            point: new Vector2(targetPosition.x + target.width - target.radius, targetPosition.y + target.height - target.radius),
         })) return this;
     }
 
     collisionCheckWithCornerCircle({target, point}) {
-        const distance = this.position.distanceTo(point);
+        const thisMov = this.movable;
+        const thisPosition = this.movable.position;
+        const thisVelocity = this.movable.velocity;
+
+        const distance = thisPosition.distanceTo(point);
         if (distance <= this.radius + target.radius) {
-            let normalVector = point.clone().sub(this.position);
+            let normalVector = point.clone().sub(thisPosition);
             // 嵌入时位置调整
-            const delta = normalVector.length();
+            const delta = normalVector.length;
             const deltaVector = normalVector.clone().setLength(this.radius + target.radius - delta);
 
-            this.position.sub(deltaVector);
-            this.setPosition(this.position);
+            thisPosition.sub(deltaVector);
+            thisMov.setPosition(thisPosition);
 
-            let projectionVector = this.velocity.clone().projectionWithNormal(normalVector);
-            this.velocity.setRadian(projectionVector.radian());
+            let projectionVector = thisVelocity.clone().projectionWithNormal(normalVector);
+            thisVelocity.setRadian(projectionVector.radian);
             return true;
         }
     }
 
-    topS = (target) => target.position.y - this.position.y;
-    bottomS = (target) => this.position.y - target.position.y - target.height;
-    leftS = (target) => target.position.x - this.position.x;
-    rightS = (target) => this.position.x - target.position.x - target.width;
+    topS = (target) => target.movable.position.y - this.movable.position.y;
+    bottomS = (target) => this.movable.position.y - target.movable.position.y - target.height;
+    leftS = (target) => target.movable.position.x - this.movable.position.x;
+    rightS = (target) => this.movable.position.x - target.movable.position.x - target.width;
 };
