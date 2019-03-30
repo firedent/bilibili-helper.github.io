@@ -83,9 +83,9 @@ export const createApp = (width, height) => {
         velocity,
         acceleration,
         position: new LimitedVector2(0, 0),
-        drawDirection: true,
+        //drawDirection: true,
     });
-    const [rows, columns, gap, padding] = [6, 6, 30, 30];
+    const [rows, columns, gap, padding] = [6, 6, 2, 30];
     const columnWidth = (width - 2 * padding - (columns - 1) * gap) / columns;
     game.createMap({
             width,
@@ -96,7 +96,7 @@ export const createApp = (width, height) => {
             padding,
             blockOption: {
                 color: 0xeeeddd,
-                radius: 50,
+                radius: 5,
                 //width: 10,
                 //height: 10,
                 //alpha: 0.5,
