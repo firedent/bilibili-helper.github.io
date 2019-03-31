@@ -8,9 +8,9 @@ import styled, {keyframes} from 'styled-components';
 import {createApp} from 'Pinball/game';
 
 const panelWidth = 700;
-const panelHeight = 700;
+const panelHeight = 800;
 const canvasWidth = 300;
-const canvasHeight = 300;
+const canvasHeight = 600;
 
 const PinballDownAnimate = keyframes`
   0% {
@@ -57,7 +57,7 @@ const PinballView = styled.div`
   z-index: 1000;
   canvas {
     position: absolute;
-    top: calc(50% - ${canvasHeight / 2}px);
+    top: calc(50% - ${canvasHeight / 2 - 50}px);
     right: calc(50% - ${canvasWidth / 2}px);
     width: ${canvasWidth}px;
     height: ${canvasHeight}px;
@@ -70,7 +70,7 @@ const PinballView = styled.div`
 const Mask = styled.div`
   display: block;
   position: absolute;
-  top: calc(50% - ${canvasHeight / 2}px);
+  top: calc(50% - ${canvasHeight / 2 - 50}px);
   right: calc(50% - ${canvasWidth / 2}px);
   width: ${canvasWidth}px;
   height: ${canvasHeight}px;
@@ -111,7 +111,7 @@ const CloseBtn = styled.button`
 const StatusBtn = styled.button`
   display: block;
   position: absolute;
-  top: calc(50% - 35px);
+  top: calc(50% + 15px);
   left: calc(50% - 75px);
   width: 150px;
   height: 70px;
@@ -125,6 +125,10 @@ const StatusBtn = styled.button`
   cursor: pointer;
   outline: none;
   user-select: none;
+  transition: opacity .15s;
+  &:hover {
+    opacity: 0.75;
+  }
 `;
 
 export class PinballArea extends React.Component {
@@ -139,12 +143,12 @@ export class PinballArea extends React.Component {
     }
 
     // 调试的时候用
-    //componentDidMount() {
-    //    this.handleOnClickPinball().then(() => {
-    //        this.setState({play: true, pause: false});
-    //        this.app.start();
-    //    });
-    //}
+    componentDidMount() {
+        this.handleOnClickPinball().then(() => {
+            this.setState({play: true, pause: false});
+            this.app.start();
+        });
+    }
 
     handleOnClickPinball = () => {
         const that = this;

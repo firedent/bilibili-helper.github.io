@@ -3,8 +3,8 @@
  * Create: 2019/3/23
  * Description:
  */
-import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/items';
-import {Vector2} from 'Components/Pinball/game/lib/Vector2';
+import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/lib';
+import * as dat from 'dat.gui';
 import {Application, Container} from 'pixi.js';
 
 export class Game {
@@ -18,6 +18,12 @@ export class Game {
         this.ballsMap = [];
         this.baffle = null;
         this.blockMap = null;
+
+        this.gui = null;
+        this.guiController = {};
+        this.initGUI();
+
+        this.keyMap = {};
     }
 
     create(width, height) {
@@ -28,6 +34,7 @@ export class Game {
             height,
             antialias: true,
             transparent: true,
+            TARGET_FPMS: 0.03,
         });
         this.app = app;
         return this;
@@ -38,16 +45,16 @@ export class Game {
         return this;
     }
 
-    createBall({color = 0xffffff, radius = 10, speed = 1, position = new Vector2(0, 0), acceleration = new Vector2(0, 0), ...rest}) {
-        let ball = new Ball({color, speed, radius, position, acceleration: acceleration.multiplyScalar(speed), ...rest}).init(this);
+    createBall(options) {
+        let ball = new Ball({app: this, ...options});
         this.ballsMap.push(ball);
         this.ballsContainer.addChild(ball.item);
         this.app.stage.addChild(this.ballsContainer);
         return ball;
     }
 
-    createBaffle({color, length, thick, speed, position, radius, ...rest}) {
-        this.baffle = new Baffle({color, length, thick, speed, position, radius, ...rest}).init(this);
+    createBaffle(options) {
+        this.baffle = new Baffle({app: this, ...options});
         this.app.stage.addChild(this.baffle.item);
         return this.baffle;
     }
@@ -58,7 +65,23 @@ export class Game {
         return this.blockMap;
     }
 
-    bindKey(element, keyCode) {
+    initGUI(options) {
+        if (!this.gui) this.gui = new dat.GUI();
+        this.guiController = options;
+        for (let folderName in options) {
+            const folder = this.gui.addFolder(folderName);
+            for (let controllerName in options[folderName]) {
+                if (controllerName === 'open' && options[folderName][controllerName]) {
+                    folder.open();
+                } else {
+                    const {value, min, max, step} = options[folderName][controllerName];
+                    folder.add(value, controllerName, min, max, step);
+                }
+            }
+        }
+    }
+
+    bindKey(element, keyName, keyCode) {
         const state = {
             down: false,
             downHandle: () => {},
@@ -81,6 +104,7 @@ export class Game {
         };
         element.addEventListener('keydown', __keyDownHandle, false);
         element.addEventListener('keyup', __keyUpHandle, false);
+        this.keyMap[keyName] = state;
         return state;
     };
 }

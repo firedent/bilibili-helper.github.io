@@ -45,6 +45,9 @@ const GlobalStyleSheet = createGlobalStyle`
       box-sizing: border-box;
     }
   }
+  .dg.ac {
+    z-index: 1001!important;
+  }
 `;
 const Home = () => (
     <React.Fragment>

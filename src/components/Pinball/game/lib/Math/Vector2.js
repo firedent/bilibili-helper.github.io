@@ -3,17 +3,77 @@
  * Create: 2019/3/22
  * Description:
  */
+
+import {EPSILON} from 'Pinball/game/lib/Math/consts';
+
 export class Vector2 {
-    constructor(x, y) {
-        this.x = x || 0;
-        this.y = y || 0;
+    _x;
+    _y;
+
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
     }
 
     get isVector2() {return true;}
 
-    get height() {return this.y;}
+    get x() {
+        return this._x;
+    }
 
-    get width() {return this.x;}
+    set x(n) {
+        this._x = this.setZeroIfTooSmall(n);
+    }
+
+    get y() {
+        return this._y;
+    }
+
+    set y(n) {
+        this._y = this.setZeroIfTooSmall(n);
+    }
+
+    get length() {
+        return this.setZeroIfTooSmall(Math.sqrt(this.x * this.x + this.y * this.y));
+    }
+
+    set length(length) {
+        if (this.length === 0) this.set(1, 1);
+        else if (Math.abs(length) < EPSILON) this.set(0, 0);
+        this.normalize().multiplyScalar(length);
+    }
+
+    // computes the angle in radians with respect to the positive x-axis
+    get radian() {
+        let radian = Math.atan2(this.y, this.x);
+        if (radian < 0) radian += 2 * Math.PI;
+        return radian; // 转化为笛卡尔坐标系内的方向
+    }
+
+    set radian(radian) {
+        if (this.radian === radian) return;
+        this.rotate(radian - this.radian);
+    }
+
+    get angle() {
+        return this.radian * 180 / Math.PI;
+    }
+
+    get array() {
+        return [this.x, this.y];
+    }
+
+    valueOf() {
+        return {x: this.x, y: this.y};
+    }
+
+    toString() {
+        return `(${this.x}, ${this.y})`;
+    }
+
+    setZeroIfTooSmall(n) {
+        return Math.abs(n) < EPSILON ? 0 : n;
+    }
 
     set(x, y) {
         if (typeof x === 'number' && typeof y === 'number') {
@@ -23,16 +83,25 @@ export class Vector2 {
             this.x = x.x;
             this.y = x.y;
         }
+        return this;
     }
 
     setX(x) {
-        if (typeof x === 'number') this.x = x;
-        else if (x instanceof Vector2) this.x = x.x;
+        if (typeof x === 'number') {
+            this.x = x;
+        } else if (x instanceof Vector2) {
+            this.x = x.x;
+        }
+        return this;
     }
 
     setY(y) {
-        if (typeof y === 'number') this.y = y;
-        else if (y instanceof Vector2) this.y = y.y;
+        if (typeof y === 'number') {
+            this.y = y;
+        } else if (y instanceof Vector2) {
+            this.y = y.y;
+        }
+        return this;
     }
 
     clone() {
@@ -123,12 +192,8 @@ export class Vector2 {
         return this;
     }
 
-    length() {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
-    }
-
     normalize() {
-        return this.divideScalar(this.length() || 1);
+        return this.divideScalar(this.length || 1);
     }
 
     distanceToSquared(v) {
@@ -141,23 +206,10 @@ export class Vector2 {
         return Math.sqrt(this.distanceToSquared(v));
     }
 
-    setLength(length) {
-        return this.normalize().multiplyScalar(length);
-    }
-
+    // 近似比较，保留3位有效数字
     equals(v) {
-        return (v.x === this.x) && (v.y === this.y);
-    }
-
-    // computes the angle in radians with respect to the positive x-axis
-    rad() {
-        let radian = Math.atan2(this.y, this.x);
-        if (radian < 0) radian += 2 * Math.PI;
-        return radian; // 转化为笛卡尔坐标系内的方向
-    }
-
-    angle() {
-        return this.rad() * 180 / Math.PI;
+        if (v === undefined) return false;
+        return (Math.abs(v.x - this.x) <= EPSILON) && (Math.abs(v.y - this.y) <= EPSILON);
     }
 
     flip() {
@@ -167,8 +219,8 @@ export class Vector2 {
         return this;
     }
 
-    rotateAround(center, angle) {
-        const c = Math.cos(angle), s = Math.sin(angle);
+    rotateAround(center, radian) {
+        const c = Math.cos(radian), s = Math.sin(radian);
 
         const x = this.x - center.x;
         const y = this.y - center.y;
@@ -179,28 +231,19 @@ export class Vector2 {
         return this;
     }
 
-    rotate(angle) {
-        return this.rotateAround(this, angle);
+    rotate(radian) {
+        return this.rotateAround(new Vector2(0, 0), radian);
     }
-
-    toArray() {
-        return [this.x, this.y];
-    }
-
     dot(v) {
         return this.x * v.x + this.y * v.y;
     }
 
+    // Positive or negative depends on whether this angle is bigger than target's angle
     radWithVector(v) {
-        const m = this.length() * v.length();
-        let dot = this.dot(v.normalize());
-        if (dot / m > 1 || dot / m < -1) {
-            v = v.clone().negate();
-            dot = this.dot(v);
-        }
-        return Math.acos(dot / m);
+        return this.radian - v.radian;
     }
 
+    // Positive or negative depends on whether this angle is bigger than target's angle
     angleWithVector(v) {
         return this.radWithVector(v) * 180 / Math.PI;
     }
@@ -216,23 +259,9 @@ export class Vector2 {
         return this.radWithLine(v) * 180 / Math.PI;
     }
 
-    projectionWithLine(line) {
-        let theta = this.radWithLine(line);
-        if (theta > Math.PI / 2) theta = Math.PI / 2 - this.radWithLine(line);
-        const NormalLength = 2 * this.length() * Math.sin(theta);
-        const Normal = line.normal().setLength(NormalLength);
-        const NormalLineDot = Normal.dot(this);
-        const res = line.clone();
-        return res.sub(Normal.multiplyScalar(2 * NormalLineDot)).setLength(this.length());
-    }
-
-    projectionWithNormal(normal) {
-        const theta = this.radWithLine(normal);
-        const NormalLength = 2 * this.length() * Math.sin(theta);
-        const Normal = normal.setLength(NormalLength);
-        const NormalLineDot = Normal.dot(this);
-        const res = normal.normal();
-        return res.sub(Normal.multiplyScalar(2 * NormalLineDot)).setLength(this.length());
+    projectWithNormal(normal) {
+        this.radian = normal.multiplyScalar(normal.dot(this) * 2).sub(this).radian;
+        return this;
     }
 
     // return the normal vector
@@ -240,3 +269,5 @@ export class Vector2 {
         return new Vector2(this.y / this.x, -1).normalize();
     }
 }
+
+window.Vector2 = Vector2;
