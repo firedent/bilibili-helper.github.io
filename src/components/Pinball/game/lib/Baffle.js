@@ -39,8 +39,6 @@ export class Baffle extends Block {
 
     constructor(options = {}) {
         Object.assign(options, {
-            width: 100,
-            height: 10,
             acceleration,
             velocity,
         });
@@ -57,8 +55,8 @@ export class Baffle extends Block {
     createBall(options) {
         const thisPosition = this.movable.position;
         options.position = new LimitedVector2(
-            thisPosition.x + this.width / 2 + options.position.x,
-            thisPosition.y - options.radius + options.position.y,
+            thisPosition.x + this.width / 2 + options.position.x - options.width / 2,
+            thisPosition.y - options.height + options.position.y,
         );
         return this.app.createBall(options);
     }

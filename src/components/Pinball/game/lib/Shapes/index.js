@@ -4,5 +4,4 @@
  * Description:
  */
 
-export {Rect} from './Rect';
-export {Circle} from './Circle';
+export {RoundedRect} from './RoundedRect';

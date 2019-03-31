@@ -3,9 +3,9 @@
  * Create: 2019/3/22
  * Description:
  */
-import {MovableRect, Vector2} from './index';
+import {MovableRoundedRect, Vector2} from './index';
 
-export class Block extends MovableRect {
+export class Block extends MovableRoundedRect {
     friction; // 摩擦力
 
     constructor({friction = 0, ...options}) {

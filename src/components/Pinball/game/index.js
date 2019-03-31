@@ -3,7 +3,6 @@
  * Create: 2019/3/21
  * Description:
  */
-import TWEEN from '@tweenjs/tween.js';
 import {Game, LimitedVector2, Vector2} from 'Pinball/game/lib';
 import {Easing} from 'Pinball/game/lib/Math/Easing';
 import {TweenVector2} from 'Pinball/game/lib/Math/TweenVector2';
@@ -69,7 +68,7 @@ export const createApp = (width, height) => {
     });
     const baffle = game.createBaffle({
         color: 0xdddddd,
-        position: new LimitedVector2(100, height - 50),
+        position: new LimitedVector2(100, height - 100),
         width: 100,
         height: 10,
         radius: 50,
@@ -79,13 +78,15 @@ export const createApp = (width, height) => {
     });
 
     baffle.createBall({
+        width: 10,
+        height: 10,
         radius: 10,
         velocity,
         acceleration,
         position: new LimitedVector2(0, 0),
         //drawDirection: true,
     });
-    const [rows, columns, gap, padding] = [6, 6, 2, 30];
+    const [rows, columns, gap, padding] = [8, 8, 5, 10];
     const columnWidth = (width - 2 * padding - (columns - 1) * gap) / columns;
     game.createMap({
             width,
@@ -96,7 +97,7 @@ export const createApp = (width, height) => {
             padding,
             blockOption: {
                 color: 0xeeeddd,
-                radius: 5,
+                radius: 10,
                 //width: 10,
                 //height: 10,
                 //alpha: 0.5,
@@ -107,21 +108,20 @@ export const createApp = (width, height) => {
 
     let baffleUpCenter;
     game.addTicker((delta) => {
-        TWEEN.update();
         window.lastTime = game.app.ticker.lastTime;
 
         if (space.down) baffleUpCenter = game.baffle.center.sub(new Vector2(0, game.baffle.height / 2));
         else baffleUpCenter = undefined;
         window.baffleUpCenter = baffleUpCenter;
         game.ballsMap.forEach((ball) => {
-            ball.moveTo(baffleUpCenter);
+            //ball.moveTo(baffleUpCenter);
 
-            ball.collisionCheckRoundedRect(baffle);
-            for (let key in game.blockMap.map) {
-                const res = ball.collisionCheckRoundedRect(game.blockMap.map[key]);
+            //ball.collisionCheckRoundedRect(baffle);
+            //for (let key in game.blockMap.map) {
+            //    const res = ball.collisionCheckRoundedRect(game.blockMap.map[key]);
                 //res && console.log(1);
-            }
-            ball.collisionCheckWithMap(width, height);
+            //}
+            //ball.collisionCheckWithMap(width, height);
         });
     });
 

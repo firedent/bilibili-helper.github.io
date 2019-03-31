@@ -3,14 +3,10 @@
  * Create: 2019/3/22
  * Description:
  */
-import {Vector2, MovableCircle, CollisionItem, EPSILON} from 'Components/Pinball/game/lib';
+import {Vector2, MovableRoundedRect, CollisionItem, EPSILON} from 'Components/Pinball/game/lib';
 
-export class Ball extends MovableCircle {
+export class Ball extends MovableRoundedRect {
     constructor(options = {}) {
-        options = Object.assign(options, {
-            maxVelocity: 5,
-            maxAcceleration: 5,
-        });
         super(options);
     }
 

@@ -5,4 +5,4 @@
  */
 export {MovableActionManager} from './MovableActionManager'
 export {MovableCircle} from './MovableCircle';
-export {MovableRect} from './MovableRect';
+export {MovableRoundedRect} from './MovableRoundedRect';

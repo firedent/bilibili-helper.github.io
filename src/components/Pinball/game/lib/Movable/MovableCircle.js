@@ -3,13 +3,11 @@
  * Create: 2019/3/27
  * Description:
  */
-import {Shape} from 'Pinball/game/lib/Shapes/Shape';
-import {MixClasses} from 'Pinball/game/utils/MixClasses';
-import {Circle} from 'Pinball/game/lib/Shapes/Circle';
-import {Movable} from './Movable';
 import {Graphics} from 'pixi.js';
+import {Movable} from './Movable';
+import {RoundedRect} from 'Pinball/game/lib/Shapes';
 
-export class MovableCircle extends Circle {
+export class MovableCircle extends RoundedRect {
     drawDirection = false;
     line = null;
 
