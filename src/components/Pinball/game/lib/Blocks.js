@@ -11,7 +11,7 @@ const useNewByOldFunc = (oldValue, newValue) => (newValue !== undefined) ? newVa
 
 const mergeNew = (oldObject, newObject, func = useNewByOldFunc) => _.mergeWith(oldObject, newObject, func);
 
-export class BlockMap {
+export class Blocks {
     constructor({app, width, height, rows, columns, gap = 0, padding = 0, mapData, blockOption = {}}) {
         this.width = width;
         this.height = height;
@@ -26,7 +26,7 @@ export class BlockMap {
         this.item = new Container();
         this.blockOption = blockOption;
         this.calculate();
-        if (app) this.init(app);
+        this.app = app;
     }
 
     setGap(gap) {
@@ -34,11 +34,6 @@ export class BlockMap {
         const delta2 = (this.height - 2 * this.padding) / (this.rows - 1);
         if (delta1 >= gap && delta2 >= gap) this.gap = gap;
         else this.gap = Math.min(delta1, delta2);
-    }
-
-    init(app) {
-        this.app = app;
-        return this;
     }
 
     calculate() {

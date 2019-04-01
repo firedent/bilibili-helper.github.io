@@ -1,3 +1,5 @@
+import {Vector2} from 'Pinball/game/lib/Math';
+
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/23
@@ -25,7 +27,6 @@ export class RoundedRect extends Shape {
     }
 
     get radius() {
-        if (this.isCircle()) return this._radiusTopLeft;
         return [this._radiusTopLeft, this._radiusTopRight, this._radiusBottomRight, this._radiusBottomLeft];
     }
 
@@ -95,7 +96,6 @@ export class RoundedRect extends Shape {
     }
 
     initRoundedRect() {
-        this.item = new Container();
         const roundedRect = new Graphics();
         roundedRect.beginFill(this.color, this.alpha);
 
@@ -122,27 +122,23 @@ export class RoundedRect extends Shape {
         roundedRect.lineTo(0, this._radiusTopLeft);
 
         roundedRect.endFill();
-        this.item.addChild(roundedRect);
+        this.item = roundedRect;
     }
 
     initCircle() {
-        this.item = new Container();
         const circle = new Graphics();
         circle.beginFill(this.color, this.alpha);
         circle.drawCircle(0, 0, this._radiusTopLeft);
         circle.endFill();
-        circle.position.x = this.halfWidth;
-        circle.position.y = this.halfHeight;
-        this.item.addChild(circle);
+        this.item = circle;
     }
 
     initRect() {
-        this.item = new Container();
         const rect = new Graphics();
         rect.beginFill(this.color, this.alpha);
         rect.drawRect(0, 0, this.width, this.height);
         rect.endFill();
-        this.item.addChild(rect);
+        this.item = rect;
     }
 
     getShapeType() {

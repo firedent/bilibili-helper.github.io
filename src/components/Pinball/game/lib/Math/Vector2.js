@@ -22,7 +22,7 @@ export class Vector2 {
     }
 
     set x(n) {
-        this._x = this.setZeroIfTooSmall(n);
+        this._x = n;
     }
 
     get y() {
@@ -30,11 +30,11 @@ export class Vector2 {
     }
 
     set y(n) {
-        this._y = this.setZeroIfTooSmall(n);
+        this._y = n;
     }
 
     get length() {
-        return this.setZeroIfTooSmall(Math.sqrt(this.x * this.x + this.y * this.y));
+        return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
     set length(length) {

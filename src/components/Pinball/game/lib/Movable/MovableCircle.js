@@ -1,19 +1,19 @@
+import {BOTTOM, LEFT, RIGHT, TOP} from 'Pinball/game/lib/Math';
+
 /**
  * Author: DrowsyFlesh
  * Create: 2019/3/27
  * Description:
  */
 import {Graphics} from 'pixi.js';
-import {Movable} from './Movable';
-import {RoundedRect} from 'Pinball/game/lib/Shapes';
+import {MovableRoundedRect} from 'Pinball/game/lib/Movable/MovableRoundedRect';
 
-export class MovableCircle extends RoundedRect {
+export class MovableCircle extends MovableRoundedRect {
     drawDirection = false;
     line = null;
 
     constructor(options) {
         super(options);
-        this.movable = new Movable({item: this.item, ...options});
         this.drawDirection = options.drawDirection;
         this.drawDirection && this.createMoveDirection();
     }
@@ -21,7 +21,7 @@ export class MovableCircle extends RoundedRect {
     createMoveDirection() {
         this.line = new Graphics();
         this.line.beginFill(0x0000ff);
-        this.line.drawRect(0, 0, this.radius, 1);
+        this.line.drawRect(0, 0, this.radius[0], 1);
         this.line.endFill();
         this.item.addChild(this.line);
     }

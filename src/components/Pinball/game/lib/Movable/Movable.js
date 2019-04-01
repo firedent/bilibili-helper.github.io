@@ -3,10 +3,8 @@
  * Create: 2019/3/27
  * Description:
  */
-import {EPSILON, LimitedVector2, Vector2} from 'Pinball/game/lib/Math';
+import {EPSILON, LimitedVector2} from 'Pinball/game/lib/Math';
 import {MovableActionManager} from 'Pinball/game/lib/Movable/MovableActionManager';
-
-const ZERO_VECTOR = new LimitedVector2(0, 0);
 
 export class Movable {
     delta = 1;
@@ -232,14 +230,13 @@ export class Movable {
          * delta - renderer rate
          */
         this.resultVelocity.copy(this.velocity).multiplyScalar(this.speed * this.delta); // 最终修正速度
-
+        window.acceleration = this.resultAcceleration.length;
         this.setPosition(this.position.add(this.resultVelocity));
         return this;
     }
 
     // 动作包裹函数，如果上一个action未完成则自动跳过，否则执行调用相关回调
     actionWrapper(callback) {
-        window.manager = this.actionManager.actionQueue;
         if (this.actionManager.sameTime(this.lastTime) && !this.actionManager.lastResult) { // 同一帧中上个动作未完成
             return this;
         } else {

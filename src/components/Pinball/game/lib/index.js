@@ -4,12 +4,13 @@
  * Description:
  */
 export * from './Math';
-export {CollisionItem} from './CollisionItem';
 export * from './Movable';
 export * from './Shapes';
+export {Collision} from './Collision';
 export {Block} from './Block';
 export {Ball} from './Ball';
 export {Baffle} from './Baffle';
 export {Level} from './Level';
-export {BlockMap} from './BlockMap';
+export {Blocks} from './Blocks';
+export {Map} from './Map';
 export {Game} from './Game';

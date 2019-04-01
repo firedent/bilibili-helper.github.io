@@ -46,7 +46,7 @@ export const createApp = (width, height) => {
         },
         ball: {
             speed: {
-                value: {speed: 2.5},
+                value: {speed: 1},
                 min: .1,
                 max: 5,
                 step: .1,
@@ -78,17 +78,20 @@ export const createApp = (width, height) => {
     });
 
     baffle.createBall({
-        width: 10,
-        height: 10,
+        width: 20,
+        height: 20,
         radius: 10,
         velocity,
         acceleration,
         position: new LimitedVector2(0, 0),
-        //drawDirection: true,
+        drawDirection: true,
     });
     const [rows, columns, gap, padding] = [8, 8, 5, 10];
     const columnWidth = (width - 2 * padding - (columns - 1) * gap) / columns;
     game.createMap({
+        width,
+        height,
+        blocks: {
             width,
             height: 2 * padding + rows * (columnWidth + gap) - gap,
             rows,
@@ -101,27 +104,25 @@ export const createApp = (width, height) => {
                 //width: 10,
                 //height: 10,
                 //alpha: 0.5,
-            },
-        })//.createBlock({index: 0});
-        .fillAll();
+            }
+        },
+    });
+    game.map.blocks.fillAll();
     const space = game.bindKey(document, 'space', 32);
 
     let baffleUpCenter;
     game.addTicker((delta) => {
-        window.lastTime = game.app.ticker.lastTime;
 
         if (space.down) baffleUpCenter = game.baffle.center.sub(new Vector2(0, game.baffle.height / 2));
         else baffleUpCenter = undefined;
-        window.baffleUpCenter = baffleUpCenter;
         game.ballsMap.forEach((ball) => {
-            //ball.moveTo(baffleUpCenter);
+            ball.moveTo(baffleUpCenter);
 
-            //ball.collisionCheckRoundedRect(baffle);
-            //for (let key in game.blockMap.map) {
-            //    const res = ball.collisionCheckRoundedRect(game.blockMap.map[key]);
-                //res && console.log(1);
-            //}
-            //ball.collisionCheckWithMap(width, height);
+            ball.collision.collisionCheckWithRoundedRect(baffle);
+            for (let key in game.map.blocks.map) {
+                ball.collision.collisionCheckWithRoundedRect(game.map.blocks.map[key]);
+            }
+            ball.collisionCheckWithMap();
         });
     });
 

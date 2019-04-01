@@ -3,7 +3,6 @@
  * Create: 2019/3/28
  * Description:
  */
-import {EPSILON} from 'Pinball/game/lib/Math/consts';
 import {LimitedVector2} from 'Pinball/game/lib/Math/LimitedVector2';
 import {Easing} from 'Pinball/game/lib/Math/Easing';
 

@@ -3,7 +3,7 @@
  * Create: 2019/3/23
  * Description:
  */
-import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/lib';
+import {Baffle, Ball, Blocks, Map} from 'Components/Pinball/game/lib';
 import * as dat from 'dat.gui';
 import {Application, Container} from 'pixi.js';
 
@@ -60,9 +60,8 @@ export class Game {
     }
 
     createMap(options) {
-        this.blockMap = new BlockMap(options).init(this);
-        this.app.stage.addChild(this.blockMap.item);
-        return this.blockMap;
+        this.map = new Map({app: this, ...options});
+        return this;
     }
 
     initGUI(options) {
