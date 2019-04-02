@@ -27,7 +27,7 @@ export default {
         [
             'umi-plugin-react',
             {
-                chunks: ['pinball', 'vendors', 'umi'],
+                chunks: ['vendors', 'umi'],
                 antd: false,
                 dva: {
                     immer: true,

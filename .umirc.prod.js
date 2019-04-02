@@ -21,12 +21,12 @@ export default {
                 splitChunks: {
                     minChunks: 2,
                     cacheGroups: {
-                        pinball: {
-                            name: 'pinball',
-                            test: /[\\/]Pinball\/game[\\/]/,
-                            chunks: 'all',
-                            minChunks: 1,
-                        },
+                        //pinball: {
+                        //    name: 'pinball',
+                        //    test: /[\\/]Pinball\/game[\\/]/,
+                        //    chunks: 'all',
+                        //    minChunks: 1,
+                        //},
                         vendors: {
                             name: 'vendors',
                             test: /[\\/](node_modules)[\\/]/,

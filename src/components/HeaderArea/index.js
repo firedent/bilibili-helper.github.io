@@ -6,7 +6,7 @@
 import React from 'react';
 import {connect} from 'dva';
 import styled from 'styled-components';
-import {PinballArea} from 'Components/Pinball';
+//import {PinballArea} from 'Components/Pinball';
 
 
 const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
@@ -136,7 +136,7 @@ class HeaderArea extends React.Component {
                         <div className="title-box">
                             <h1>
                                 BILIBILI HELPER
-                                <PinballArea/>
+                                {/*<PinballArea/>*/}
                             </h1>
                             <div className="version-box">
                                 {global.config && <span>Latest: {global.config.lastVersion}</span>}
