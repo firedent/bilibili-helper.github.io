@@ -4,7 +4,7 @@
  * Description:
  */
 import Bezier from 'bezier-js';
-import {LimitedVector2} from 'Pinball/game/lib/Math/LimitedVector2';
+import {LimitedVector2} from 'Pinball/game/lib-old/Math/LimitedVector2';
 
 const StartPoint = new LimitedVector2(0, 0).setMin('x', 0).setMax('x', 1);
 const EndPoint = new LimitedVector2(1, 1).setMin('x', 0).setMax('x', 1);

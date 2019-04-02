@@ -3,9 +3,9 @@
  * Create: 2019/3/21
  * Description:
  */
-import {Game, LimitedVector2, Vector2} from 'Pinball/game/lib';
-import {Easing} from 'Pinball/game/lib/Math/Easing';
-import {TweenVector2} from 'Pinball/game/lib/Math/TweenVector2';
+import {Game, LimitedVector2, Vector2} from 'Pinball/game/lib-old';
+import {Easing} from 'Pinball/game/lib-old/Math/Easing';
+import {TweenVector2} from 'Pinball/game/lib-old/Math/TweenVector2';
 
 const increaseAccelerationBezier = new Easing(
     new LimitedVector2(.99, .22),

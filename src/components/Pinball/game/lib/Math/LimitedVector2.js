@@ -3,7 +3,7 @@
  * Create: 2019/3/28
  * Description:
  */
-import {Vector2} from 'Pinball/game/lib/Math/Vector2';
+import {Vector2} from 'Pinball/game/lib-old/Math/Vector2';
 
 export class LimitedVector2 extends Vector2 {
     constructor(x = 0, y = 0, limit) {

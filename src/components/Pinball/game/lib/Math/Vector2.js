@@ -4,7 +4,7 @@
  * Description:
  */
 
-import {EPSILON} from 'Pinball/game/lib/Math/consts';
+import {EPSILON} from 'Pinball/game/lib-old/Math/consts';
 
 export class Vector2 {
     _x;

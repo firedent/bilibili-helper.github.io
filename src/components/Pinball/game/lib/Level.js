@@ -1,8 +1,5 @@
 /**
  * Author: DrowsyFlesh
- * Create: 2019/3/26
- * Description:
+ * Create: 2019/4/3
+ * Description: 关卡
  */
-export class Level {
-
-}

@@ -3,8 +3,8 @@
  * Create: 2019/3/28
  * Description:
  */
-import {LimitedVector2} from 'Pinball/game/lib/Math/LimitedVector2';
-import {Easing} from 'Pinball/game/lib/Math/Easing';
+import {LimitedVector2} from 'Pinball/game/lib-old/Math/LimitedVector2';
+import {Easing} from 'Pinball/game/lib-old/Math/Easing';
 
 export class TweenVector2 extends LimitedVector2 {
     constructor(x, y, limit, tween, progress) {
