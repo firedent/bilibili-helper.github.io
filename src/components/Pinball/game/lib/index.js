@@ -4,7 +4,6 @@
  * Description:
  */
 export * from './Math';
-export {CollisionItem} from './CollisionItem';
 export * from './Movable';
 export * from './Shapes';
 export {Block} from './Block';
