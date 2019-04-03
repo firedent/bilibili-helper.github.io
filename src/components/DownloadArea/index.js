@@ -77,7 +77,12 @@ const DownloadAreaWrapper = styled(Page)`
       }
     }
   }
-  .tab-contents {}
+  .tab-contents {
+    .important, .important:hover {
+      background-color: var(--bilibili-pink);
+      color: var(--pure-white);
+    }
+  }
   .info-item {
     position: relative;
     padding: 5px 0 5px 30px;
@@ -293,7 +298,9 @@ class DownloadArea extends React.Component {
                     <a href="https://www.bilibili.com/video/av44808808" target="_blank">功能介绍</a>
                     <a href="https://github.com/bilibili-helper/bilibili-helper/wiki/%E5%A6%82%E4%BD%95%E4%B8%8B%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85%EF%BC%9F#%E5%A6%82%E4%BD%95%E5%AE%89%E8%A3%85"
                        target="_blank">安装方法</a>
-                    <p className="sub-title">旧版本不提供下载地址哟~</p>
+                    <p className="sub-title">
+                        安装测试版本的话，需要使用特殊的方法进行安装，具体请查看"安装方法"
+                        <br/>旧版本不提供下载地址哟~</p>
                 </Header>
                 <div className="tab-bar">
                     <div className="versions">
