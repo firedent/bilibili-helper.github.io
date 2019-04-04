@@ -1,50 +1,131 @@
-
+import {Vector2} from 'Pinball/game/lib/Math';
+import UUID from 'uuid/v1';
 
 /**
  * Author: DrowsyFlesh
  * Create: 2019/4/3
  * Description: 物体类
  */
+import {Graphics} from 'pixi.js';
 import {BOTTOM, CENTER, LEFT, NOT_INTERSECT, RIGHT, TOP} from 'Pinball/game/lib-old/Math';
 
 /**
  * 物体类
  */
 export class Thing {
-    app; // pixi.js's application
+    /**
+     * 同一帧更新标记，如果和当前time相同则默认不更新
+     * @type {number}
+     * @private
+     */
+    _updateSign = -1;
+
+    game; // pixi.js's application
     next = {}; // next attribute map
 
     position; // 位置
     acceleration; // 加速度
+    velocity; // 速度
     mass; // 质量
+    density; // 密度
 
     item; // 渲染对象
-    width;
-    height;
 
-    constructor() {
+    forces = [];
+    forceSynthesizer; // 受力合成器
 
+    /**
+     * 物体基类
+     * @param app 渲染器对象
+     * @param position 坐标
+     * @param mass 质量
+     * @param originAcceleration 初始加速度
+     */
+    constructor({game, position, mass, density, originAcceleration}) {
+        this.id = UUID();
+        this.game = game;
+        this.position = position;
+        this.mass = mass;
+        this.density = density;
+        this.acceleration = originAcceleration;
+        this.item = new Graphics();
+    }
+
+    get app () {
+        return this.game.app;
+    }
+
+    get volume() {
+        return this.mass / this.density;
+    }
+
+    get crossSection() { // 横截面积
+        return this.volume / 5; // 先用体积的五分之一代替
+    }
+
+    get lastTime() {
+        return this.app.ticker.lastTime;
+    }
+
+    /**
+     * 状态更新处理
+     */
+
+    addUpdate(key, value) {
+        this.next[key] = value;
+        return this;
+    }
+
+    /**
+     * 将上一帧计算的到并暂存在next中的数据更新到当前帧，用于计算下一帧
+     */
+    update() {
+        for (let key in this.next) {
+            const value = this.next[key];
+            if (this[key]) {
+                this[key] = value;
+                delete this.next[key];
+            }
+        }
+    }
+
+    /**
+     * 受力处理部分
+     */
+
+    /**
+     * 增加受力
+     * @param force {Force}
+     */
+    addForce(force) {
+        this.forces.push(force);
+        return this;
+    }
+
+    // 力的合成
+    composite() {
+        const newAcceleration = new Vector2(0, 0);
+        this.forces.forEach((force, index) => {
+            if (force.condition()) { // 过滤被合成力
+                newAcceleration.add(force.f);
+            } else this.forces.splice(index, 1); // 删除不满足条件的力
+        });
+        this.addUpdate('acceleration', newAcceleration);
+        return this;
     }
 
     /**
      * 碰撞检测部分
      */
-
-    /**
-     * 同一帧更新bbox盒的标记，如果和当前time相同则默认不再更新
-     * @type {number}
-     * @private
-     */
-    _bboxUpdateSign = -1;
     _bbox;
 
     /**
      * 获取
-     * @param force
+     * @param force 强制更新标记
      * @return {Rectangle}
      */
     bbox(force = false) {
-        if (this._bboxUpdateSign !== this.app.ticker.lastTime || force)
+        if (this._updateSign !== this.lastTime || force)
             this._bbox = this.item.getBounds();
         return this._bbox;
     }

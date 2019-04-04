@@ -3,40 +3,35 @@
  * Create: 2019/3/23
  * Description:
  */
-import {Baffle, Ball, BlockMap} from 'Components/Pinball/game/lib';
 import * as dat from 'dat.gui';
-import {Application, Container} from 'pixi.js';
+import {Level} from 'Pinball/game/lib/levels';
+import {Application} from 'pixi.js';
 
 export class Game {
-    constructor({outputLevel = 'debug'} = {outputLevel: 'debug'}) {
-        this.app = null;
-        this.width = 0;
-        this.height = 0;
-        this.outputLevel = outputLevel;
+    app; // 渲染器对象
+    level; // 当前载入关卡
 
-        this.ballsContainer = new Container();
-        this.ballsMap = [];
-        this.baffle = null;
-        this.blockMap = null;
+    width = 0; // 渲染宽度
+    height = 0; // 渲染高度
 
-        this.gui = null;
-        this.guiController = {};
+    gui; // gui对象
+    guiCtrl = {}; // gui参数表
+
+    keyMap = {}; // 按键绑定列表
+
+    constructor() {
         this.initGUI();
-
-        this.keyMap = {};
     }
 
     create(width, height) {
         this.width = width;
         this.height = height;
-        const app = new Application({
+        this.app = new Application({
             width,
             height,
             antialias: true,
             transparent: true,
-            TARGET_FPMS: 0.03,
         });
-        this.app = app;
         return this;
     }
 
@@ -45,29 +40,19 @@ export class Game {
         return this;
     }
 
-    createBall(options) {
-        let ball = new Ball({app: this, ...options});
-        this.ballsMap.push(ball);
-        this.ballsContainer.addChild(ball.item);
-        this.app.stage.addChild(this.ballsContainer);
-        return ball;
+    loadLevel(levelOption) {
+        this.level = new Level(levelOption);
     }
 
-    createBaffle(options) {
-        this.baffle = new Baffle({app: this, ...options});
-        this.app.stage.addChild(this.baffle.item);
-        return this.baffle;
-    }
-
-    createMap(options) {
-        this.blockMap = new BlockMap(options).init(this);
-        this.app.stage.addChild(this.blockMap.item);
-        return this.blockMap;
-    }
+    //createMap(options) {
+    //    this.blockMap = new BlockMap(options).init(this);
+    //    this.app.stage.addChild(this.blockMap.item);
+    //    return this.blockMap;
+    //}
 
     initGUI(options) {
         if (!this.gui) this.gui = new dat.GUI();
-        this.guiController = options;
+        this.guiCtrl = options;
         for (let folderName in options) {
             const folder = this.gui.addFolder(folderName);
             for (let controllerName in options[folderName]) {
@@ -83,28 +68,38 @@ export class Game {
 
     bindKey(element, keyName, keyCode) {
         const state = {
+            element,
+            keyCode,
             down: false,
             downHandle: () => {},
             upHandle: () => {},
+            downEvent: function(e) {
+                e.preventDefault();
+                if (e.keyCode === keyCode) {
+                    state.down = true;
+                    state.downHandle();
+                }
+            },
+            upEvent: function(e) {
+                e.preventDefault();
+                if (e.keyCode === keyCode) {
+                    state.down = false;
+                    state.upHandle();
+                }
+            },
         };
-        const __keyDownHandle = function(e) {
-            e.preventDefault();
-            if (e.keyCode === keyCode) {
-                state.down = true;
-                state.downHandle();
-            }
-        };
-
-        const __keyUpHandle = function(e) {
-            e.preventDefault();
-            if (e.keyCode === keyCode) {
-                state.down = false;
-                state.upHandle();
-            }
-        };
-        element.addEventListener('keydown', __keyDownHandle, false);
-        element.addEventListener('keyup', __keyUpHandle, false);
+        element.addEventListener('keydown', state.downEvent, false);
+        element.addEventListener('keyup', state.upEvent, false);
         this.keyMap[keyName] = state;
         return state;
     };
+
+    unbindKey(keyName) {
+        const keyState = this.keyMap[keyName];
+        if (keyState) {
+            const {element, downEvent, upEvent} = keyState;
+            element.removeEventListener(downEvent);
+            element.removeEventListener(upEvent);
+        }
+    }
 }
