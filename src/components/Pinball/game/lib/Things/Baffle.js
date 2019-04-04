@@ -21,7 +21,7 @@ export class Baffle extends Thing {
             game,
             position: new LimitedVector2(100, 500).setMinXY(0, 500).setMaxXY(200, 500),
             mass: 1,
-            density: 0.1,
+            density: 10,
             originAcceleration: new LimitedVector2(0, 0),
         });
         this.shape = new RoundedRect({
@@ -33,7 +33,7 @@ export class Baffle extends Thing {
 
         //this.addForce(new InertiaForce(this)); // 添加惯性力
         //this.addForce(new Obstruction(this)); // 添加空气阻力
-        this.addForce(new StaticFriction(this, .3)); // 添加静摩擦力
+        this.addForce(new StaticFriction(this, .2)); // 添加静摩擦力
     }
 
     /**

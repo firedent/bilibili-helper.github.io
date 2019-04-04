@@ -59,16 +59,16 @@ export class Thing {
         this.game = game;
 
         this.position = position;
-        this.next.position = this.position;
+        //this.next.position = this.position;
 
         this.mass = mass;
-        this.next.mass = this.mass;
+        //this.next.mass = this.mass;
 
         this.density = density;
-        this.next.density = this.density;
+        //this.next.density = this.density;
 
         this.acceleration = originAcceleration;
-        this.next.acceleration = this.acceleration;
+        //this.next.acceleration = this.acceleration;
     }
 
     get app() {
@@ -159,13 +159,13 @@ export class Thing {
      */
     composite() {
         const newAcceleration = new LimitedVector2(0, 0);
+        this.forces.forEach((force) => {
+            // 过滤掉不满足触发条件的力
+            if (force.condition()) newAcceleration.add(force.f);
+        });
         this.forces.forEach((force, index) => {
-            if (force.condition()) { // 过滤掉不满足触发条件的力
-                newAcceleration.add(force.f);
-            }
-            if (force.instantaneous) { // 不满足条件的力并且是非持久力则删除
-                this.forces.splice(index, 1);
-            }
+            // 不满足条件的力并且是非持久力则删除
+            if (force.instantaneous) this.forces.splice(index, 1);
         });
         const newVelocity = this.velocity.clone().add(newAcceleration);
         const newPosition = this.position.clone().add(newVelocity);
@@ -206,16 +206,16 @@ export class Thing {
 
     updateWithNewNext() {
         for (let [key, value] of this.newNext) {
-            if (key === 'position') {
-                this.position = value;
-            } else {
-                if (this[key] instanceof LimitedVector2) {
-                    //console.log(this[key]);
-                    this[key].set(value.x, value.y);
-                } else {
+            //if (key === 'position') {
+            //    this.position = value;
+            //} else {
+                //if (this[key] instanceof LimitedVector2) {
+                //    //console.log(this[key]);
+                //    this[key].set(value.x, value.y);
+                //} else {
                     this[key] = value;
-                }
-            }
+                //}
+            //}
         }
     }
 
