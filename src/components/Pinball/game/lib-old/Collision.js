@@ -83,10 +83,7 @@ export class Collision {
 
     /**
      * bbox相交测试
-     * @param x
-     * @param w
-     * @param y
-     * @param height
+     * @param targetBoundRect {PIXI.Rectangle}
      * @return {string[]}
      */
     checkBBoxInside(targetBoundRect) {

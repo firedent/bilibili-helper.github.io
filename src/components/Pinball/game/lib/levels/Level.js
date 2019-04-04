@@ -10,12 +10,19 @@
 //    }
 //}
 import _ from 'lodash';
+import {LimitedVector2} from 'Pinball/game/lib/Math';
+import {Thing} from 'Pinball/game/lib/Things';
 import {Baffle} from 'Pinball/game/lib/Things/Baffle';
-import {Container} from 'pixi.js';
+import {Container, Graphics} from 'pixi.js';
 
 export class Level {
+    /**
+     * @param game {Game}
+     */
     game;
     stage = new Container();
+    scene; // 场景
+    shape;
 
     coordinate; // 大地图数据
     originThingData; // 战斗物体初始化列表
@@ -25,13 +32,24 @@ export class Level {
 
     /**
      * 关卡
-     * @param coordinate {Vector2} 大地图数据
+     * @param coordinate {LimitedVector2} 大地图数据
      * @param battleData {Thing[]} 战斗场景中物体的初始化数据列表
      */
-    constructor({game, coordinate, things}) {
+    constructor({game, coordinate, scene, things}) {
         this.game = game;
         this.coordinate = coordinate;
         this.originThingData = things;
+        this.scene = new Thing({
+            game,
+            position: new LimitedVector2(0, 0),
+            mass: 1000,
+            density: 100,
+            originAcceleration: new LimitedVector2(0, 0),
+        });
+        this.scene.shape = new Graphics();
+        this.scene.shape.beginFill(0, 0).drawRect(0, 0, scene.width, scene.height);
+        this.scene.shape.endFill();
+        this.scene.item.addChild(this.scene.shape);
         this.load();
     }
 
@@ -43,8 +61,41 @@ export class Level {
     load() {
         this.initKeyboard();
         this.initStage();
+        this.game.addTicker(this.ticker);
         return this;
     }
+
+    ticker = (delta) => {
+        /**
+         * 按键响应
+         */
+        const {left, right} = this.game.keyMap;
+        window.keyLeftRight = `${left.down}:${right.down}`;
+        if (left.down && !right.down) this.baffle.moveLeft(delta);
+        if (right.down && !left.down) this.baffle.moveRight(delta);
+
+        /**
+         * 物体状态计算与更新
+         * 1. 初步计算：先计算物体各自属性和受力模型计算下一帧的属性，如位置，加速度，速度，存储在next中
+         * 2. 碰撞检测：根据next数据做碰撞检测，存储在collisionResult中
+         * 3. 二次计算：根据next和collisionResult生成新的newNext
+         * 4. 更新数据：根据next更新为当前数据
+         */
+        // 1. 初步计算：先计算物体各自属性和受力模型计算下一帧的属性，如位置，加速度，速度，存储在next中
+        //_.each(this.things,(thing) => {
+        // thing.composite();
+        //});
+        this.baffle.composite();
+
+        // 2. 碰撞检测：根据next数据做碰撞检测，存储在collisionResult中
+        this.baffle.collisionWithScene(this.scene);
+
+        // 3. 二次计算：根据next和collisionResult生成新的newNext
+        this.baffle.compositeWithNextAndCollisionResult();
+
+        // 4. 更新数据：根据newNext更新为当前数据
+        this.baffle.updateWithNewNext();
+    };
 
     destory() { // 退出关卡
         this.unbindKeyboard();
@@ -86,10 +137,13 @@ export class Level {
 
     // 初始化按键绑定
     initKeyboard() {
-        //const up = this.game.bindKey(document, 'up', 38);
-        //const down = this.game.bindKey(document, 'down', 40);
-        this.game.bindKey(document, 'left', 37);
-        this.game.bindKey(document, 'right', 39);
+        //const up = this.game.bindKeyboard(document, 'up', 38);
+        //const down = this.game.bindKeyboard(document, 'down', 40);
+        /**
+         * baffle keyboard
+         */
+        this.game.bindKeyboard(document, 'left', 37);
+        this.game.bindKeyboard(document, 'right', 39);
         return this;
     }
 

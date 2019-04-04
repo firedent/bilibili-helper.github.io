@@ -6,18 +6,23 @@
 import {Force} from 'Pinball/game/lib/Forces/Force';
 
 export class Obstruction extends Force {
+    instantaneous = false;
+
     constructor(thing) {
         super(thing);
     }
 
+    /**
+     * @return {LimitedVector2}
+     */
     get f() {
-        const newForce = this.velocity.clone();
-        newForce.length = newForce.length * newForce.length;
+        const newForce = this.thing.velocity.clone();
+        newForce.length = newForce.length * newForce.length / 10;
         newForce.multiplyScalar(this.thing.volume);
         return newForce;
     }
 
     condition() {
-        return this.velocity.length > 0;
+        return this.thing.velocity.length > 0;
     }
 }

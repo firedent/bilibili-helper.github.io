@@ -66,7 +66,14 @@ export class Game {
         }
     }
 
-    bindKey(element, keyName, keyCode) {
+    /**
+     * 按键绑定
+     * @param element 绑定元素
+     * @param keyName 按键名称
+     * @param keyCode 按键代码
+     * @return {{keyCode: *, downEvent: downEvent, upEvent: upEvent, downHandle: downHandle, upHandle: upHandle, down: boolean, element: *}}
+     */
+    bindKeyboard(element, keyName, keyCode) {
         const state = {
             element,
             keyCode,

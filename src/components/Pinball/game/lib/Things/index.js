@@ -5,3 +5,5 @@
  */
 export {Thing} from './Thing';
 export {BasicThing} from './BasicThing';
+export {Baffle} from './Baffle';
+export {Ball} from './Ball';

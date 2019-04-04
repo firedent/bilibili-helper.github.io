@@ -113,7 +113,7 @@ export const createApp = (width, height) => {
 //            },
 //        })//.createBlock({index: 0});
 //        .fillAll();
-//    const space = game.bindKey(document, 'space', 32);
+//    const space = game.bindKeyboard(document, 'space', 32);
 //
 //    let baffleUpCenter;
 //    game.addTicker((delta) => {

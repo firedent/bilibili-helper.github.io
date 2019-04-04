@@ -8,6 +8,10 @@ import * as dat from 'dat.gui';
 import {Application, Container} from 'pixi.js';
 
 export class Game {
+    app;
+    gui;
+    keyMap = {}; // 存储按键绑定的相关数据
+
     constructor({outputLevel = 'debug'} = {outputLevel: 'debug'}) {
         this.app = null;
         this.width = 0;
@@ -22,8 +26,6 @@ export class Game {
         this.gui = null;
         this.guiController = {};
         this.initGUI();
-
-        this.keyMap = {};
     }
 
     create(width, height) {
@@ -80,7 +82,7 @@ export class Game {
         }
     }
 
-    bindKey(element, keyName, keyCode) {
+    bindKeyboard(element, keyName, keyCode) {
         const state = {
             down: false,
             downHandle: () => {},

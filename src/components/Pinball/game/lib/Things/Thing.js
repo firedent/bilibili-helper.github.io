@@ -1,5 +1,8 @@
-import {Vector2} from 'Pinball/game/lib/Math';
+import {PullForce} from 'Pinball/game/lib/Forces/PullForce';
+import {PushForce} from 'Pinball/game/lib/Forces/PushForce';
+import {LimitedVector2} from 'Pinball/game/lib/Math';
 import UUID from 'uuid/v1';
+import {Rectangle, Container} from 'pixi.js';
 
 /**
  * Author: DrowsyFlesh
@@ -19,20 +22,30 @@ export class Thing {
      * @private
      */
     _updateSign = -1;
+    _bbox;
 
     game; // pixi.js's application
-    next = {}; // next attribute map
+    next = { // 碰撞检测前计算的出的运动结果数据集
+        velocity: new LimitedVector2(0, 0),
+    };
+    collisionResult = new Map(); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
+    newNext = new Map(); // 碰撞响应后下一帧的数据集
 
-    position; // 位置
-    acceleration; // 加速度
-    velocity; // 速度
+    /**
+     * 坐标位置
+     * @param vector {LimitedVector2}
+     * @private
+     */
+    _position = new LimitedVector2(0, 0); // 位置
+    acceleration = new LimitedVector2(0, 0); // 加速度
+    velocity = new LimitedVector2(0, 0); // 速度
     mass; // 质量
     density; // 密度
 
-    item; // 渲染对象
+    shape; // 形状管理对象，更新并输出item
+    item = new Container(); // 渲染对象
 
     forces = [];
-    forceSynthesizer; // 受力合成器
 
     /**
      * 物体基类
@@ -44,14 +57,21 @@ export class Thing {
     constructor({game, position, mass, density, originAcceleration}) {
         this.id = UUID();
         this.game = game;
+
         this.position = position;
+        this.next.position = this.position;
+
         this.mass = mass;
+        this.next.mass = this.mass;
+
         this.density = density;
+        this.next.density = this.density;
+
         this.acceleration = originAcceleration;
-        this.item = new Graphics();
+        this.next.acceleration = this.acceleration;
     }
 
-    get app () {
+    get app() {
         return this.game.app;
     }
 
@@ -68,13 +88,27 @@ export class Thing {
     }
 
     /**
+     * 属性设置
+     */
+    get position() {
+        return this._position;
+    }
+
+    /**
+     * 坐标位置
+     * @param vector {LimitedVector2}
+     */
+    set position(vector) {
+        const res = vector.checkXY(true);
+        window.res = res;
+        this._position = vector;
+        this.item.x = vector.x;
+        this.item.y = vector.y;
+    }
+
+    /**
      * 状态更新处理
      */
-
-    addUpdate(key, value) {
-        this.next[key] = value;
-        return this;
-    }
 
     /**
      * 将上一帧计算的到并暂存在next中的数据更新到当前帧，用于计算下一帧
@@ -90,8 +124,24 @@ export class Thing {
     }
 
     /**
-     * 受力处理部分
+     * 受力处理及相关部分
      */
+
+    /**
+     * 施加拉力
+     */
+    pull(vector) {
+        this.addForce(new PullForce(this, vector));
+    }
+
+    /**
+     * 对目标施加推力，同时会受到反作用力
+     * @param targetThing {PIXI.Rectangle}
+     */
+    push(targetThing) {
+        const pushForce = new PushForce(targetThing); // 对目标施加推力
+        this.addForce(new PullForce(this, pushForce.reactionForce)); // 对自身施加其反作用力（拉力）
+    }
 
     /**
      * 增加受力
@@ -102,37 +152,112 @@ export class Thing {
         return this;
     }
 
-    // 力的合成
+    /**
+     * 力的合成
+     * 生成新的加速度，速度和位置到next中
+     * @return {Thing}
+     */
     composite() {
-        const newAcceleration = new Vector2(0, 0);
+        const newAcceleration = new LimitedVector2(0, 0);
         this.forces.forEach((force, index) => {
-            if (force.condition()) { // 过滤被合成力
+            if (force.condition()) { // 过滤掉不满足触发条件的力
                 newAcceleration.add(force.f);
-            } else this.forces.splice(index, 1); // 删除不满足条件的力
+            }
+            if (force.instantaneous) { // 不满足条件的力并且是非持久力则删除
+                this.forces.splice(index, 1);
+            }
         });
-        this.addUpdate('acceleration', newAcceleration);
+        const newVelocity = this.velocity.clone().add(newAcceleration);
+        const newPosition = this.position.clone().add(newVelocity);
+        this.next['acceleration'] = newAcceleration;
+        this.next['velocity'] = newVelocity;
+        this.next['position'] = newPosition;
+        //console.log(this.forces);
         return this;
+    }
+
+    /**
+     * 合并next和碰撞检测处理结果生成newNext用于下一帧的渲染数据
+     */
+    compositeWithNextAndCollisionResult() {
+        if (this.collisionResult.size > 0) {
+            for (let [attrName, change] of this.collisionResult) {
+                const param = this.next[attrName];
+                if (param !== undefined) {
+                    const {name, operation, value} = change;
+                    if (param instanceof LimitedVector2 && param[name] !== undefined && operation === 'set') {
+                        const newParam = param.clone();
+                        newParam[name] = value;
+                        this.newNext.set(attrName, newParam);
+                    }
+                }
+            }
+        } else {
+            for (let key in this.next) {
+                this.newNext.set(key, this.next[key]);
+            }
+        }
+        this.collisionResult.clear();
+        window.newNextAcceleration = this.newNext.get('acceleration');
+        window.newNextVelocity = this.newNext.get('velocity');
+        window.newNextPosition = this.newNext.get('position');
+        return this;
+    }
+
+    updateWithNewNext() {
+        for (let [key, value] of this.newNext) {
+            if (key === 'position') {
+                this.position = value;
+            } else {
+                if (this[key] instanceof LimitedVector2) {
+                    //console.log(this[key]);
+                    this[key].set(value.x, value.y);
+                } else {
+                    this[key] = value;
+                }
+            }
+        }
     }
 
     /**
      * 碰撞检测部分
      */
-    _bbox;
+
+    /**
+     * 与场景进行碰撞检测
+     * @param scene {Thing}
+     */
+    collisionWithScene(scene) {
+        const collisionRes = scene.inBBox(this.nextBBox());
+        if (collisionRes[0] === CENTER && collisionRes[1] === CENTER) return false; // 未与场景边缘碰撞
+        return collisionRes;
+    }
 
     /**
      * 获取
      * @param force 强制更新标记
-     * @return {Rectangle}
+     * @return {PIXI.Rectangle}
      */
-    bbox(force = false) {
-        if (this._updateSign !== this.lastTime || force)
+    BBox(force = false) {
+        if (this._updateSign !== this.lastTime || force) {
             this._bbox = this.item.getBounds();
+        }
         return this._bbox;
     }
 
     /**
+     * 根据下一帧数据返回BBox
+     * @return {PIXI.Rectangle}
+     */
+    nextBBox() {
+        const {position} = this.next;
+        const {width, height} = this.item;
+        return new Rectangle(position.x, position.y, width, height);
+    }
+
+    /**
      * 包围盒内测试，返回全包含和碰撞方向两种状态
-     * @param targetBoundRect {Rectangle}
+     * @param targetBoundRect {PIXI.Rectangle}
      * @return {*[]}
      */
     inBBox(targetBoundRect) {
@@ -140,12 +265,12 @@ export class Thing {
 
         let res = [null, null];
 
-        if (axis1 <= 3) res[0] = RIGHT;
-        else if (axis1 >= 5) res[0] = LEFT;
+        if (axis1 <= 3) res[0] = LEFT;
+        else if (axis1 >= 5) res[0] = RIGHT;
         else res[0] = CENTER;
 
-        if (axis2 <= 3) res[1] = BOTTOM;
-        else if (axis2 >= 5) res[1] = TOP;
+        if (axis2 <= 3) res[1] = TOP;
+        else if (axis2 >= 5) res[1] = BOTTOM;
         else res[1] = CENTER;
 
         return res;
@@ -153,7 +278,7 @@ export class Thing {
 
     /**
      * 包围盒测试，返回全包含，碰撞方向和未碰撞三种状态
-     * @param targetBoundRect {Rectangle}
+     * @param targetBoundRect {PIXI.Rectangle}
      * @return {*[]}
      */
     onBBox(targetBoundRect) {
@@ -178,7 +303,7 @@ export class Thing {
 
     /**
      * 包围盒测试，返回未碰撞和其他两种状态
-     * @param targetBoundRect {Rectangle}
+     * @param targetBoundRect {PIXI.Rectangle}
      * @return {*[]}
      */
     outBBOx(targetBoundRect) {
@@ -199,11 +324,12 @@ export class Thing {
 
     /**
      * bbox双轴测试
-     * @param {Rectangle}
+     * @param {PIXI.Rectangle}
      * @return {number[]}
      */
-    checkBBox({x, width, y, height, right, bottom}) {
-        const bbox = this.bbox();
+    checkBBox(targetBoundRect) {
+        const {x, width, y, height, right, bottom} = targetBoundRect;
+        const bbox = this.BBox();
         const axis1 = this.segmentRelationship( // y轴向投影测试
             {
                 x: bbox.left,
