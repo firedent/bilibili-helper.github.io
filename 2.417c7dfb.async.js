@@ -186,6 +186,10 @@
     .important, .important:hover {
       background-color: var(--bilibili-pink);
       color: var(--pure-white);
+      i {
+        color: var(--pure-white);
+        font-weight: bold;
+      }
     }
   }
   .info-item {
