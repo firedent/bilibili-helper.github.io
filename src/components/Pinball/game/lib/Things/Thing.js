@@ -192,12 +192,12 @@ export class Thing {
                     }
                 }
             }
+            this.collisionResult.clear();
         } else {
             for (let key in this.next) {
                 this.newNext.set(key, this.next[key]);
             }
         }
-        this.collisionResult.clear();
         window.newNextAcceleration = this.newNext.get('acceleration');
         window.newNextVelocity = this.newNext.get('velocity');
         window.newNextPosition = this.newNext.get('position');
@@ -217,6 +217,7 @@ export class Thing {
                 //}
             //}
         }
+        this.newNext.clear();
     }
 
     /**
@@ -262,11 +263,11 @@ export class Thing {
      */
     inBBox(targetBoundRect) {
         const [axis1, axis2] = this.checkBBox(targetBoundRect);
-
+window.c = [axis1, axis2];
         let res = [null, null];
 
         if (axis1 <= 3) res[0] = LEFT;
-        else if (axis1 >= 5) res[0] = RIGHT;
+        else if (axis1 >= 6) res[0] = RIGHT;
         else res[0] = CENTER;
 
         if (axis2 <= 3) res[1] = TOP;
