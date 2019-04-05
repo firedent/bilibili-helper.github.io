@@ -428,6 +428,7 @@ class CommentArea extends React.Component {
 
     // 处理评论的表情
     renderContent = (content) => {
+        content = content.replace('【', '[').replace('】', ']');
         const emojiRegex = new RegExp(/(\[.*?\])/g);
         const finalContent = [];
         let tempRes = null, tempIndex = 0;

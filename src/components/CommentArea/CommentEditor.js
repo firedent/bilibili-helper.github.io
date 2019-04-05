@@ -314,7 +314,8 @@ class CommentEditor extends React.Component {
 
     handleSendReply = () => {
         const {oid, parent, root, name} = this.props;
-        const {value} = this.textarea;
+        let {value} = this.textarea;
+        value = value.replace('【', '[').replace('】', ']');
         const message = name ? `回复 @${name} :${value}` : value;
         const {csrf} = this.props.user;
         value && this.props.dispatch({
