@@ -63,7 +63,7 @@ const PinballView = styled.div`
     height: ${canvasHeight}px;
     border-radius: 10px;
     background-color: var(--bilibili-pink);
-    cursor: pointer!important;
+    //cursor: pointer!important;
   }
 `;
 
@@ -186,8 +186,8 @@ export class PinballArea extends React.Component {
 
     handlePause = (e) => {
         e.preventDefault();
-        this.setState({play: false, pause: true});
-        this.app.stop();
+        //this.setState({play: false, pause: true});
+        //this.app.stop();
     };
 
     render() {

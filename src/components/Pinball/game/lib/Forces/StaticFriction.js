@@ -1,10 +1,11 @@
 /**
  * Author: DrowsyFlesh
  * Create: 2019/4/1
- * Description:
+ * Description: 静摩擦力
  */
 import {Force} from 'Pinball/game/lib/Forces';
 import {EPSILON, G} from 'Pinball/game/lib/Math'; // 重力
+import {LimitedVector2} from 'Pinball/game/lib';
 
 export class StaticFriction extends Force {
     instantaneous = false;
@@ -12,7 +13,7 @@ export class StaticFriction extends Force {
     /**
      * 静摩擦力
      * @param mass 质量
-     * @param µ 静摩擦系数
+     * @param µ 摩擦系数，暂不区分静摩擦力和动摩擦力
      * @param a 加速度
      */
     constructor(thing, µ) {

@@ -12,9 +12,8 @@ export class PushForce extends Force {
      * @param targetThing 受到推力的物体
      * @param vector 施加的力
      */
-    constructor(thing, targetThing, vector) {
+    constructor(thing, vector) {
         super(thing);
-        this.targetThing = targetThing;
         this.vector = vector;
     }
 
@@ -22,7 +21,10 @@ export class PushForce extends Force {
      * @return {LimitedVector2}
      */
     get f() {
-        this.targetThing.addForce(this.vector);
         return this.vector;
+    }
+
+    condition() {
+        return true;
     }
 }

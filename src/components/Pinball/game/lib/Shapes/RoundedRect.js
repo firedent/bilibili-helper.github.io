@@ -133,6 +133,8 @@ export class RoundedRect {
         circle.beginFill(this.color, this.alpha);
         circle.drawCircle(0, 0, this._radiusTopLeft);
         circle.endFill();
+        circle.x = this._radiusTopLeft;
+        circle.y = this._radiusTopLeft;
         this.item = circle;
     }
 
@@ -174,8 +176,7 @@ export class RoundedRect {
                 || this._radiusBottomLeft > 0
             )) {
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     isCircle() {

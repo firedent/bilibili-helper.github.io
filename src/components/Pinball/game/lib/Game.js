@@ -42,6 +42,7 @@ export class Game {
 
     loadLevel(levelOption) {
         this.level = new Level(levelOption);
+        this.level.load();
     }
 
     //createMap(options) {
@@ -84,14 +85,14 @@ export class Game {
                 e.preventDefault();
                 if (e.keyCode === keyCode) {
                     state.down = true;
-                    state.downHandle();
+                    state.downHandle(e);
                 }
             },
             upEvent: function(e) {
                 e.preventDefault();
                 if (e.keyCode === keyCode) {
                     state.down = false;
-                    state.upHandle();
+                    state.upHandle(e);
                 }
             },
         };
@@ -105,6 +106,15 @@ export class Game {
         const keyState = this.keyMap[keyName];
         if (keyState) {
             const {element, downEvent, upEvent} = keyState;
+            element.removeEventListener(downEvent);
+            element.removeEventListener(upEvent);
+        }
+    }
+
+    unbindMouseEvent() {
+        const mouseState = this.mouseEvent;
+        if (mouseState) {
+            const {element, downEvent, upEvent} = mouseState;
             element.removeEventListener(downEvent);
             element.removeEventListener(upEvent);
         }

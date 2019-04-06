@@ -16,8 +16,8 @@ export class Obstruction extends Force {
      * @return {LimitedVector2}
      */
     get f() {
-        const newForce = this.thing.velocity.clone();
-        newForce.length = newForce.length * newForce.length / 10;
+        const newForce = this.thing.acceleration.clone().negate();
+        newForce.length = newForce.length * newForce.length;
         newForce.multiplyScalar(this.thing.volume);
         return newForce;
     }

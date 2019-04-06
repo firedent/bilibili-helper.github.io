@@ -7,6 +7,7 @@ import {BasicThing} from 'Pinball/game/lib/Things';
 import {LimitedVector2} from 'Pinball/game/lib/Math';
 
 export const testLevel = {
+    id: 'test',
     coordinate: new LimitedVector2(0, 0),
     scene: {
         width: 300,

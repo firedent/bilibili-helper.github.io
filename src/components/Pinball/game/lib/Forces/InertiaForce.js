@@ -5,8 +5,9 @@
  */
 import {Force} from 'Pinball/game/lib/Forces';
 
-export class InertiaForce extends Force{
+export class InertiaForce extends Force {
     instantaneous = false;
+
     /**
      * 惯性力
      * @param mass 质量
@@ -15,17 +16,16 @@ export class InertiaForce extends Force{
     constructor(thing) {
         super(thing);
         this.mass = thing.mass;
-        this.a = thing.acceleration;
     }
 
     /**
      * @return {LimitedVector2}
      */
     get f() {
-        return this.a.clone().multiplyScalar(this.mass);
+        return this.thing.acceleration.clone().multiplyScalar(this.mass);
     }
 
     condition() {
-        return this.a.length > 0;
+        return this.thing.acceleration.length > 0;
     }
 }

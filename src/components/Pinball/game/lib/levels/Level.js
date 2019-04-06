@@ -24,19 +24,25 @@ export class Level {
     scene; // 场景
     shape;
 
+    id;
     coordinate; // 大地图数据
     originThingData; // 战斗物体初始化列表
-    things = {}; // 战斗物体实例化Map
+    things = { // 战斗物体实例化Map
+        ball: new Map(),
+        baffle: null,
+        entry: new Map(),
+    };
 
-    baffle;
+    keyMap = {}; // 按键绑定列表
 
     /**
      * 关卡
      * @param coordinate {LimitedVector2} 大地图数据
      * @param battleData {Thing[]} 战斗场景中物体的初始化数据列表
      */
-    constructor({game, coordinate, scene, things}) {
+    constructor({game, id, coordinate, scene, things}) {
         this.game = game;
+        this.id = id;
         this.coordinate = coordinate;
         this.originThingData = things;
         this.scene = new Thing({
@@ -50,7 +56,6 @@ export class Level {
         this.scene.shape.beginFill(0, 0).drawRect(0, 0, scene.width, scene.height);
         this.scene.shape.endFill();
         this.scene.item.addChild(this.scene.shape);
-        this.load();
     }
 
     get app() {
@@ -59,8 +64,8 @@ export class Level {
 
     // 载入关卡
     load() {
-        this.initKeyboard();
         this.initStage();
+        this.initKeyboard();
         this.game.addTicker(this.ticker);
         return this;
     }
@@ -71,8 +76,8 @@ export class Level {
          */
         const {left, right} = this.game.keyMap;
         window.keyLeftRight = `${left.down}:${right.down}`;
-        if (left.down && !right.down) this.baffle.moveLeft(delta);
-        if (right.down && !left.down) this.baffle.moveRight(delta);
+        if (left.down && !right.down) this.things.baffle.moveLeft(delta);
+        if (right.down && !left.down) this.things.baffle.moveRight(delta);
 
         /**
          * 物体状态计算与更新
@@ -81,28 +86,47 @@ export class Level {
          * 3. 二次计算：根据next和collisionResult生成新的newNext
          * 4. 更新数据：根据next更新为当前数据
          */
-        // 1. 初步计算：先计算物体各自属性和受力模型计算下一帧的属性，如位置，加速度，速度，存储在next中
-        //_.each(this.things,(thing) => {
-        // thing.composite();
-        //});
-        this.baffle.composite();
+            // 1. 初步计算：先计算物体各自属性和受力模型计算下一帧的属性，如位置，加速度，速度，存储在next中
+            //_.each(this.things,(thing) => {
+            // thing.composite();
+            //});
+        const unCarriedBalls = [];
+        this.things.ball.forEach((ball) => {
+            if (ball.carried) ball.followBaffle(this.things.baffle);
+            else {
+                ball.composite();
+                unCarriedBalls.push(ball);
+            }
+        });
+        this.things.baffle.composite();
 
         // 2. 碰撞检测：根据next数据做碰撞检测，存储在collisionResult中
-        this.baffle.collisionWithScene(this.scene);
+        unCarriedBalls.map((ball) => {
+            ball.collisionWithScene(this.scene);
+        });
+        this.things.baffle.collisionWithScene(this.scene);
 
         // 3. 二次计算：根据next和collisionResult生成新的newNext
-        this.baffle.compositeWithNextAndCollisionResult();
+        unCarriedBalls.map((ball) => {
+            ball.compositeWithNextAndCollisionResult();
+        });
+        this.things.baffle.compositeWithNextAndCollisionResult();
 
         // 4. 更新数据：根据newNext更新为当前数据
-        this.baffle.updateWithNewNext();
+        unCarriedBalls.map((ball) => {
+            ball.updateWithNewNext();
+        });
+        this.things.baffle.updateWithNewNext();
     };
 
     destory() { // 退出关卡
         this.unbindKeyboard();
+        this.unbindMouseEvent();
     }
 
     initStage() {
         this.initBattleField();
+        this.stage.addChild(this.scene.item);
         this.app.stage.addChild(this.stage);
         return this;
     }
@@ -130,8 +154,7 @@ export class Level {
 
     // 创建并载入反射板
     initBaffle() {
-        this.baffle = new Baffle();
-        this.stage.addChild(this.baffle.item);
+        this.addThing(new Baffle(this.game));
         return this;
     }
 
@@ -144,13 +167,42 @@ export class Level {
          */
         this.game.bindKeyboard(document, 'left', 37);
         this.game.bindKeyboard(document, 'right', 39);
+
         return this;
+    }
+
+    addThing(thing) {
+        if (thing.type === 'baffle') {
+            this.things.baffle = thing;
+        } else {
+            const typeObject = this.things[thing.type];
+            if (!typeObject) this.things[thing.type] = new Map();
+
+            this.things[thing.type].set(thing.id, thing);
+        }
+        this.stage.addChild(thing.item);
+        return this;
+    }
+
+    bindMouseEvent(element, eventType, callback) {
+        if (element instanceof PIXI.DisplayObject) {
+            element.interactive = true;
+            element.buttonMode = true;
+            element.on(eventType, callback);
+        } else {
+            console.warn(`element is not a DisplayObject`, element);
+        }
     }
 
     // 卸载按键绑定
     unbindKeyboard() {
         this.game.unbindKey('left');
         this.game.unbindKey('right');
+    }
+
+    // 卸载鼠标事件
+    unbindMouseEvent() {
+        this.game.unbindMouseEvent();
     }
 
     /**

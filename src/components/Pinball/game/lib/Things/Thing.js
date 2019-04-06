@@ -1,16 +1,63 @@
+/**
+ * Author: DrowsyFlesh
+ * Create: 2019/4/3
+ * Description: 物体类
+ */
+import {BOTTOM, CENTER, LEFT, NOT_INTERSECT, RIGHT, TOP} from 'Pinball/game/lib-old/Math';
 import {PullForce} from 'Pinball/game/lib/Forces/PullForce';
 import {PushForce} from 'Pinball/game/lib/Forces/PushForce';
 import {LimitedVector2} from 'Pinball/game/lib/Math';
 import UUID from 'uuid/v1';
 import {Rectangle, Container} from 'pixi.js';
 
-/**
- * Author: DrowsyFlesh
- * Create: 2019/4/3
- * Description: 物体类
- */
-import {Graphics} from 'pixi.js';
-import {BOTTOM, CENTER, LEFT, NOT_INTERSECT, RIGHT, TOP} from 'Pinball/game/lib-old/Math';
+export class CollisionResult {
+    prototype;
+    subAttrName;
+    operation;
+    value;
+    priority;
+
+    constructor(prototype, subAttrName, operation, value, priority = 0) {
+        this.prototype = prototype;
+        this.subAttrName = subAttrName;
+        this.operation = operation;
+        this.value = value;
+        this.priority = priority;
+    }
+}
+
+export class CollisionResultMap {
+    /**
+     *
+     * @type {Array[CollisionResult]}
+     */
+    results = [];
+
+    constructor() {}
+
+    get size() {
+        return this.results.length;
+    }
+
+    sort() {
+        this.results.sort((a, b) => a.priority < b.priority ? -1 : 0);
+    }
+
+    add({prototype, subAttrName, operation, value, priority = 0}) {
+        this.results.push(new CollisionResult(prototype, subAttrName, operation, value, priority));
+    }
+
+    each(callback) {
+        this.sort();
+        if (typeof callback === 'function' && this.results.length > 0) {
+            this.results.map(callback);
+        }
+    }
+
+    clear() {
+        this.results.length = 0;
+    }
+}
 
 /**
  * 物体类
@@ -28,8 +75,10 @@ export class Thing {
     next = { // 碰撞检测前计算的出的运动结果数据集
         velocity: new LimitedVector2(0, 0),
     };
-    collisionResult = new Map(); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
+    collisionResult = new CollisionResultMap(); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
     newNext = new Map(); // 碰撞响应后下一帧的数据集
+
+    type = 'basic'; // 标记类型，默认为basic
 
     /**
      * 坐标位置
@@ -59,7 +108,7 @@ export class Thing {
         this.game = game;
 
         this.position = position;
-        //this.next.position = this.position;
+        this.next.position = this.position;
 
         this.mass = mass;
         //this.next.mass = this.mass;
@@ -161,7 +210,9 @@ export class Thing {
         const newAcceleration = new LimitedVector2(0, 0);
         this.forces.forEach((force) => {
             // 过滤掉不满足触发条件的力
-            if (force.condition()) newAcceleration.add(force.f);
+            if (force.condition() && force.f.length > 0) { // 受力不为零
+                newAcceleration.add(force.f);
+            }
         });
         this.forces.forEach((force, index) => {
             // 不满足条件的力并且是非持久力则删除
@@ -172,7 +223,6 @@ export class Thing {
         this.next['acceleration'] = newAcceleration;
         this.next['velocity'] = newVelocity;
         this.next['position'] = newPosition;
-        //console.log(this.forces);
         return this;
     }
 
@@ -181,26 +231,27 @@ export class Thing {
      */
     compositeWithNextAndCollisionResult() {
         if (this.collisionResult.size > 0) {
-            for (let [attrName, change] of this.collisionResult) {
-                const param = this.next[attrName];
+            this.collisionResult.each((o) => {
+                const {prototype, subAttrName, operation, value} = o;
+                const param = this.next[prototype];
                 if (param !== undefined) {
-                    const {name, operation, value} = change;
-                    if (param instanceof LimitedVector2 && param[name] !== undefined && operation === 'set') {
-                        const newParam = param.clone();
-                        newParam[name] = value;
-                        this.newNext.set(attrName, newParam);
+                    if (param instanceof LimitedVector2) {
+                        if (subAttrName && param[subAttrName] !== undefined && operation === 'set') {
+                            const newParam = param.clone();
+                            newParam[subAttrName] = value;
+                            this.newNext.set(prototype, newParam);
+                        } else {
+                            this.newNext.set(prototype, value);
+                        }
                     }
                 }
-            }
+            });
             this.collisionResult.clear();
         } else {
             for (let key in this.next) {
                 this.newNext.set(key, this.next[key]);
             }
         }
-        window.newNextAcceleration = this.newNext.get('acceleration');
-        window.newNextVelocity = this.newNext.get('velocity');
-        window.newNextPosition = this.newNext.get('position');
         return this;
     }
 
@@ -209,12 +260,12 @@ export class Thing {
             //if (key === 'position') {
             //    this.position = value;
             //} else {
-                //if (this[key] instanceof LimitedVector2) {
-                //    //console.log(this[key]);
-                //    this[key].set(value.x, value.y);
-                //} else {
-                    this[key] = value;
-                //}
+            //if (this[key] instanceof LimitedVector2) {
+            //    //console.log(this[key]);
+            //    this[key].set(value.x, value.y);
+            //} else {
+            this[key] = value;
+            //}
             //}
         }
         this.newNext.clear();
@@ -223,6 +274,21 @@ export class Thing {
     /**
      * 碰撞检测部分
      */
+
+    /**
+     * 与圆角矩形碰撞检测
+     */
+    collisiionWithThing(ting) {
+        const collisionRes = this.onBBox(ting.nextBBox());
+        if (collisionRes[0] !== NOT_INTERSECT && collisionRes !== NOT_INTERSECT) return;
+        else if (collisionRes[0] !== CENTER && collisionRes !== CENTER) {
+
+        } else {
+            if (collisionRes[0] === LEFT) {
+
+            }
+        }
+    }
 
     /**
      * 与场景进行碰撞检测
@@ -263,7 +329,6 @@ export class Thing {
      */
     inBBox(targetBoundRect) {
         const [axis1, axis2] = this.checkBBox(targetBoundRect);
-window.c = [axis1, axis2];
         let res = [null, null];
 
         if (axis1 <= 3) res[0] = LEFT;
