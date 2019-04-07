@@ -78,6 +78,14 @@ const DownloadAreaWrapper = styled(Page)`
     }
   }
   .tab-contents {
+    ul {
+      margin-top: 10px;
+      list-style: none;
+      .info-item {
+        margin: 0 20px;
+        padding: 5px 4px;
+      }
+    }
     .important, .important:hover {
       background-color: var(--bilibili-pink);
       color: var(--pure-white);
@@ -341,7 +349,20 @@ class DownloadArea extends React.Component {
                     </div>
                 </div>
                 <div className="tab-contents">
-                    {global.downloads && global.downloads.map(({version, url, info}) => (
+                    {global.downloads && global.downloads.map(({version, url, notify, info}) => ([
+                        tabVersion === version && notify && (<ul key={version + '-notify'}>
+                            {notify.map((line, index) => (
+                                <div className={`info-item ${line[0]}`} key={index}>
+                                    <li dangerouslySetInnerHTML={{__html: line[1]}}/>
+                                    {line[2] !== undefined && (
+                                        <a
+                                            target="_blank"
+                                            href={`https://github.com/bilibili-helper/bilibili-helper/issues/${line[2]}`}
+                                        >#{line[2]}</a>
+                                    )}
+                                </div>
+                            ))}
+                        </ul>),
                         tabVersion === version && (<ol key={version}>
                             {info.map((line, index) => (
                                 <div className={`info-item ${line[0]}`} key={index}>
@@ -354,8 +375,8 @@ class DownloadArea extends React.Component {
                                     )}
                                 </div>
                             ))}
-                        </ol>)),
-                    )}
+                        </ol>),
+                    ]))}
                 </div>
             </DownloadAreaWrapper>
         );
