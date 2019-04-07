@@ -415,14 +415,6 @@ export class Thing {
                         priority: 10,
                     });
 
-                    thing.collisionResult.add({
-                        prototype: 'position',
-                        subAttrName: 'y',
-                        operation: 'set',
-                        value: thing.position.clone().y - delta,
-                        priority: 10,
-                    });
-
                     // 如果没有互相作用，则直接按照完全反弹处理
                     if (mutual) {
                         // 计算两者互相碰撞时的互相作用力
@@ -461,6 +453,13 @@ export class Thing {
                                 value: this.velocity.clone().negateY(),
                                 priority: 10,
                             },
+                            { // 有互相作用 则同时调整两者的位置，同时移动差值的一半，反向
+                                prototype: 'position',
+                                subAttrName: 'y',
+                                operation: 'set',
+                                value: thing.position.clone().y - delta,
+                                priority: 10,
+                            }
                         ]);
                     } else {
                         this.collisionResult.add({
@@ -492,15 +491,6 @@ export class Thing {
                             value: this.position.clone().x + delta,
                             priority: 10,
                         });
-                        //if (mutual) { // 有互相作用 则同时调整两者的位置，同时移动差值的一半，反向
-                        thing.collisionResult.add({
-                            prototype: 'position',
-                            subAttrName: 'x',
-                            operation: 'set',
-                            value: thing.position.clone().x - delta,
-                            priority: 10,
-                        });
-                        //}
 
                         // 如果没有互相作用，则直接按照完全反弹处理
                         if (mutual) {
@@ -540,6 +530,13 @@ export class Thing {
                                     value: this.velocity.clone().negateX(),
                                     priority: 10,
                                 },
+                                { // 有互相作用 则同时调整两者的位置，同时移动差值的一半，反向
+                                    prototype: 'position',
+                                    subAttrName: 'x',
+                                    operation: 'set',
+                                    value: thing.position.clone().x - delta,
+                                    priority: 10,
+                                }
                             ]);
                         } else {
                             this.collisionResult.add({
