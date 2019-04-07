@@ -16,9 +16,6 @@ export class Baffle extends Thing {
     type = 'baffle';
 
     balls = []; // 球的列表
-    width = 100;
-    height = 10;
-    radius = 10;
 
     directionLine;
 
@@ -34,16 +31,12 @@ export class Baffle extends Thing {
         super({
             game,
             position: new LimitedVector2(100, 500).setMinXY(0, 500).setMaxXY(200, 500),
-            mass: 1,
-            density: 1,
-            originAcceleration: new LimitedVector2(0, 0),
-        });
-        this.shape = new RoundedRect({
             width: 100,
             height: 10,
             radius: 10,
+            density: .001,
+            originAcceleration: new LimitedVector2(0, 0),
         });
-        this.item.addChild(this.shape.item);
 
         //this.addForce(new InertiaForce(this)); // 添加惯性力
         //this.addForce(new Obstruction(this)); // 添加空气阻力
@@ -123,11 +116,11 @@ export class Baffle extends Thing {
      * 创建球
      * @param radius
      */
-    createBall(radius = 5) {
+    createBall(radius = 80) {
+        const ballPosition = this.launchPosition.clone().sub(new LimitedVector2(100 - radius, radius * 2));
         const newBall = new Ball({
             game: this.game,
-            position: this.launchPosition.clone().sub(new LimitedVector2(100 - radius, radius * 2)),
-            mass: 1,
+            position: ballPosition,
             density: 1,
             radius: radius,
             originAcceleration: new LimitedVector2(0, 0),
@@ -155,7 +148,7 @@ export class Baffle extends Thing {
         this.level.things.ball.forEach((ball) => {
             if (ball.carried) {
                 ball.carried = false;
-                const pushForce = new LimitedVector2(1,1);
+                const pushForce = new LimitedVector2(1, 1);
                 pushForce.length = this.launchStrength;
                 pushForce.radian = this.launchDirection;
                 ball.addForce(new PushForce(ball, pushForce));
@@ -166,7 +159,7 @@ export class Baffle extends Thing {
     initDirectionLine() {
         const line = new Graphics();
         line.beginFill(0x000000, 0.5);
-        line.drawRect(0, 0, .0000001, 1);
+        line.drawRect(0, 0, .0000001, 0.3);
         line.endFill();
         line.pivot.x = 0;
         line.pivot.y = 0;

@@ -8,6 +8,8 @@ import {EPSILON, G} from 'Pinball/game/lib/Math'; // 重力
 import {LimitedVector2} from 'Pinball/game/lib';
 
 export class StaticFriction extends Force {
+    _CONST_µG;
+
     instantaneous = false;
 
     /**
@@ -20,10 +22,11 @@ export class StaticFriction extends Force {
         super(thing);
         this.mass = thing.mass;
         this.µ = µ;
+        this._CONST_µG = this.µ * G;
     }
 
     get constNumber() {
-        return this.mass * this.µ * G;
+        return this.mass * this._CONST_µG;
     }
 
     /**

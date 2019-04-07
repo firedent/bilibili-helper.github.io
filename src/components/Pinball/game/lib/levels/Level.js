@@ -48,18 +48,24 @@ export class Level {
         this.scene = new Thing({
             game,
             position: new LimitedVector2(0, 0),
-            mass: 1000,
+            alpha: 0,
+            width: 300,
+            height: 600,
             density: 100,
             originAcceleration: new LimitedVector2(0, 0),
         });
-        this.scene.shape = new Graphics();
-        this.scene.shape.beginFill(0, 0).drawRect(0, 0, scene.width, scene.height);
-        this.scene.shape.endFill();
-        this.scene.item.addChild(this.scene.shape);
     }
 
     get app() {
         return this.game.app;
+    }
+
+    get baffle() {
+        return this.things.baffle;
+    }
+
+    set baffle(thing) {
+        this.things.baffle = thing;
     }
 
     // 载入关卡
@@ -76,8 +82,8 @@ export class Level {
          */
         const {left, right} = this.game.keyMap;
         window.keyLeftRight = `${left.down}:${right.down}`;
-        if (left.down && !right.down) this.things.baffle.moveLeft(delta);
-        if (right.down && !left.down) this.things.baffle.moveRight(delta);
+        if (left.down && !right.down) this.baffle.moveLeft(delta);
+        if (right.down && !left.down) this.baffle.moveRight(delta);
 
         /**
          * 物体状态计算与更新
@@ -92,31 +98,32 @@ export class Level {
             //});
         const unCarriedBalls = [];
         this.things.ball.forEach((ball) => {
-            if (ball.carried) ball.followBaffle(this.things.baffle);
+            if (ball.carried) ball.followBaffle(this.baffle);
             else {
                 ball.composite();
                 unCarriedBalls.push(ball);
             }
         });
-        this.things.baffle.composite();
+        this.baffle.composite();
 
         // 2. 碰撞检测：根据next数据做碰撞检测，存储在collisionResult中
         unCarriedBalls.map((ball) => {
             ball.collisionWithScene(this.scene);
+            ball.collisionWithThing(this.baffle, false);
         });
-        this.things.baffle.collisionWithScene(this.scene);
+        this.baffle.collisionWithScene(this.scene);
 
         // 3. 二次计算：根据next和collisionResult生成新的newNext
         unCarriedBalls.map((ball) => {
             ball.compositeWithNextAndCollisionResult();
         });
-        this.things.baffle.compositeWithNextAndCollisionResult();
+        this.baffle.compositeWithNextAndCollisionResult();
 
         // 4. 更新数据：根据newNext更新为当前数据
         unCarriedBalls.map((ball) => {
             ball.updateWithNewNext();
         });
-        this.things.baffle.updateWithNewNext();
+        this.baffle.updateWithNewNext();
     };
 
     destory() { // 退出关卡
@@ -173,7 +180,7 @@ export class Level {
 
     addThing(thing) {
         if (thing.type === 'baffle') {
-            this.things.baffle = thing;
+            this.baffle = thing;
         } else {
             const typeObject = this.things[thing.type];
             if (!typeObject) this.things[thing.type] = new Map();

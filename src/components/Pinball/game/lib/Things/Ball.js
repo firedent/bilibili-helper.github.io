@@ -11,27 +11,27 @@ import {Thing} from 'Pinball/game/lib/Things/Thing';
 
 export class Ball extends Thing {
     type = 'ball';
-    radius; // 球半径
 
     carried = true; // 被baffle携带的标记，被携带即跟随baffle一起移动
 
-    constructor({game, position, mass, density, originAcceleration, radius}) {
-        super({game, position, mass, density, originAcceleration});
-        this.radius = radius;
-        this.shape = new RoundedRect({
+    constructor({game, position, radius, density, originAcceleration}) {
+        super({
+            game,
+            position,
             width: radius * 2,
             height: radius * 2,
-            radius: radius,
+            radius,
+            density,
+            originAcceleration,
         });
-        this.item.addChild(this.shape.item);
 
         //this.addForce(new InertiaForce(this)); // 添加惯性力
         //this.addForce(new Obstruction(this)); // 添加空气阻力
-        //this.addForce(new StaticFriction(this, .0)); // 添加静摩擦力
+        //this.addForce(new StaticFriction(this, 0)); // 添加静摩擦力
     }
 
     followBaffle(baffle) {
-        this.position = baffle.launchPosition.clone().sub(new LimitedVector2(this.radius, this.radius * 2));
+        this.position = baffle.launchPosition.clone().sub(new LimitedVector2(this.radius[0], this.radius[0] * 2));
     }
 
     /**
