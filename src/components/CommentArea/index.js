@@ -82,6 +82,8 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
       width: 48px;
       height: 48px;
       border-radius: 50%;
+      border: 1px solid var(--border-color);
+      box-sizing: border-box;
     }
   }
   .main {
