@@ -22,7 +22,7 @@ export class StaticFriction extends Force {
         super(thing);
         this.mass = thing.mass;
         this.µ = µ;
-        this._CONST_µG = this.µ * G;
+        this._CONST_µG = this.µ * G * thing.crossSection;
     }
 
     get constNumber() {

@@ -10,22 +10,29 @@ export class RoundedRect {
     alpha;
     width;
     height;
+    zIndex;
+    rotation;
 
+    _temp = [];
     _radiusTopLeft = 0;
     _radiusTopRight = 0;
     _radiusBottomLeft = 0;
     _radiusBottomRight = 0;
+    _complete = false;
 
     shapeType;
     item;
 
     constructor(options = {}) {
-        const {color = 0xffffff, width, height, radius = 0, alpha = 1} = options;
+        const {color = 0xffffff, width, height, radius = 0, alpha = 1, zIndex = 0, rotation = 0, pivot = {x: 0, y: 0}} = options;
         this.color = color;
         this.alpha = alpha;
         this.width = width;
         this.height = height;
         this.radius = radius;
+        this.zIndex = zIndex;
+        this.rotation = rotation;
+        this.pivot = pivot;
         this.initShape();
     }
 
@@ -63,6 +70,7 @@ export class RoundedRect {
         this._radiusTopRight = tr;
         this._radiusBottomRight = br;
         this._radiusBottomLeft = bl;
+        //if (this._complete) this.initShape();
     }
 
     get halfWidth() {
@@ -71,6 +79,25 @@ export class RoundedRect {
 
     get halfHeight() {
         return this.height / 2;
+    }
+
+    get rotation() {
+        return this.item.rotation;
+    }
+
+    set rotation(n) {
+        if (this.item) this.item.rotation = n;
+    }
+
+    setSize({width, height}) {
+        if (width !== undefined) {
+            this.width = width;
+            this.item.width = width;
+        }
+        if (height !== undefined) {
+            this.height = height;
+            this.item.height = height;
+        }
     }
 
     normalizeRadius(n) {
@@ -95,6 +122,10 @@ export class RoundedRect {
             default:
                 break;
         }
+        this.item.zIndex = this.zIndex;
+        this.item.pivot.x = this.item.width * this.pivot.x;
+        this.item.pivot.y = this.item.height * this.pivot.y;
+        this._complete = true;
         return this;
     }
 

@@ -9,7 +9,7 @@ import {LimitedVector2} from 'Pinball/game/lib/Math';
 export const testLevel = {
     id: 'test',
     coordinate: new LimitedVector2(0, 0),
-    scene: {
+    sceneSize: {
         width: 300,
         height: 600,
     },
@@ -17,10 +17,49 @@ export const testLevel = {
         {
             type: BasicThing,
             attributes: {
-                position: new LimitedVector2(20, 20),
-                mass: 1,
-                density: 10,
-                acceleration: new LimitedVector2(0, 0),
+                position: new LimitedVector2(20, 0),
+                width: 20,
+                height: 320,
+                radius: 40,
+                density: 0.01,
+                //µ: 0.01,
+                //originAcceleration: new LimitedVector2(0, 1),
+            },
+        },
+        {
+            type: BasicThing,
+            attributes: {
+                position: new LimitedVector2(260, 20),
+                width: 20,
+                height: 300,
+                radius: 40,
+                density: 0.01,
+                //µ: 0.01,
+                //originAcceleration: new LimitedVector2(0, 1),
+            },
+        },
+        {
+            type: BasicThing,
+            attributes: {
+                position: new LimitedVector2(20, 300),
+                width: 200,
+                height: 20,
+                radius: 40,
+                density: 0.01,
+                //µ: 0.01,
+                //originAcceleration: new LimitedVector2(0, 1),
+            },
+        },
+        {
+            type: BasicThing,
+            attributes: {
+                position: new LimitedVector2(80, 20),
+                width: 200,
+                height: 20,
+                radius: 40,
+                density: 0.01,
+                //µ: 0.01,
+                //originAcceleration: new LimitedVector2(0, 1),
             },
         },
     ],

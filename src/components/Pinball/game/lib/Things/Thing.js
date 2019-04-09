@@ -3,13 +3,11 @@
  * Create: 2019/4/3
  * Description: 物体类
  */
-import {BOTTOM, CENTER, EPSILON, LEFT, NOT_INTERSECT, RIGHT, TOP} from 'Pinball/game/lib/Math';
-import {PullForce} from 'Pinball/game/lib/Forces/PullForce';
-import {PushForce} from 'Pinball/game/lib/Forces/PushForce';
-import {LimitedVector2, Vector2} from 'Pinball/game/lib/Math';
-import {RoundedRect} from 'Pinball/game/lib/Shapes';
-import UUID from 'uuid/v1';
 import {Rectangle, Container} from 'pixi.js';
+import UUID from 'uuid/v1';
+import {PullForce, PushForce, StaticFriction} from 'Pinball/game/lib/Forces';
+import {BOTTOM, CENTER, EPSILON, LEFT, NOT_INTERSECT, RIGHT, TOP, LimitedVector2, Vector2} from 'Pinball/game/lib/Math';
+import {RoundedRect} from 'Pinball/game/lib/Shapes';
 
 export class CollisionResult {
     prototype;
@@ -102,6 +100,8 @@ export class Thing {
      * @type {boolean}
      * @private
      */
+    _width;
+    _height;
     _widthChanged = true;
     _heightChanged = true;
 
@@ -121,7 +121,7 @@ export class Thing {
     collisionResult = new CollisionResultMap(); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
     newNext = new Map(); // 碰撞响应后下一帧的数据集
 
-    type = 'basic'; // 标记类型，默认为basic
+    type; // 标记类型，默认为basic
 
     /**
      * 坐标位置
@@ -133,9 +133,13 @@ export class Thing {
     velocity = new LimitedVector2(0, 0); // 速度
     //mass; // 质量
     density; // 密度
+    µ; // 摩擦力系数，包括静摩擦力和滑动摩擦力
 
     width;
     height;
+    color;
+    alpha;
+    zIndex; // 图层高度
     shape; // 形状管理对象，更新并输出item
     item = new Container(); // 渲染对象
 
@@ -148,27 +152,38 @@ export class Thing {
      * @param mass 质量
      * @param originAcceleration 初始加速度
      */
-    constructor({game, position, width, height, radius = 0, density, originAcceleration, alpha}) {
+    constructor({game, type = 'basic', position, width, height, radius = 0, density, originAcceleration, color, alpha, µ = 0, zIndex = 0, pivot}) {
         this.id = UUID();
         this.game = game;
+        this.type = type;
 
         this.position = position;
-        this.next.position = this.position;
+        this.next.position = position;
+
+        //this.acceleration = originAcceleration;
+        this.shape = new RoundedRect({
+            width: width,
+            height: height,
+            radius: radius,
+            alpha: alpha,
+            color: color,
+            pivot,
+        });
 
         this.width = width;
         this.height = height;
         this.density = density;
+        this.µ = µ;
 
-        this.acceleration = originAcceleration;
-
-        this.shape = new RoundedRect({
-            width: this.width,
-            height: this.height,
-            radius: radius,
-            alpha,
-        });
+        this.color = color;
+        this.alpha = alpha;
+        this.zIndex = zIndex;
+        this.item.zIndex = zIndex;
 
         this.item.addChild(this.shape.item);
+
+        originAcceleration && this.addForce(new PushForce(this, originAcceleration));
+        this.addForce(new StaticFriction(this, this.µ));
     }
 
     get app() {
@@ -183,12 +198,38 @@ export class Thing {
         return this._mass;
     }
 
+    get width() {
+        return this._width;
+    }
+
+    set width(n) {
+        if (this._width === n) return;
+        this._width = n;
+        if (this.shape) this.shape.setSize({width: n});
+        this._widthChanged = true;
+    }
+
+    get height() {
+        return this._height;
+    }
+
+    set height(n) {
+        if (this._height === n) return;
+        this._height = n;
+        if (this.shape) this.shape.setSize({height: n});
+        this._heightChanged = true;
+    }
+
     get volume() {
         return this.mass / this.density;
     }
 
     get radius() {
         return this.shape.radius;
+    }
+
+    set radius(n) {
+        this.shape.radius = n;
     }
 
     get crossSection() { // 横截面积
@@ -230,6 +271,22 @@ export class Thing {
         this._position = vector;
         this.item.x = vector.x;
         this.item.y = vector.y;
+    }
+
+    get renderable() {
+        return this.item.renderable;
+    }
+
+    set renderable(value) {
+        this.item.renderable = value;
+    }
+
+    get rotation() {
+        return this.shape.rotation;
+    }
+
+    set rotation(n) {
+        this.shape.rotation = n;
     }
 
     /**
@@ -278,6 +335,13 @@ export class Thing {
         return this;
     }
 
+    clearForces() {
+        this.forces.forEach((force, index) => {
+            // 不满足条件的力并且是非持久力则删除
+            if (force.instantaneous) this.forces.splice(index, 1);
+        });
+    }
+
     /**
      * 力的合成
      * 生成新的加速度，速度和位置到next中
@@ -290,10 +354,6 @@ export class Thing {
             if (force.condition() && force.f.length > 0) { // 受力不为零
                 newAcceleration.add(force.f);
             }
-        });
-        this.forces.forEach((force, index) => {
-            // 不满足条件的力并且是非持久力则删除
-            if (force.instantaneous) this.forces.splice(index, 1);
         });
         const newVelocity = this.velocity.clone().add(newAcceleration);
         const newPosition = this.position.clone().add(newVelocity);
@@ -323,7 +383,7 @@ export class Thing {
                             } else {
                                 this.newNext.set(prototype, value);
                             }
-                        } else if (operation === 'add') {
+                        } else if (operation === 'add' && value.length > 0) {
                             const newParam = param.clone();
                             if (subAttrName && param[subAttrName] !== undefined) {
                                 newParam[subAttrName] += value;
@@ -350,20 +410,13 @@ export class Thing {
 
     updateWithNewNext() {
         if (this.newNext.size > 0) {
-            for (let [key, value] of this.newNext) {
-                //if (key === 'position') {
-                //    this.position = value;
-                //} else {
-                //if (this[key] instanceof LimitedVector2) {
-                //    //console.log(this[key]);
-                //    this[key].set(value.x, value.y);
-                //} else {
-                this[key] = value;
-                //}
-                //}
-            }
+            for (let [key, value] of this.newNext) this[key] = value;
             this.newNext.clear();
         }
+        if (this.collisionResult.size > 0) {
+            this.collisionResult.clear();
+        }
+        this.clearForces();
         return this;
     }
 
@@ -372,22 +425,113 @@ export class Thing {
      */
 
     /**
-     * 与物体进行碰撞检测
+     * 与物体进行碰撞检测并执行回调
+     * @param thing {Thing} 碰撞对象
+     * @param mutual {boolean} 标记是否有相互作用
+     * @return {Thing}
      */
-    collisionWithThing(thing, mutual = true) {
-        // 添加处理标记
-        if (this._collisionCheckedMap.has(thing.id)) return;
-        else this._collisionCheckedMap.add(thing.id);
-
+    collisionWithThingAndCallback(thing, callback = () => {}) {
+        if (this._collisionCheckedMap.has(thing.id) || this.id === thing.id) return;
+        else {
+            this._collisionCheckedMap.add(thing.id);
+            thing._collisionCheckedMap.add(this.id);
+        }
         const collisionRes = this.onBBox(thing.nextBBox());
-        window.collisionRes = collisionRes;
         if (!(collisionRes[0] === NOT_INTERSECT || collisionRes[1] === NOT_INTERSECT)) {
             let topS = this.topS(thing);
             let bottomS = this.bottomS(thing);
             let leftS = this.leftS(thing);
             let rightS = this.rightS(thing);
 
-            let modified = false;
+            const thisPosition = this.next.position;
+            const targetPosition = thing.next.position;
+
+            const thisL = (index) => thisPosition.x + this.radius[index];
+            const thisR = (index) => thisPosition.x + this.width - this.radius[index];
+            const thingL = (index) => targetPosition.x + thing.radius[index];
+            const thingR = (index) => targetPosition.x + thing.width - thing.radius[index];
+
+            const atUpOrDown = ((thisL(0) >= thingL(0) && thisR(1) <= thingR(1)) || (thisL(0) <= thingL(0) && thisR(1) >= thingR(1))) || ((thisL(3) >= thingL(3) && thisR(2) <= thingR(2)) || (thisL(3) <= thingL(3) && thisR(2) >= thingR(2)));
+            if (atUpOrDown) {
+                const atTop = Math.abs(topS) - Math.abs(bottomS) < 0 ? true : false;
+                if (atTop) {
+                    callback(topS);
+                } else {
+                    callback(bottomS);
+                }
+                return this;
+            } else {
+                const thisT = (index) => thisPosition.y + this.radius[index];
+                const thisB = (index) => thisPosition.y + this.height - this.radius[index];
+                const thingT = (index) => targetPosition.y + thing.radius[index];
+                const thingB = (index) => targetPosition.y + thing.height - thing.radius[index];
+                const atLeftOrRight = ((thisT(0) >= thingT(0) && thisB(1) <= thingB(1)) || (thisT(0) <= thingT(0) && thisB(1) >= thingB(1))) || ((thisT(3) >= thingT(3) && thisB(2) <= thingB(2)) || (thisT(3) <= thingT(3) && thisB(2) >= thingB(2)));
+
+                if (atLeftOrRight) {
+                    const atLeft = Math.abs(leftS) - Math.abs(rightS) < 0 ? true : false;
+                    if (atLeft) {
+                        callback(leftS);
+                    } else {
+                        callback(rightS);
+                    }
+                    return this;
+                }
+            }
+            // 弹板角落回弹处理
+            //top left
+            if (this.collisionCheckWithCornerCircleAndCallback({
+                thing, callback,
+                radiusSUM: this.radius[2] + thing.radius[0],
+                thisPoint: new Vector2(thisPosition.x + this.width - this.radius[2], thisPosition.y + this.height - this.radius[2]),
+                point: targetPosition.clone().addScalar(thing.radius[0]),
+            })) return this;
+
+            // top right
+            if (this.collisionCheckWithCornerCircleAndCallback({
+                thing, callback,
+                radiusSUM: this.radius[3] + thing.radius[1],
+                thisPoint: new Vector2(thisPosition.x + this.radius[3], thisPosition.y + this.height - this.radius[3]),
+                point: new Vector2(targetPosition.x + thing.width - thing.radius[1], targetPosition.y + thing.radius[1]),
+            })) return this;
+
+            // bottom left
+            if (this.collisionCheckWithCornerCircleAndCallback({
+                thing, callback,
+                radiusSUM: this.radius[1] + thing.radius[3],
+                thisPoint: new Vector2(thisPosition.x + this.width - this.radius[1], thisPosition.y + this.radius[1]),
+                point: new Vector2(targetPosition.x + thing.radius[3], targetPosition.y + thing.height - thing.radius[3]),
+            })) return this;
+
+            // bottom right
+            if (this.collisionCheckWithCornerCircleAndCallback({
+                thing, callback,
+                radiusSUM: this.radius[0] + thing.radius[2],
+                thisPoint: thisPosition.clone().addScalar(this.radius[0]),
+                point: new Vector2(targetPosition.x + thing.width - thing.radius[2], targetPosition.y + thing.height - thing.radius[2]),
+            })) return this;
+        }
+    }
+
+    /**
+     * 与物体进行碰撞检测并作出反弹
+     * @param thing {Thing} 碰撞对象
+     * @param mutual {boolean} 标记是否有相互作用
+     * @return {Thing}
+     */
+    collisionWithThingAndReflect(thing, mutual = false) {
+        // 添加处理标记并排除自己
+        if (this._collisionCheckedMap.has(thing.id) || this.id === thing.id) return;
+        else {
+            this._collisionCheckedMap.add(thing.id);
+            thing._collisionCheckedMap.add(this.id);
+        }
+
+        const collisionRes = this.onBBox(thing.nextBBox());
+        if (!(collisionRes[0] === NOT_INTERSECT || collisionRes[1] === NOT_INTERSECT)) {
+            let topS = this.topS(thing);
+            let bottomS = this.bottomS(thing);
+            let leftS = this.leftS(thing);
+            let rightS = this.rightS(thing);
 
             const thisPosition = this.next.position;
             const targetPosition = thing.next.position;
@@ -401,75 +545,70 @@ export class Thing {
 
             const atUpOrDown = ((thisL(0) >= thingL(0) && thisR(1) <= thingR(1)) || (thisL(0) <= thingL(0) && thisR(1) >= thingR(1))) || ((thisL(3) >= thingL(3) && thisR(2) <= thingR(2)) || (thisL(3) <= thingL(3) && thisR(2) >= thingR(2)));
             if (atUpOrDown) {
-                if (Math.abs(topS) < Math.abs(bottomS)) {
+                const atTop = Math.abs(topS) - Math.abs(bottomS) < 0 ? true : false;
+                if (atTop) {
                     delta = mutual ? topS / 2 : topS;
                 } else {
-                    delta = Math.abs(mutual ? bottomS / 2 : bottomS);
+                    delta = mutual ? -bottomS / 2 : -bottomS;
                 }
                 if (delta !== undefined) {
-                    this.collisionResult.add({
-                        prototype: 'position',
-                        subAttrName: 'y',
-                        operation: 'set',
-                        value: this.position.clone().y + delta,
-                        priority: 10,
-                    });
-
-                    // 如果没有互相作用，则直接按照完全反弹处理
-                    if (mutual) {
-                        // 计算两者互相碰撞时的互相作用力
-                        const mutualForceVectorFromThing = new Vector2(0, -1);
-
-                        const mutualForceWhichFromThisSize = Math.abs(this.acceleration.dot(mutualForceVectorFromThing));
-
-                        mutualForceVectorFromThing.length = Math.abs(thing.acceleration.dot(mutualForceVectorFromThing));
-
-                        const mutualForceVectorWhichFromThis = mutualForceVectorFromThing.negate();
-                        mutualForceVectorWhichFromThis.length = mutualForceWhichFromThisSize;
-
-                        this.collisionResult.add([
-                            {
-                                prototype: 'acceleration',
-                                operation: 'add',
-                                value: mutualForceVectorFromThing,
-                            }
-                            , {
-                                prototype: 'velocity',
-                                operation: 'set',
-                                value: this.velocity.clone().negateY(),
-                                priority: 10,
-                            },
-                        ]);
-
-                        thing.collisionResult.add([
-                            {
-                                prototype: 'acceleration',
-                                operation: 'add',
-                                value: mutualForceVectorWhichFromThis,
-                            },
-                            {
-                                prototype: 'velocity',
-                                operation: 'set',
-                                value: this.velocity.clone().negateY(),
-                                priority: 10,
-                            },
-                            { // 有互相作用 则同时调整两者的位置，同时移动差值的一半，反向
-                                prototype: 'position',
-                                subAttrName: 'y',
-                                operation: 'set',
-                                value: thing.position.clone().y - delta,
-                                priority: 10,
-                            }
-                        ]);
-                    } else {
-                        this.collisionResult.add({
+                    this.collisionResult.add([
+                        {
+                            prototype: 'position',
+                            subAttrName: 'y',
+                            operation: 'set',
+                            value: this.next.position.clone().y - delta,
+                        },
+                        {
                             prototype: 'velocity',
                             operation: 'set',
-                            value: this.velocity.clone().negateY(),
+                            value: this.next.velocity.clone().negateY(),
+                        },
+                    ]);
+
+                    // 如果没有互相作用，则直接按照完全反弹处理
+                    /*if (mutual) {
+                        const thisMass = this.next.mass || this.mass;
+                        const thingMass = thing.next.mass || thing.mass;
+
+                        const normal = new Vector2(0, atTop ? 1 : -1);
+
+                        // 计算两者互相碰撞时的互相作用力
+                        const reflectionVectorFromThing = this.next.velocity.clone().negate().projectWithNormal(normal.clone());
+                        const reflectionVectorFromThis = thing.next.velocity.clone().negate().projectWithNormal(normal.clone().negate());
+
+                        reflectionVectorFromThing.length = ((thisMass - thingMass) * this.next.velocity.length + 2 * thingMass * thing.next.velocity.length) / (thisMass + thingMass);
+                        reflectionVectorFromThis.length = ((thingMass - thisMass) * thing.next.velocity.length + 2 * thisMass * this.next.velocity.length) / (thisMass + thingMass);
+
+                        if (thing.next.velocity.length < 0) {
+                            reflectionVectorFromThis.radian = Math.PI + reflectionVectorFromThing.radian;
+                        } else if (this.next.velocity.length < 0) {
+                            reflectionVectorFromThing.radian = Math.PI + reflectionVectorFromThis.radian;
+                        }
+
+                        // 计算两物体运动方向夹角是否为锐角，大于零则为锐角，小于零则为钝角，等于零则互相垂直
+                        const dot = this.next.velocity.dot(thing.next.velocity);
+                        if (dot > 0) {
+                            reflectionVectorFromThing.negate();
+                        }
+
+                        reflectionVectorFromThing.length > 0 && this.collisionResult.add({
+                            prototype: 'velocity',
+                            operation: 'set',
+                            value: reflectionVectorFromThing,
+                            priority: 10,
                         });
-                    }
-                    return this;
+
+                        reflectionVectorFromThis.length > 0 && thing.collisionResult.add({
+                            prototype: 'velocity',
+                            operation: 'set',
+                            value: reflectionVectorFromThis,
+                            priority: 10,
+                        });
+
+                    }*/
                 }
+                return this;
             } else {
                 const thisT = (index) => thisPosition.y + this.radius[index];
                 const thisB = (index) => thisPosition.y + this.height - this.radius[index];
@@ -478,73 +617,68 @@ export class Thing {
                 const atLeftOrRight = ((thisT(0) >= thingT(0) && thisB(1) <= thingB(1)) || (thisT(0) <= thingT(0) && thisB(1) >= thingB(1))) || ((thisT(3) >= thingT(3) && thisB(2) <= thingB(2)) || (thisT(3) <= thingT(3) && thisB(2) >= thingB(2)));
 
                 if (atLeftOrRight) {
-                    if (Math.abs(leftS) < Math.abs(rightS)) {
+                    const atLeft = Math.abs(leftS) - Math.abs(rightS) < 0 ? true : false;
+                    if (atLeft) {
                         delta = mutual ? leftS / 2 : leftS;
                     } else {
-                        delta = mutual ? rightS / 2 : rightS;
+                        delta = mutual ? -rightS / 2 : -rightS;
                     }
                     if (delta !== undefined) {
-                        this.collisionResult.add({
-                            prototype: 'position',
-                            subAttrName: 'x',
-                            operation: 'set',
-                            value: this.position.clone().x + delta,
-                            priority: 10,
-                        });
-
-                        // 如果没有互相作用，则直接按照完全反弹处理
-                        if (mutual) {
-                            // 计算两者互相碰撞时的互相作用力
-                            const mutualForceVectorFromThing = new Vector2(1, 0);
-
-                            const mutualForceWhichFromThisSize = Math.abs(this.acceleration.dot(mutualForceVectorFromThing));
-
-                            mutualForceVectorFromThing.length = Math.abs(thing.acceleration.dot(mutualForceVectorFromThing));
-
-                            const mutualForceVectorWhichFromThis = mutualForceVectorFromThing.negate();
-                            mutualForceVectorWhichFromThis.length = mutualForceWhichFromThisSize;
-
-                            this.collisionResult.add([
-                                {
-                                    prototype: 'acceleration',
-                                    operation: 'add',
-                                    value: mutualForceVectorFromThing,
-                                }
-                                , {
-                                    prototype: 'velocity',
-                                    operation: 'set',
-                                    value: this.velocity.clone().negateX(),
-                                    priority: 10,
-                                },
-                            ]);
-
-                            thing.collisionResult.add([
-                                {
-                                    prototype: 'acceleration',
-                                    operation: 'add',
-                                    value: mutualForceVectorWhichFromThis,
-                                },
-                                {
-                                    prototype: 'velocity',
-                                    operation: 'set',
-                                    value: this.velocity.clone().negateX(),
-                                    priority: 10,
-                                },
-                                { // 有互相作用 则同时调整两者的位置，同时移动差值的一半，反向
-                                    prototype: 'position',
-                                    subAttrName: 'x',
-                                    operation: 'set',
-                                    value: thing.position.clone().x - delta,
-                                    priority: 10,
-                                }
-                            ]);
-                        } else {
-                            this.collisionResult.add({
+                        this.collisionResult.add([
+                            {
+                                prototype: 'position',
+                                subAttrName: 'x',
+                                operation: 'set',
+                                value: this.next.position.clone().x - delta,
+                                priority: 10,
+                            },
+                            {
                                 prototype: 'velocity',
                                 operation: 'set',
-                                value: this.velocity.clone().negateX(),
+                                value: this.next.velocity.clone().negateX(),
+                            },
+                        ]);
+
+                        // 如果没有互相作用，则直接按照完全反弹处理
+                        /*if (mutual) {
+                            const thisMass = this.next.mass || this.mass;
+                            const thingMass = thing.next.mass || thing.mass;
+
+                            const normal = new Vector2(atLeft ? 1 : -1, 0);
+
+                            // 计算两者互相碰撞时的互相作用力
+                            const reflectionVectorFromThing = this.next.velocity.clone().negate().projectWithNormal(normal.clone());
+                            const reflectionVectorFromThis = thing.next.velocity.clone().negate().projectWithNormal(normal.clone().negate());
+
+                            reflectionVectorFromThing.length = ((thisMass - thingMass) * this.next.velocity.length + 2 * thingMass * thing.next.velocity.length) / (thisMass + thingMass);
+                            reflectionVectorFromThis.length = ((thingMass - thisMass) * thing.next.velocity.length + 2 * thisMass * this.next.velocity.length) / (thisMass + thingMass);
+
+                            if (thing.next.velocity.length < 0) {
+                                reflectionVectorFromThis.radian = Math.PI + reflectionVectorFromThing.radian;
+                            } else if (this.next.velocity.length < 0) {
+                                reflectionVectorFromThing.radian = Math.PI + reflectionVectorFromThis.radian;
+                            }
+
+                            // 计算两物体运动方向夹角是否为锐角，大于零则为锐角，小于零则为钝角，等于零则互相垂直
+                            const dot = this.next.velocity.dot(thing.next.velocity);
+                            if (dot > 0) {
+                                reflectionVectorFromThing.negate();
+                            }
+
+                            reflectionVectorFromThing.length > 0 && this.collisionResult.add({
+                                prototype: 'velocity',
+                                operation: 'set',
+                                value: reflectionVectorFromThing,
+                                priority: 10,
                             });
-                        }
+
+                            reflectionVectorFromThis.length > 0 && thing.collisionResult.add({
+                                prototype: 'velocity',
+                                operation: 'set',
+                                value: reflectionVectorFromThis,
+                                priority: 10,
+                            });
+                        }*/
                     }
                     return this;
                 }
@@ -552,7 +686,7 @@ export class Thing {
 
             // 弹板角落回弹处理
             //top left
-            if (this.collisionCheckWithCornerCircle({
+            if (this.collisionCheckWithCornerCircleAndReflect({
                 mutual, thing,
                 radiusSUM: this.radius[2] + thing.radius[0],
                 thisPoint: new Vector2(thisPosition.x + this.width - this.radius[2], thisPosition.y + this.height - this.radius[2]),
@@ -560,7 +694,7 @@ export class Thing {
             })) return this;
 
             // top right
-            if (this.collisionCheckWithCornerCircle({
+            if (this.collisionCheckWithCornerCircleAndReflect({
                 mutual, thing,
                 radiusSUM: this.radius[3] + thing.radius[1],
                 thisPoint: new Vector2(thisPosition.x + this.radius[3], thisPosition.y + this.height - this.radius[3]),
@@ -568,7 +702,7 @@ export class Thing {
             })) return this;
 
             // bottom left
-            if (this.collisionCheckWithCornerCircle({
+            if (this.collisionCheckWithCornerCircleAndReflect({
                 mutual, thing,
                 radiusSUM: this.radius[1] + thing.radius[3],
                 thisPoint: new Vector2(thisPosition.x + this.width - this.radius[1], thisPosition.y + this.radius[1]),
@@ -576,24 +710,45 @@ export class Thing {
             })) return this;
 
             // bottom right
-            if (this.collisionCheckWithCornerCircle({
+            if (this.collisionCheckWithCornerCircleAndReflect({
                 mutual, thing,
                 radiusSUM: this.radius[0] + thing.radius[2],
                 thisPoint: thisPosition.clone().addScalar(this.radius[0]),
                 point: new Vector2(targetPosition.x + thing.width - thing.radius[2], targetPosition.y + thing.height - thing.radius[2]),
             })) return this;
-            return this;
         }
+        return this;
     }
 
     /**
-     * 圆角碰撞
+     * 圆角碰撞并执行相应函数
      * @param radiusSUM
      * @param thing
      * @param point
      * @return {boolean}
      */
-    collisionCheckWithCornerCircle({mutual, thing, radiusSUM, thisPoint, point}) {
+    collisionCheckWithCornerCircleAndCallback({callback, thing, radiusSUM, thisPoint, point}) {
+        const distance = thisPoint.distanceTo(point);
+        if (distance - radiusSUM <= 0) {
+            let normalVector = thisPoint.clone().sub(point);
+
+            // 嵌入时位置调整
+            const amendVector = normalVector.clone();
+            amendVector.length = radiusSUM - normalVector.length; // 修正向量
+
+            callback(amendVector);
+            return true;
+        } else return false;
+    }
+
+    /**
+     * 圆角碰撞并作出反弹
+     * @param radiusSUM
+     * @param thing
+     * @param point
+     * @return {boolean}
+     */
+    collisionCheckWithCornerCircleAndReflect({mutual, thing, radiusSUM, thisPoint, point}) {
         //const thisPosition = this.next.position;
         const thisVelocity = this.next.velocity;
 
@@ -602,76 +757,152 @@ export class Thing {
             let normalVector = thisPoint.clone().sub(point);
 
             // 嵌入时位置调整
-            const difference = mutual ? normalVector.length / 2 : normalVector.length;
-
             const amendVector = normalVector.clone();
-            amendVector.length = radiusSUM - difference; // 修正向量
+            const delta = radiusSUM - normalVector.length;
+            amendVector.length = mutual ? delta / 2 : delta; // 修正向量
 
-            this.collisionResult.add({
-                prototype: 'position',
-                operation: 'set',
-                value: this.position.clone().add(amendVector),
-                priority: 10,
-            });
+            /*if (mutual) {
 
-            if (mutual) {
-                const mutualForceVectorFromThing = thisVelocity.clone().negate().projectWithNormal(normalVector); // 计算this反射方向
-                mutualForceVectorFromThing.length = Math.abs(thing.acceleration.dot(normalVector)); // 计算this收到的推力大小
+                const thisMass = this.next.mass || this.mass;
+                const thingMass = thing.next.mass || thing.mass;
 
-                const mutualForceVectorWhichFromThis = thing.next.velocity.clone().negate().projectWithNormal(normalVector.negate()); // 计算thing反射方向
-                mutualForceVectorWhichFromThis.length = Math.abs(this.acceleration.dot(normalVector)); // 计算thing收到的推力大小
+                // 计算this反射方向
+                const reflectionVectorFromThing = thisVelocity.clone().negate().projectWithNormal(normalVector.clone());
+                reflectionVectorFromThing.length = ((thisMass - thingMass) * thisVelocity.length + 2 * thingMass * thing.next.velocity.length) / (thisMass + thingMass);
 
-                this.collisionResult.add([
-                    {
-                        prototype: 'acceleration',
-                        operation: 'add',
-                        value: mutualForceVectorFromThing,
-                    }
-                    , {
-                        prototype: 'velocity',
-                        subAttrName: 'radian',
-                        operation: 'set',
-                        value: mutualForceVectorFromThing.radian,
-                        priority: 10,
-                    },
-                ]);
+                // 计算thing反射方向
+                const reflectionVectorFromThis = thing.next.velocity.clone().negate().projectWithNormal(normalVector.clone().negate());
+                reflectionVectorFromThis.length = ((thingMass - thisMass) * thing.next.velocity.length + 2 * thisMass * this.next.velocity.length) / (thisMass + thingMass);
 
-                thing.collisionResult.add([
-                    {
-                        prototype: 'acceleration',
-                        operation: 'add',
-                        value: mutualForceVectorWhichFromThis,
-                    },
-                    {
-                        prototype: 'velocity',
-                        operation: 'set',
-                        value: this.velocity.clone().negateX(),
-                        priority: 10,
-                    },
-                ]);
+                if (thing.next.velocity.length === 0) {
+                    reflectionVectorFromThis.radian = Math.PI + reflectionVectorFromThing.radian;
+                }
+                if (this.next.velocity.length === 0) {
+                    reflectionVectorFromThing.radian = Math.PI + reflectionVectorFromThis.radian;
+                }
 
-            } else {
-                const newVelocity = thisVelocity.clone().negate().projectWithNormal(normalVector);
-                this.collisionResult.add({
+                // 计算两物体运动方向夹角是否为锐角，大于零则为锐角，小于零则为钝角，等于零则互相垂直
+                const dot = this.next.velocity.dot(thing.next.velocity);
+                //console.log(dot);
+                if (dot > 0 && reflectionVectorFromThing.length > 0 && reflectionVectorFromThis.length > 0) {
+                    reflectionVectorFromThing.negate();
+                }
+                //this.collisionResult.add(
+                //    {
+                //        prototype: 'position',
+                //        operation: 'set',
+                //        value: this.position.clone().add(amendVector),
+                //        priority: 10,
+                //    },
+                //);
+                //
+                //thing.collisionResult.add(
+                //    {
+                //        prototype: 'position',
+                //        operation: 'set',
+                //        value: thing.position.clone().sub(amendVector),
+                //        priority: 10,
+                //    },
+                //);
+
+
+
+                reflectionVectorFromThing.length > 0 && this.collisionResult.add({
+                    prototype: 'velocity',
+                    operation: 'set',
+                    value: reflectionVectorFromThing,
+                    priority: 10,
+                });
+
+                reflectionVectorFromThis.length > 0 && thing.collisionResult.add({
+                    prototype: 'velocity',
+                    operation: 'set',
+                    value: reflectionVectorFromThis,
+                    priority: 10,
+                });
+
+            } else */
+            const newVelocity = thisVelocity.clone().negate().projectWithNormal(normalVector);
+            this.collisionResult.add([
+                {
+                    prototype: 'position',
+                    operation: 'set',
+                    value: this.next.position.clone().add(amendVector),
+                    priority: 9,
+                },
+                {
                     prototype: 'velocity',
                     subAttrName: 'radian',
                     operation: 'set',
                     value: newVelocity.radian,
                     priority: 10,
-                });
-            }
+                },
+            ]);
+
             return true;
         } else return false;
     }
 
     /**
-     * 与场景进行碰撞检测
+     * 与场景进行碰撞检测和碰撞反应处理，默认反弹
      * @param scene {Thing}
+     * @return {Thing}
      */
     collisionWithScene(scene) {
         const collisionRes = scene.inBBox(this.nextBBox());
         if (collisionRes[0] === CENTER && collisionRes[1] === CENTER) return false; // 未与场景边缘碰撞
-        return collisionRes;
+        if (collisionRes[0] === 'left' || collisionRes[0] === 'right') {
+            this.collisionResult.add({
+                prototype: 'velocity',
+                operation: 'set',
+                value: this.velocity.clone().negateX(),
+                priority: 100,
+            });
+            if (collisionRes[0] === 'left') {
+                this.collisionResult.add({
+                    prototype: 'position',
+                    subAttrName: 'x',
+                    operation: 'set',
+                    value: 0,
+                    priority: 100,
+                });
+            } else if (collisionRes[0] === 'right') {
+                this.collisionResult.add({
+                    prototype: 'position',
+                    subAttrName: 'x',
+                    operation: 'set',
+                    value: (scene.next.width || scene.width) - (this.next.width || this.width),
+                    priority: 100,
+                });
+            }
+
+        }
+        if (collisionRes[1] === 'top' || collisionRes[1] === 'bottom') {
+            this.collisionResult.add({
+                prototype: 'velocity',
+                operation: 'set',
+                value: this.velocity.clone().negateY(),
+                priority: 100,
+            });
+            if (collisionRes[1] === 'top') {
+                this.collisionResult.add({
+                    prototype: 'position',
+                    subAttrName: 'y',
+                    operation: 'set',
+                    value: 0,
+                    priority: 100,
+                });
+            } else if (collisionRes[1] === 'bottom') {
+                this.collisionResult.add({
+                    prototype: 'position',
+                    subAttrName: 'y',
+                    operation: 'set',
+                    value: (scene.next.height || scene.height) - (this.next.height || this.height),
+                    priority: 100,
+                });
+            }
+        }
+        return this;
     }
 
     /**
@@ -711,7 +942,7 @@ export class Thing {
         let res = [null, null];
 
         if (axis1 <= 3) res[0] = LEFT;
-        else if (axis1 >= 6) res[0] = RIGHT;
+        else if (axis1 >= 5) res[0] = RIGHT;
         else res[0] = CENTER;
 
         if (axis2 <= 3) res[1] = TOP;
@@ -728,7 +959,6 @@ export class Thing {
      */
     onBBox(targetBoundRect) {
         const [axis1, axis2] = this.checkBBox(targetBoundRect);
-        window.a12 = [axis1, axis2];
         let res = [null, null];
 
         if (axis1 === 1 || axis1 === 2) res[0] = RIGHT;
@@ -828,7 +1058,7 @@ export class Thing {
     // 用于包围盒检测，但是是可以获得接触时的偏移差值，用于位置修正
 
     topS = (target) => target.position.y - this.position.y - this.height;
-    bottomS = (target) => this.position.y - target.position.y - target.height - this.height;
+    bottomS = (target) => this.position.y - target.position.y - target.height;
     leftS = (target) => target.position.x - this.position.x - this.width;
-    rightS = (target) => this.position.x - target.position.x - target.width - this.width;
+    rightS = (target) => this.position.x - target.position.x - target.width;
 }

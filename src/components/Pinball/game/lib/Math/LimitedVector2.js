@@ -9,12 +9,13 @@ export class LimitedVector2 extends Vector2 {
     constructor(x = 0, y = 0, limit) {
         super(x, y);
         this.limit = limit || {min: {}, max: {}};
+        return this;
     }
 
     get isLimitedVector2() {return true;}
 
     clone() {
-        return new LimitedVector2(this.x, this.y, this.limit);
+        return new LimitedVector2(this.x, this.y, {...this.limit});
     }
 
     copy(v) {

@@ -5,9 +5,7 @@
  */
 import {PushForce} from 'Pinball/game/lib/Forces/PushForce';
 import {Graphics} from 'pixi.js';
-import {InertiaForce, StaticFriction, Obstruction} from 'Pinball/game/lib/Forces';
-import {LimitedVector2} from 'Pinball/game/lib/Math';
-import {RoundedRect} from 'Pinball/game/lib/Shapes';
+import {CENTER, LEFT, LimitedVector2, RIGHT} from 'Pinball/game/lib/Math';
 import {Ball} from 'Pinball/game/lib/Things/Ball';
 
 import {Thing} from 'Pinball/game/lib/Things/Thing';
@@ -15,13 +13,15 @@ import {Thing} from 'Pinball/game/lib/Things/Thing';
 export class Baffle extends Thing {
     type = 'baffle';
 
-    balls = []; // 球的列表
+    carriedBalls = []; // 球的列表
 
     directionLine;
 
-    launchTargetPosition;
-    launchDirection = Math.PI * 3 / 2;
-    launchStrength = 1;
+    _launchPosition;
+    launchDelta = new LimitedVector2(0, 0);
+    launchTargetPosition = new LimitedVector2(150, 200);
+    //launchDirection = Math.PI * 3 / 2;
+    //launchStrength = 1;
 
     mousedown = false;
 
@@ -30,22 +30,17 @@ export class Baffle extends Thing {
     constructor(game) {
         super({
             game,
-            position: new LimitedVector2(100, 500).setMinXY(0, 500).setMaxXY(200, 500),
+            position: new LimitedVector2(100, 550).setMinXY(0, 500).setMaxXY(200, 500),
             width: 100,
             height: 10,
-            radius: 10,
-            density: .001,
+            //radius: 10,
+            density: .002,
             originAcceleration: new LimitedVector2(0, 0),
+            µ: .0007,
         });
-
-        //this.addForce(new InertiaForce(this)); // 添加惯性力
-        //this.addForce(new Obstruction(this)); // 添加空气阻力
-        this.addForce(new StaticFriction(this, .2)); // 添加静摩擦力
 
         this.initDirectionLine();
         this.bindMouseEvent();
-
-        this.setPushDirection(new LimitedVector2(this.launchPosition.x, this.launchPosition.y - 300).sub(this.launchPosition));
 
         this.createBall();
     }
@@ -53,40 +48,52 @@ export class Baffle extends Thing {
     /**
      * 小球发射的位置，一般为板的中轴线上边沿
      */
-    get launchPosition() {
+    get launchCenterPosition() {
         return new LimitedVector2(this.width / 2, 0).add(this.position);
     }
+
+    get launchPosition() {
+        if (this._launchPosition === undefined) {
+            this._launchPosition = this.launchCenterPosition;
+        }
+        return this.launchCenterPosition.sub(this.launchDelta);
+    }
+
+    ///**
+    // * @param delta {LimitedVector2}
+    // */
+    //set launchPosition(delta) {
+    //    this._launchPosition = this.launchCenterPosition.add(delta);
+    //}
 
     get level() {
         return this.game.level;
     }
 
     moveLeft(delta) {
-        //this.carryBall();
         this.pull(new LimitedVector2(-.5, 0));
     }
 
     moveRight(delta) {
-        //this.carryBall();
         this.pull(new LimitedVector2(.5, 0));
     }
 
     bindMouseEvent() {
         this.game.level.bindMouseEvent(this.level.stage, 'mousemove', (event) => {
             event.stopPropagation();
-            const {data} = event;
-            if (this.mousedown) {
-                this.launchTargetPosition = new LimitedVector2(data.global.x, data.global.y);
-                this.setPushDirection(new LimitedVector2(data.global.x, data.global.y).sub(this.launchPosition));
+            if (this.mousedown && !this.pushOut) {
+                this.launchTargetPosition = new LimitedVector2(event.data.global.x, event.data.global.y);
+                this.drawDirectionLine();
             }
             return false;
         });
         this.level.bindMouseEvent(this.level.stage, 'mousedown', (event) => {
             event.stopPropagation();
             this.mousedown = true;
-            const {data} = event;
-            this.launchTargetPosition = new LimitedVector2(data.global.x, data.global.y);
-            this.setPushDirection(new LimitedVector2(data.global.x, data.global.y).sub(this.launchPosition));
+            if (!this.pushOut) {
+                this.launchTargetPosition = new LimitedVector2(event.data.global.x, event.data.global.y);
+                this.drawDirectionLine();
+            }
         });
         this.level.bindMouseEvent(this.level.stage, 'mouseup', (event) => {
             this.mousedown = false;
@@ -104,37 +111,22 @@ export class Baffle extends Thing {
     }
 
     /**
-     * 设定球发射目标点
-     */
-    setPushDirection(point) {
-        this.launchDirection = point.radian;
-        this.launchStrength = point.length / 100;
-        this.drawDirectionLine(point.length, point.radian);
-    }
-
-    /**
      * 创建球
      * @param radius
      */
-    createBall(radius = 80) {
+    createBall(radius = 10) {
         const ballPosition = this.launchPosition.clone().sub(new LimitedVector2(100 - radius, radius * 2));
         const newBall = new Ball({
             game: this.game,
             position: ballPosition,
-            density: 1,
+            density: .001,
             radius: radius,
             originAcceleration: new LimitedVector2(0, 0),
+            µ: .0002,
         });
+        this.carriedBalls.push(newBall);
         this.level.addThing(newBall);
     }
-
-    //carryBall() {
-    //    if (!this.pushOut) {
-    //        this.balls.forEach((ball) => {
-    //            ball.position = this.launchPosition.clone().add(new LimitedVector2(0, -ball.radius));
-    //        });
-    //    }
-    //}
 
     /**
      * 将球推出去
@@ -144,52 +136,79 @@ export class Baffle extends Thing {
     pushBall() {
         if (this.pushOut) return;
         this.pushOut = true;
-        this.directionLine.renderable = false;
-        this.level.things.ball.forEach((ball) => {
-            if (ball.carried) {
-                ball.carried = false;
-                const pushForce = new LimitedVector2(1, 1);
-                pushForce.length = this.launchStrength;
-                pushForce.radian = this.launchDirection;
-                ball.addForce(new PushForce(ball, pushForce));
-            }
-        });
+        if (this.carriedBalls.length === 0) return this;
+        let pushBall = this.carriedBalls.shift();
+        if (pushBall) {
+            pushBall.carried = false;
+            const pushForceVector = new LimitedVector2(1, 1);
+            pushForceVector.length = this.launchStrength;
+            pushForceVector.radian = this.launchDirection;
+            pushBall.addForce(new PushForce(pushBall, pushForceVector));
+        }
+        return this;
+    }
+
+    carryBall(ball) {
+        this.pushOut = false;
+        if (!ball.carried) {
+            this.carriedBalls.unshift(ball);
+            ball.carried = true;
+            ball.next.acceleration.length = 0;
+            ball.next.velocity.length = 0;
+            this.launchDelta = this.launchCenterPosition.clone().sub(new LimitedVector2(ball.position.x + ball.radius[0], this.position.y));
+        }
+        return this;
     }
 
     initDirectionLine() {
-        const line = new Graphics();
-        line.beginFill(0x000000, 0.5);
-        line.drawRect(0, 0, .0000001, 0.3);
-        line.endFill();
-        line.pivot.x = 0;
-        line.pivot.y = 0;
+        const line = new Thing({
+            game: this.game,
+            type: 'other',
+            color: 0x000000,
+            alpha: .5,
+            width: .0000001,
+            height: .3,
+            density: 1,
+            position: new LimitedVector2(0, 0),
+            zIndex: 1,
+            pivot: {x: 0, y: 0.5},
+        });
         this.directionLine = line;
-        this.level.scene.item.addChild(this.directionLine);
+        this.level.addThing(this.directionLine);
+        return this;
     }
 
-    drawDirectionLine(long, radian) {
-        this.directionLine.x = this.launchPosition.x;
-        this.directionLine.y = this.launchPosition.y;
-        this.directionLine.width = long;
-        this.directionLine.rotation = radian;
+    drawDirectionLine() {
+        if (this.carriedBalls.length > 0 && this.launchTargetPosition) {
+            this.directionLine.renderable = true;
+            const line = this.launchTargetPosition.clone().sub(this.launchPosition);
+            if (this.launchDirection !== line.radian || this.launchStrength !== line.length / 100) {
+                const ball = this.carriedBalls[0];
+                this.launchDirection = line.radian;
+                this.launchStrength = line.length / 100;
+                this.directionLine.position = new LimitedVector2(this.launchPosition.x, this.launchPosition.y - ball.radius[0]);
+                this.directionLine.width = line.length - ball.radius[0];
+                this.directionLine.height = ball.radius[0] * 2;
+                this.directionLine.rotation = line.radian;
+            }
+        } else this.directionLine.renderable = false;
+        return this;
     }
 
     /**
-     * 与场景进行碰撞检测
+     * 与场景进行碰撞检测和碰撞反应处理，不反弹
      * @param scene {Thing}
      */
     collisionWithScene(scene) {
-        const collisionRes = super.collisionWithScene(scene);
-        //window.collisionRes = collisionRes;
-        if (collisionRes) {
-            const {width} = scene.shape;
-            this.collisionResult.add({prototype: 'acceleration', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
-            this.collisionResult.add({prototype: 'velocity', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
-            if (collisionRes[0] === 'left') {
-                this.collisionResult.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: 0, priority: 10});
-            } else if (collisionRes[0] === 'right') {
-                this.collisionResult.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: width - this.width, priority: 10});
-            }
+        const collisionRes = scene.inBBox(this.nextBBox());
+        if (collisionRes[0] === CENTER && collisionRes[1] === CENTER) return false; // 未与场景边缘碰撞
+
+        this.collisionResult.add({prototype: 'acceleration', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
+        this.collisionResult.add({prototype: 'velocity', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
+        if (collisionRes[0] === LEFT) {
+            this.collisionResult.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: 0, priority: 10});
+        } else if (collisionRes[0] === RIGHT) {
+            this.collisionResult.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: scene.width - this.width, priority: 10});
         }
         return this;
     }
