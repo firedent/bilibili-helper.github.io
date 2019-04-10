@@ -8,10 +8,7 @@ import {StaticFriction} from 'Pinball/game/lib/Forces';
 
 export class GravityE extends Effect {
     constructor(thing) {
-        super({holder: thing, lasting: true});
-    }
-
-    apply() {
+        super({holder: thing});
         this.holder.addForce(new StaticFriction(this.holder, this.holder.µ));
     }
 }

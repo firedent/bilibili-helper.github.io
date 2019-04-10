@@ -3,12 +3,13 @@
  * Create: 2019/4/3
  * Description:
  */
+import {SlowdownE} from 'Pinball/game/lib/Effect';
 import {PushForce} from 'Pinball/game/lib/Forces/PushForce';
 import {Graphics} from 'pixi.js';
 import {CENTER, LEFT, LimitedVector2, RIGHT} from 'Pinball/game/lib/Math';
 import {Ball} from 'Pinball/game/lib/Things/Ball';
 
-import {Thing} from 'Pinball/game/lib/Things/Thing';
+import {SyncData, Thing} from 'Pinball/game/lib/Things/Thing';
 
 export class Baffle extends Thing {
     type = 'baffle';
@@ -110,7 +111,7 @@ export class Baffle extends Thing {
             density: .001,
             radius: radius,
             originAcceleration: new LimitedVector2(0, 0),
-            µ: .0002,
+            µ: .0,
         });
         this.carriedBalls.push(newBall);
         this.level.addThing(newBall);
@@ -132,6 +133,7 @@ export class Baffle extends Thing {
             pushForceVector.length = this.launchStrength;
             pushForceVector.radian = this.launchDirection;
             pushBall.addForce(new PushForce(pushBall, pushForceVector));
+            pushBall.addEffect(new SlowdownE(pushBall,0.9,2.5));
         }
         return this;
     }
@@ -156,7 +158,7 @@ export class Baffle extends Thing {
             alpha: .5,
             width: .0000001,
             height: .3,
-            density: 1,
+            density: 0,
             position: new LimitedVector2(0, 0),
             zIndex: 1,
             pivot: {x: 0, y: 0.5},
@@ -191,12 +193,12 @@ export class Baffle extends Thing {
         const collisionRes = scene.inBBox(this.nextBBox());
         if (collisionRes[0] === CENTER && collisionRes[1] === CENTER) return false; // 未与场景边缘碰撞
 
-        this.syncManager.add({prototype: 'acceleration', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
-        this.syncManager.add({prototype: 'velocity', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
+        this.syncManager.add(new SyncData('acceleration', 'length', 'set', 0, 10));
+        this.syncManager.add(new SyncData('velocity', 'length', 'set', 0, 10));
         if (collisionRes[0] === LEFT) {
-            this.syncManager.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: 0, priority: 10});
+            this.syncManager.add(new SyncData('position', 'x', 'set', 0, 10));
         } else if (collisionRes[0] === RIGHT) {
-            this.syncManager.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: scene.width - this.width, priority: 10});
+            this.syncManager.add(new SyncData('position', 'x', 'set', scene.width - this.width, 10));
         }
         return this;
     }

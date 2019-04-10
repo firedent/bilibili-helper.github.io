@@ -7,9 +7,9 @@ import {utils} from 'pixi.js';
 
 
 export class Timer extends utils.EventEmitter {
-    constructor(time = 1, manager) {
+    constructor(time = 0, manager) {
         super();
-        this.time = time;
+        this.time = time * 60000; // 60fps
         if (manager) this.addTo(manager);
 
         this.active = false; // 计时器激活标记
@@ -20,6 +20,7 @@ export class Timer extends utils.EventEmitter {
         this.repeat = 0; // 计数器计数上限
         this.loop = false; // 是否循环，如果为true，则忽略repeat参数
 
+        this._pause = false;
         this._delayTime = 0; // 统计延迟启动经过的ms
         this._elapsedTime = 0; // 记录一次计时更新经过的时长，ms
         this._repeat = 0; // 记录repeat次数
@@ -48,6 +49,14 @@ export class Timer extends utils.EventEmitter {
         return this;
     }
 
+    pause() {
+        this._pause = true;
+    }
+
+    restart() {
+        this._pause = false;
+    }
+
     reset() {
         this._elapsedTime = 0;
         this._repeat = 0;
@@ -58,7 +67,7 @@ export class Timer extends utils.EventEmitter {
     }
 
     update(delta, deltaMS) {
-        if (!this.active) return;
+        if (!this.active || this._pause) return;
         if (this.delay > this._delayTime) {
             this._delayTime += deltaMS;
             return;

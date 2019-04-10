@@ -11,6 +11,20 @@ import {ForceManager, PullForce, PushForce} from 'Pinball/game/lib/Forces';
 import {BOTTOM, CENTER, LEFT, NOT_INTERSECT, RIGHT, TOP, LimitedVector2, Vector2} from 'Pinball/game/lib/Math';
 import {RoundedRect} from 'Pinball/game/lib/Shapes';
 
+export class SyncCallback {
+    priority;
+    callback;
+
+    /**
+     * @param callback {function}
+     * @param priority {number}
+     */
+    constructor(callback, priority) {
+        this.callback = callback;
+        this.priority = priority;
+    }
+}
+
 export class SyncData {
     prototype;
     subAttrName;
@@ -18,6 +32,13 @@ export class SyncData {
     value;
     priority;
 
+    /**
+     * @param prototype {string}
+     * @param subAttrName {string|*}
+     * @param operation {string}
+     * @param value {*}
+     * @param priority {number}
+     */
     constructor(prototype, subAttrName, operation, value, priority = 0) {
         this.prototype = prototype;
         this.subAttrName = subAttrName;
@@ -29,7 +50,7 @@ export class SyncData {
 
 export class SyncManager {
     /**
-     * @type {Array<SyncData>}
+     * @type {Array<SyncData|SyncCallback>}
      */
     results = [];
 
@@ -50,23 +71,21 @@ export class SyncManager {
 
     /**
      * 添加碰撞反应
-     * @param syncData {Array<Object>|Object}
+     * @param syncObject {Array<SyncData|SyncCallback>|SyncData|SyncCallback}
      */
-    add(syncData) {
-        if (syncData instanceof Array) {
-            syncData.map((result) => {
-                const {prototype, subAttrName, operation, value, priority = 0} = result;
-                this.results.push(new SyncData(prototype, subAttrName, operation, value, priority));
+    add(syncObject) {
+        if (syncObject instanceof Array) {
+            syncObject.map((result) => {
+                this.add(result);
             });
         } else {
-            const {prototype, subAttrName, operation, value, priority = 0} = syncData;
-            this.results.push(new SyncData(prototype, subAttrName, operation, value, priority));
+            this.results.push(syncObject);
         }
     }
 
     each(callback) {
-        this.sort();
         if (typeof callback === 'function' && this.results.length > 0) {
+            this.results.length > 1 && this.sort();
             this.results.map(callback);
         }
     }
@@ -81,38 +100,41 @@ export class SyncManager {
      * 结束后清理碰撞检测和反应的过程数据
      */
     compositeWithNextAndCollisionResult() {
+        for (let key in this.thing.next) {
+            this.newNext.set(key, this.thing.next[key]);
+        }
         if (this.size > 0) {
-            this.each((o) => {
-                const {prototype, subAttrName, operation, value} = o;
-                const param = this.thing.next[prototype];
-                if (param !== undefined && value !== undefined) {
-                    if (param instanceof LimitedVector2) {
-                        if (operation === 'set') {
-                            if (subAttrName && param[subAttrName] !== undefined) {
+            this.each((syncObject) => {
+                if (syncObject instanceof SyncData) {
+                    const {prototype, subAttrName, operation, value} = syncObject;
+                    const param = this.thing.next[prototype];
+                    if (param !== undefined && value !== undefined) {
+                        if (param instanceof LimitedVector2) {
+                            if (operation === 'set') {
+                                if (subAttrName && param[subAttrName] !== undefined) {
+                                    const newParam = param.clone();
+                                    newParam[subAttrName] = value;
+                                    this.newNext.set(prototype, newParam);
+                                } else if (value instanceof LimitedVector2) {
+                                    this.newNext.set(prototype, value);
+                                }
+                            } else if (operation === 'add' && value.length > 0) {
                                 const newParam = param.clone();
-                                newParam[subAttrName] = value;
-                                this.newNext.set(prototype, newParam);
-                            } else if (value instanceof LimitedVector2){
-                                this.newNext.set(prototype, value);
-                            }
-                        } else if (operation === 'add' && value.length > 0) {
-                            const newParam = param.clone();
-                            if (subAttrName && param[subAttrName] !== undefined) {
-                                newParam[subAttrName] += value;
-                                this.newNext.set(prototype, newParam);
-                            } else {
-                                newParam.add(value);
-                                this.newNext.set(prototype, newParam);
+                                if (subAttrName && param[subAttrName] !== undefined) {
+                                    newParam[subAttrName] += value;
+                                    this.newNext.set(prototype, newParam);
+                                } else {
+                                    newParam.add(value);
+                                    this.newNext.set(prototype, newParam);
+                                }
                             }
                         }
                     }
+                } else if (syncObject instanceof SyncCallback) {
+                    syncObject.callback(this.thing, this.newNext);
                 }
             });
             this.clear();
-        } else {
-            for (let key in this.thing.next) {
-                this.newNext.set(key, this.thing.next[key]);
-            }
         }
 
         return this;
@@ -121,7 +143,15 @@ export class SyncManager {
     updateWithNewNextAndClear() {
         if (this.newNext.size > 0) {
             for (let [key, value] of this.newNext) {
-                this.thing[key] = value;
+                /**
+                 * 此处对基本类型进行比较，如果相同则不重复赋值
+                 * 由于一些属性赋值时会进行重载/初始化行为，所以此过滤流程节省了一部分性能
+                 */
+                if (this.thing[key] instanceof Vector2) {
+                    if (!this.thing[key].equals(value)) this.thing[key] = value;
+                } else if (typeof this.thing[key] === 'number' || typeof this.thing[key] === 'boolean' || typeof this.thing[key] === 'string') {
+                    if (this.thing[key] !== value) this.thing[key] = value;
+                } else this.thing[key] = value;
             }
             this.newNext.clear();
         }
@@ -181,19 +211,20 @@ export class Thing {
         velocity: new LimitedVector2(0, 0),
     };
 
-    syncManager = new SyncManager(this); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
-
-    type; // 标记类型，默认为basic
+    /**
+     * 标记类型，默认为basic
+     * @type {string}
+     */
+    type;
 
     /**
      * 坐标位置
      * @param vector {LimitedVector2}
      * @private
      */
-    _position; // 位置
+    _position;
     acceleration = new LimitedVector2(0, 0); // 加速度
     velocity = new LimitedVector2(0, 0); // 速度
-    //mass; // 质量
     density; // 密度
     µ; // 摩擦力系数，包括静摩擦力和滑动摩擦力
 
@@ -205,6 +236,7 @@ export class Thing {
     shape; // 形状管理对象，更新并输出item
     item = new Container(); // 渲染对象
 
+    syncManager = new SyncManager(this); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
     effectManager = new EffectManager(this);
     forceManager = new ForceManager(this);
 
@@ -247,7 +279,7 @@ export class Thing {
 
         originAcceleration && this.addForce(new PushForce(this, originAcceleration));
         //this.addForce(new StaticFriction(this, this.µ));
-        this.effectManager.add(new GravityE(this));
+        this.density > 0 && this.addEffect(new GravityE(this));
     }
 
     get app() {
@@ -385,14 +417,22 @@ export class Thing {
      * 对目标施加推力，同时会受到反作用力
      * @param targetThing {PIXI.Rectangle}
      */
-    push(targetThing) {
-        const pushForce = new PushForce(targetThing); // 对目标施加推力
-        this.addForce(new PullForce(this, pushForce.reactionForce)); // 对自身施加其反作用力（拉力）
-    }
+    //push(targetThing) {
+    //    const pushForce = new PushForce(targetThing); // 对目标施加推力
+    //    this.addForce(new PullForce(this, pushForce.reactionForce)); // 对自身施加其反作用力（拉力）
+    //}
 
     /**
      * 效果相关
      */
+
+    /**
+     *
+     * @param effect {Effect}
+     */
+    addEffect(effect) {
+        this.effectManager.add(effect);
+    }
 
     clearEffects() {
         this.effectManager.recycle();
@@ -583,17 +623,8 @@ export class Thing {
                 }
                 if (delta !== undefined) {
                     this.syncManager.add([
-                        {
-                            prototype: 'position',
-                            subAttrName: 'y',
-                            operation: 'set',
-                            value: this.next.position.clone().y - delta,
-                        },
-                        {
-                            prototype: 'velocity',
-                            operation: 'set',
-                            value: this.next.velocity.clone().negateY(),
-                        },
+                        new SyncData('position', 'y', 'set', this.next.position.clone().y - delta),
+                        new SyncData('velocity', null, 'set', this.next.velocity.clone().negateY()),
                     ]);
 
                     // 如果没有互相作用，则直接按照完全反弹处理
@@ -655,18 +686,8 @@ export class Thing {
                     }
                     if (delta !== undefined) {
                         this.syncManager.add([
-                            {
-                                prototype: 'position',
-                                subAttrName: 'x',
-                                operation: 'set',
-                                value: this.next.position.clone().x - delta,
-                                priority: 10,
-                            },
-                            {
-                                prototype: 'velocity',
-                                operation: 'set',
-                                value: this.next.velocity.clone().negateX(),
-                            },
+                            new SyncData('position', 'x', 'set', this.next.position.clone().x - delta, 10),
+                            new SyncData('velocity', null, 'set', this.next.velocity.clone().negateX()),
                         ]);
 
                         // 如果没有互相作用，则直接按照完全反弹处理
@@ -854,19 +875,8 @@ export class Thing {
             } else */
             const newVelocity = thisVelocity.clone().negate().projectWithNormal(normalVector);
             this.syncManager.add([
-                {
-                    prototype: 'position',
-                    operation: 'set',
-                    value: this.next.position.clone().add(amendVector),
-                    priority: 9,
-                },
-                {
-                    prototype: 'velocity',
-                    subAttrName: 'radian',
-                    operation: 'set',
-                    value: newVelocity.radian,
-                    priority: 10,
-                },
+                new SyncData('position', null, 'set', this.next.position.clone().add(amendVector), 9),
+                new SyncData('velocity', 'radian', 'set', newVelocity.radian, 10),
             ]);
 
             return true;
@@ -882,54 +892,19 @@ export class Thing {
         const collisionRes = scene.inBBox(this.nextBBox());
         if (collisionRes[0] === CENTER && collisionRes[1] === CENTER) return false; // 未与场景边缘碰撞
         if (collisionRes[0] === 'left' || collisionRes[0] === 'right') {
-            this.syncManager.add({
-                prototype: 'velocity',
-                operation: 'set',
-                value: this.velocity.clone().negateX(),
-                priority: 100,
-            });
+            this.syncManager.add(new SyncData('velocity', null, 'set', this.velocity.clone().negateX(), 10000));
             if (collisionRes[0] === 'left') {
-                this.syncManager.add({
-                    prototype: 'position',
-                    subAttrName: 'x',
-                    operation: 'set',
-                    value: 0,
-                    priority: 100,
-                });
+                this.syncManager.add(new SyncData('position', 'x', 'set', 0, 10000));
             } else if (collisionRes[0] === 'right') {
-                this.syncManager.add({
-                    prototype: 'position',
-                    subAttrName: 'x',
-                    operation: 'set',
-                    value: (scene.next.width || scene.width) - (this.next.width || this.width),
-                    priority: 100,
-                });
+                this.syncManager.add(new SyncData('position', 'x', 'set', (scene.next.width || scene.width) - (this.next.width || this.width), 10000));
             }
-
         }
         if (collisionRes[1] === 'top' || collisionRes[1] === 'bottom') {
-            this.syncManager.add({
-                prototype: 'velocity',
-                operation: 'set',
-                value: this.velocity.clone().negateY(),
-                priority: 100,
-            });
+            this.syncManager.add(new SyncData('velocity', null, 'set', this.velocity.clone().negateY(), 10000));
             if (collisionRes[1] === 'top') {
-                this.syncManager.add({
-                    prototype: 'position',
-                    subAttrName: 'y',
-                    operation: 'set',
-                    value: 0,
-                    priority: 100,
-                });
+                this.syncManager.add(new SyncData('position', 'y', 'set', 0, 10000));
             } else if (collisionRes[1] === 'bottom') {
-                this.syncManager.add({
-                    prototype: 'position',
-                    subAttrName: 'y',
-                    operation: 'set',
-                    value: (scene.next.height || scene.height) - (this.next.height || this.height),
-                    priority: 100,
-                });
+                this.syncManager.add(new SyncData('position', 'y', 'set', (scene.next.height || scene.height) - (this.next.height || this.height), 10000));
             }
         }
         return this;
@@ -957,7 +932,14 @@ export class Thing {
             this._updateSign = this.lastTime;
             const {position} = this.next;
             const {width, height} = this.item;
-            this._nextBBox = new Rectangle(position.x, position.y, width, height);
+            if (this._nextBBox) {
+                const {x, y} = position;
+                this._nextBBox.x = x;
+                this._nextBBox.y = y;
+                this._nextBBox.width = width;
+                this._nextBBox.height = height;
+
+            } else this._nextBBox = new Rectangle(position.x, position.y, width, height);
         }
         return this._nextBBox;
     }

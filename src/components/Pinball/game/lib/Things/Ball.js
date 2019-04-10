@@ -1,4 +1,4 @@
-import {LimitedVector2, NOT_INTERSECT, CENTER, Vector2} from 'Pinball/game/lib';
+import {LimitedVector2, NOT_INTERSECT, CENTER, Vector2, SyncData} from 'Pinball/game/lib';
 
 /**
  * Author: DrowsyFlesh
@@ -38,11 +38,6 @@ export class Ball extends Thing {
                 baffle.launchDelta.x = delta + baffle.launchDelta.x;
             }
         }
-        this.syncManager.add({
-            prototype: 'position',
-            operation: 'set',
-            value: newPosition,
-            priority: 10,
-        });
+        this.syncManager.add(new SyncData('position', null, 'set', newPosition, 10));
     }
 }

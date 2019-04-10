@@ -10,6 +10,8 @@ import 'Pinball/game/lib/Timer';
 export class Effect {
     id = new UUID();
 
+    basePriority = 100;
+
     /**
      * 效果持有者
      * @type {Thing}
@@ -64,34 +66,35 @@ export class Effect {
      */
     recyclable;
 
-    constructor({holder, source, duration = 0, lasting = false, repeat = 0, delay = 0, recyclable = true}) {
+    priority;
+
+    updateFrame;
+
+    constructor({holder, source}) {
         this.holder = holder;
         this.source = source;
-        this.lasting = lasting;
-        this.duration = duration;
-        this.repeat = repeat;
-        this.delay = delay;
-        this.recyclable = recyclable;
-
-        this.timer = PIXI.TimerManager.createTimer(duration);
-        this.timer.repeat = repeat;
-        this.timer.delay = delay;
-        this.timer.loop = lasting;
-        this.bindEvent();
-        this.timer.start();
     }
 
-    bindEvent() {
-        this.timer.on('start', () => {
-            this.apply();
-        });
-        this.timer.on('repeat', () => {
-            this.apply();
-        });
-        this.timer.on('end', () => {
-            this.disable();
-        });
+    get finalPriority() {
+        return this.basePriority + this.priority;
     }
+
+    //bindEvent() {
+    //    this.timer.on('start', () => {
+    //        this.apply();
+    //    });
+    //    if (this.updateFrame) {
+    //        this.timer.on('update', () => {
+    //            this.apply();
+    //        });
+    //    }
+    //    this.timer.on('repeat', () => {
+    //        this.apply();
+    //    });
+    //    this.timer.on('end', () => {
+    //        this.disable();
+    //    });
+    //}
 
     /**
      * 触发效果
