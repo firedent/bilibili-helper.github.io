@@ -41,7 +41,13 @@ export class ForceManager {
 
     // 遍历，用于力的合成和处理
     each(callback) {
-        this.forces.forEach((force, fid) => {
+        this.forces.forEach((force, fid) => callback(force, fid));
+        return this;
+    }
+
+    // 遍历起作用的力
+    eachActive(callback) {
+        this.each((force, fid) => {
             if (force.condition() && force.f.length > 0) { // 过滤掉不满足触发条件且不会零的力
                 callback(force, fid);
             }
@@ -52,7 +58,7 @@ export class ForceManager {
     // 获取合力
     jointForce() {
         const jointForce = new LimitedVector2(0, 0);
-        this.each((force) => jointForce.add(force.f));
+        this.eachActive((force) => jointForce.add(force.f));
         return jointForce;
     }
 

@@ -38,7 +38,7 @@ export class Ball extends Thing {
                 baffle.launchDelta.x = delta + baffle.launchDelta.x;
             }
         }
-        this.collisionResult.add({
+        this.syncManager.add({
             prototype: 'position',
             operation: 'set',
             value: newPosition,

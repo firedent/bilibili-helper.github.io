@@ -203,12 +203,12 @@ export class Baffle extends Thing {
         const collisionRes = scene.inBBox(this.nextBBox());
         if (collisionRes[0] === CENTER && collisionRes[1] === CENTER) return false; // 未与场景边缘碰撞
 
-        this.collisionResult.add({prototype: 'acceleration', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
-        this.collisionResult.add({prototype: 'velocity', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
+        this.syncManager.add({prototype: 'acceleration', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
+        this.syncManager.add({prototype: 'velocity', subAttrName: 'length', operation: 'set', value: 0, priority: 10});
         if (collisionRes[0] === LEFT) {
-            this.collisionResult.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: 0, priority: 10});
+            this.syncManager.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: 0, priority: 10});
         } else if (collisionRes[0] === RIGHT) {
-            this.collisionResult.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: scene.width - this.width, priority: 10});
+            this.syncManager.add({prototype: 'position', subAttrName: 'x', operation: 'set', value: scene.width - this.width, priority: 10});
         }
         return this;
     }

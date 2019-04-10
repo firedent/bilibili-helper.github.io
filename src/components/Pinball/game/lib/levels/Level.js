@@ -148,12 +148,12 @@ export class Level {
 
         // 3. 二次计算：根据next和collisionResult生成新的newNext
         this.things.ball.forEach((ball) => {
-            ball.compositeWithNextAndCollisionResult();
+            ball.syncNextAndCollisionResult();
         });
         this.things.entry.forEach((type) => type.forEach((thing) => {
-            thing.compositeWithNextAndCollisionResult();
+            thing.syncNextAndCollisionResult();
         }));
-        this.baffle.compositeWithNextAndCollisionResult();
+        this.baffle.syncNextAndCollisionResult();
 
         // 4. 更新数据：根据newNext更新为当前数据
         this.things.ball.forEach((ball) => {

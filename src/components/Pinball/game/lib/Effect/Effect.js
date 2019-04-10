@@ -9,6 +9,7 @@ import 'Pinball/game/lib/Timer';
 
 export class Effect {
     id = new UUID();
+
     // 效果持有者
     holder;
 

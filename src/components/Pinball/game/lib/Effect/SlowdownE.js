@@ -10,7 +10,7 @@ export class SlowdownE extends Effect {
         super({holder, source});
     }
 
-    on() {
+    apply() {
 
     }
 }

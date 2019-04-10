@@ -7,11 +7,11 @@ import {GravityE} from 'Pinball/game/lib/Effect';
 import {EffectManager} from 'Pinball/game/lib/Effect/EffectManager';
 import {Rectangle, Container} from 'pixi.js';
 import UUID from 'uuid/v1';
-import {ForceManager, PullForce, PushForce, StaticFriction} from 'Pinball/game/lib/Forces';
-import {BOTTOM, CENTER, EPSILON, LEFT, NOT_INTERSECT, RIGHT, TOP, LimitedVector2, Vector2} from 'Pinball/game/lib/Math';
+import {ForceManager, PullForce, PushForce} from 'Pinball/game/lib/Forces';
+import {BOTTOM, CENTER, LEFT, NOT_INTERSECT, RIGHT, TOP, LimitedVector2, Vector2} from 'Pinball/game/lib/Math';
 import {RoundedRect} from 'Pinball/game/lib/Shapes';
 
-export class CollisionResult {
+export class SyncData {
     prototype;
     subAttrName;
     operation;
@@ -27,13 +27,18 @@ export class CollisionResult {
     }
 }
 
-export class CollisionResultMap {
+export class SyncManager {
     /**
-     * @type {Array<CollisionResult>}
+     * @type {Array<SyncData>}
      */
     results = [];
 
-    constructor() {}
+    thing;
+    newNext = new Map();
+
+    constructor(thing) {
+        this.thing = thing;
+    }
 
     get size() {
         return this.results.length;
@@ -45,17 +50,17 @@ export class CollisionResultMap {
 
     /**
      * 添加碰撞反应
-     * @param collisionResult {Array<Object>|Object}
+     * @param syncData {Array<Object>|Object}
      */
-    add(collisionResult) {
-        if (collisionResult instanceof Array) {
-            collisionResult.map((result) => {
+    add(syncData) {
+        if (syncData instanceof Array) {
+            syncData.map((result) => {
                 const {prototype, subAttrName, operation, value, priority = 0} = result;
-                this.results.push(new CollisionResult(prototype, subAttrName, operation, value, priority));
+                this.results.push(new SyncData(prototype, subAttrName, operation, value, priority));
             });
         } else {
-            const {prototype, subAttrName, operation, value, priority = 0} = collisionResult;
-            this.results.push(new CollisionResult(prototype, subAttrName, operation, value, priority));
+            const {prototype, subAttrName, operation, value, priority = 0} = syncData;
+            this.results.push(new SyncData(prototype, subAttrName, operation, value, priority));
         }
     }
 
@@ -68,6 +73,62 @@ export class CollisionResultMap {
 
     clear() {
         this.results.length = 0;
+    }
+
+    /**
+     * 碰撞检测结束，开始处理检测后的反应数据
+     * 合并next和碰撞检测处理结果生成newNext用于下一帧的渲染数据
+     * 结束后清理碰撞检测和反应的过程数据
+     */
+    compositeWithNextAndCollisionResult() {
+        if (this.size > 0) {
+            this.each((o) => {
+                const {prototype, subAttrName, operation, value} = o;
+                const param = this.thing.next[prototype];
+                if (param !== undefined && value !== undefined) {
+                    if (param instanceof LimitedVector2) {
+                        if (operation === 'set') {
+                            if (subAttrName && param[subAttrName] !== undefined) {
+                                const newParam = param.clone();
+                                newParam[subAttrName] = value;
+                                this.newNext.set(prototype, newParam);
+                            } else if (value instanceof LimitedVector2){
+                                this.newNext.set(prototype, value);
+                            }
+                        } else if (operation === 'add' && value.length > 0) {
+                            const newParam = param.clone();
+                            if (subAttrName && param[subAttrName] !== undefined) {
+                                newParam[subAttrName] += value;
+                                this.newNext.set(prototype, newParam);
+                            } else {
+                                newParam.add(value);
+                                this.newNext.set(prototype, newParam);
+                            }
+                        }
+                    }
+                }
+            });
+            this.clear();
+        } else {
+            for (let key in this.thing.next) {
+                this.newNext.set(key, this.thing.next[key]);
+            }
+        }
+
+        return this;
+    }
+
+    updateWithNewNextAndClear() {
+        if (this.newNext.size > 0) {
+            for (let [key, value] of this.newNext) {
+                this.thing[key] = value;
+            }
+            this.newNext.clear();
+        }
+        if (this.size > 0) {
+            this.clear();
+        }
+        return this;
     }
 }
 
@@ -120,8 +181,7 @@ export class Thing {
         velocity: new LimitedVector2(0, 0),
     };
 
-    collisionResult = new CollisionResultMap(); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
-    newNext = new Map(); // 碰撞响应后下一帧的数据集
+    syncManager = new SyncManager(this); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
 
     type; // 标记类型，默认为basic
 
@@ -339,7 +399,6 @@ export class Thing {
         return this;
     }
 
-
     /**
      * 增加受力
      * @param force {Force}
@@ -375,55 +434,19 @@ export class Thing {
      * 合并next和碰撞检测处理结果生成newNext用于下一帧的渲染数据
      * 结束后清理碰撞检测和反应的过程数据
      */
-    compositeWithNextAndCollisionResult() {
-        if (this.collisionResult.size > 0) {
-            this.collisionResult.each((o) => {
-                const {prototype, subAttrName, operation, value} = o;
-                const param = this.next[prototype];
-                if (param !== undefined) {
-                    if (param instanceof LimitedVector2) {
-                        if (operation === 'set') {
-                            if (subAttrName && param[subAttrName] !== undefined) {
-                                const newParam = param.clone();
-                                newParam[subAttrName] = value;
-                                this.newNext.set(prototype, newParam);
-                            } else {
-                                this.newNext.set(prototype, value);
-                            }
-                        } else if (operation === 'add' && value.length > 0) {
-                            const newParam = param.clone();
-                            if (subAttrName && param[subAttrName] !== undefined) {
-                                newParam[subAttrName] += value;
-                                this.newNext.set(prototype, newParam);
-                            } else {
-                                newParam.add(value);
-                                this.newNext.set(prototype, newParam);
-                            }
-                        }
-                    }
-                }
-            });
-            this.collisionResult.clear();
-        } else {
-            for (let key in this.next) {
-                this.newNext.set(key, this.next[key]);
-            }
-        }
-
-        // 清理缓存数据
-        this._collisionCheckedMap.clear();
-        return this;
+    syncNextAndCollisionResult() {
+        return this.syncManager.compositeWithNextAndCollisionResult();
     }
 
+    /**
+     * 清理帧运算缓存数据
+     * 如清理不再生效的力，碰撞检测名单，同步完后的帧数据
+     * @return {Thing}
+     */
     updateWithNewNext() {
-        if (this.newNext.size > 0) {
-            for (let [key, value] of this.newNext) this[key] = value;
-            this.newNext.clear();
-        }
-        if (this.collisionResult.size > 0) {
-            this.collisionResult.clear();
-        }
+        this.syncManager.updateWithNewNextAndClear();
         this.clearForces();
+        this._collisionCheckedMap.clear();
         return this;
     }
 
@@ -559,7 +582,7 @@ export class Thing {
                     delta = mutual ? -bottomS / 2 : -bottomS;
                 }
                 if (delta !== undefined) {
-                    this.collisionResult.add([
+                    this.syncManager.add([
                         {
                             prototype: 'position',
                             subAttrName: 'y',
@@ -599,14 +622,14 @@ export class Thing {
                             reflectionVectorFromThing.negate();
                         }
 
-                        reflectionVectorFromThing.length > 0 && this.collisionResult.add({
+                        reflectionVectorFromThing.length > 0 && this.syncManager.add({
                             prototype: 'velocity',
                             operation: 'set',
                             value: reflectionVectorFromThing,
                             priority: 10,
                         });
 
-                        reflectionVectorFromThis.length > 0 && thing.collisionResult.add({
+                        reflectionVectorFromThis.length > 0 && thing.syncManager.add({
                             prototype: 'velocity',
                             operation: 'set',
                             value: reflectionVectorFromThis,
@@ -631,7 +654,7 @@ export class Thing {
                         delta = mutual ? -rightS / 2 : -rightS;
                     }
                     if (delta !== undefined) {
-                        this.collisionResult.add([
+                        this.syncManager.add([
                             {
                                 prototype: 'position',
                                 subAttrName: 'x',
@@ -672,14 +695,14 @@ export class Thing {
                                 reflectionVectorFromThing.negate();
                             }
 
-                            reflectionVectorFromThing.length > 0 && this.collisionResult.add({
+                            reflectionVectorFromThing.length > 0 && this.syncManager.add({
                                 prototype: 'velocity',
                                 operation: 'set',
                                 value: reflectionVectorFromThing,
                                 priority: 10,
                             });
 
-                            reflectionVectorFromThis.length > 0 && thing.collisionResult.add({
+                            reflectionVectorFromThis.length > 0 && thing.syncManager.add({
                                 prototype: 'velocity',
                                 operation: 'set',
                                 value: reflectionVectorFromThis,
@@ -794,7 +817,7 @@ export class Thing {
                 if (dot > 0 && reflectionVectorFromThing.length > 0 && reflectionVectorFromThis.length > 0) {
                     reflectionVectorFromThing.negate();
                 }
-                //this.collisionResult.add(
+                //this.syncManager.add(
                 //    {
                 //        prototype: 'position',
                 //        operation: 'set',
@@ -803,7 +826,7 @@ export class Thing {
                 //    },
                 //);
                 //
-                //thing.collisionResult.add(
+                //thing.syncManager.add(
                 //    {
                 //        prototype: 'position',
                 //        operation: 'set',
@@ -814,14 +837,14 @@ export class Thing {
 
 
 
-                reflectionVectorFromThing.length > 0 && this.collisionResult.add({
+                reflectionVectorFromThing.length > 0 && this.syncManager.add({
                     prototype: 'velocity',
                     operation: 'set',
                     value: reflectionVectorFromThing,
                     priority: 10,
                 });
 
-                reflectionVectorFromThis.length > 0 && thing.collisionResult.add({
+                reflectionVectorFromThis.length > 0 && thing.syncManager.add({
                     prototype: 'velocity',
                     operation: 'set',
                     value: reflectionVectorFromThis,
@@ -830,7 +853,7 @@ export class Thing {
 
             } else */
             const newVelocity = thisVelocity.clone().negate().projectWithNormal(normalVector);
-            this.collisionResult.add([
+            this.syncManager.add([
                 {
                     prototype: 'position',
                     operation: 'set',
@@ -859,14 +882,14 @@ export class Thing {
         const collisionRes = scene.inBBox(this.nextBBox());
         if (collisionRes[0] === CENTER && collisionRes[1] === CENTER) return false; // 未与场景边缘碰撞
         if (collisionRes[0] === 'left' || collisionRes[0] === 'right') {
-            this.collisionResult.add({
+            this.syncManager.add({
                 prototype: 'velocity',
                 operation: 'set',
                 value: this.velocity.clone().negateX(),
                 priority: 100,
             });
             if (collisionRes[0] === 'left') {
-                this.collisionResult.add({
+                this.syncManager.add({
                     prototype: 'position',
                     subAttrName: 'x',
                     operation: 'set',
@@ -874,7 +897,7 @@ export class Thing {
                     priority: 100,
                 });
             } else if (collisionRes[0] === 'right') {
-                this.collisionResult.add({
+                this.syncManager.add({
                     prototype: 'position',
                     subAttrName: 'x',
                     operation: 'set',
@@ -885,14 +908,14 @@ export class Thing {
 
         }
         if (collisionRes[1] === 'top' || collisionRes[1] === 'bottom') {
-            this.collisionResult.add({
+            this.syncManager.add({
                 prototype: 'velocity',
                 operation: 'set',
                 value: this.velocity.clone().negateY(),
                 priority: 100,
             });
             if (collisionRes[1] === 'top') {
-                this.collisionResult.add({
+                this.syncManager.add({
                     prototype: 'position',
                     subAttrName: 'y',
                     operation: 'set',
@@ -900,7 +923,7 @@ export class Thing {
                     priority: 100,
                 });
             } else if (collisionRes[1] === 'bottom') {
-                this.collisionResult.add({
+                this.syncManager.add({
                     prototype: 'position',
                     subAttrName: 'y',
                     operation: 'set',
