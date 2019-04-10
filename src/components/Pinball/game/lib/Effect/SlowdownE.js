@@ -6,8 +6,8 @@
 import {Effect} from 'Pinball/game/lib/Effect';
 
 export class SlowdownE extends Effect {
-    constructor({holder, source, duration}) {
-        super({holder, source});
+    constructor(options) {
+        super(options);
     }
 
     apply() {

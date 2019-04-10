@@ -48,11 +48,11 @@ export class EffectManager {
         });
     }
 
-    apply() {
-        this.each((effect) => {
-            effect.apply();
-        });
-        return this;
+    recycle() {
+        this.each((effect, eid) => {
+            if (!effect.active && effect.recyclable) {
+                this.remove(eid);
+            }
+        })
     }
-
 }

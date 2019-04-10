@@ -121,7 +121,6 @@ export class Level {
         this.things.entry.forEach((type) => type.forEach((thing) => {
             thing.composite();
         }));
-        this.baffle.applyEffects();
         this.baffle.composite();
 
         // 2. 碰撞检测：根据next数据做碰撞检测，存储在collisionResult中
@@ -158,11 +157,14 @@ export class Level {
         // 4. 更新数据：根据newNext更新为当前数据
         this.things.ball.forEach((ball) => {
             ball.updateWithNewNext();
+            ball.clearEffects();
         });
         this.things.entry.forEach((type) => type.forEach((thing) => {
             thing.updateWithNewNext();
+            thing.clearEffects();
         }));
         this.baffle.updateWithNewNext();
+        this.baffle.clearEffects();
     };
 
     destory() { // 退出关卡

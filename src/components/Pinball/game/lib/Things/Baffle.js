@@ -59,13 +59,6 @@ export class Baffle extends Thing {
         return this.launchCenterPosition.sub(this.launchDelta);
     }
 
-    ///**
-    // * @param delta {LimitedVector2}
-    // */
-    //set launchPosition(delta) {
-    //    this._launchPosition = this.launchCenterPosition.add(delta);
-    //}
-
     get level() {
         return this.game.level;
     }
@@ -103,11 +96,6 @@ export class Baffle extends Thing {
         space.downHandle = (e) => {
             this.pushBall();
         };
-        //this.game.level.bindMouseEvent(this.item, 'mousedown', (event) => {
-        //    event.stopPropagation();
-        //    //console.log(event);
-        //    this.createBall();
-        //});
     }
 
     /**

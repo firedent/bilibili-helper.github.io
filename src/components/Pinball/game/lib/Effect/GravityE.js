@@ -12,9 +12,6 @@ export class GravityE extends Effect {
     }
 
     apply() {
-        if (!this.active) {
-            this.holder.addForce(new StaticFriction(this.holder, this.holder.µ));
-            this.active = true;
-        }
+        this.holder.addForce(new StaticFriction(this.holder, this.holder.µ));
     }
 }

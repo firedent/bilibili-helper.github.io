@@ -394,8 +394,8 @@ export class Thing {
      * 效果相关
      */
 
-    applyEffects() {
-        this.effectManager.apply();
+    clearEffects() {
+        this.effectManager.recycle();
         return this;
     }
 
