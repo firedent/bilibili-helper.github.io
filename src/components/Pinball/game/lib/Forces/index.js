@@ -4,6 +4,7 @@
  * Description:
  */
 export {Force} from './Force';
+export {ForceManager} from './ForceManager';
 export * from './PullForce';
 export * from './PushForce';
 export * from './InertiaForce';

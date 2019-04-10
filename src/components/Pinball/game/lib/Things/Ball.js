@@ -10,6 +10,8 @@ import {Thing} from 'Pinball/game/lib/Things/Thing';
 export class Ball extends Thing {
     type = 'ball';
 
+    needRecycle = false; // 是否能被回收的标记
+
     carried = true; // 被baffle携带的标记，被携带即跟随baffle一起移动
 
     constructor(options) {
@@ -24,6 +26,7 @@ export class Ball extends Thing {
     }
 
     followBaffle(baffle) {
+        this.needRecycle = false;
         const newPosition = baffle.launchPosition.clone().sub(new LimitedVector2(this.radius[0], this.radius[0] * 2));
         if (this.position.x < 0) {
             newPosition.x = 0;

@@ -14,6 +14,7 @@ import {LimitedVector2} from 'Pinball/game/lib/Math';
 import {Thing} from 'Pinball/game/lib/Things';
 import {Baffle} from 'Pinball/game/lib/Things/Baffle';
 import * as PIXI from 'pixi.js';
+import 'Pinball/game/lib/Timer';
 import 'Pinball/game/lib';
 
 export class Level {
@@ -95,6 +96,7 @@ export class Level {
         if (right.down && !left.down) this.baffle.moveRight(delta);
 
         this.baffle.drawDirectionLine();
+        PIXI.TimerManager.update(delta);
 
         /**
          * 物体状态计算与更新
@@ -119,6 +121,7 @@ export class Level {
         this.things.entry.forEach((type) => type.forEach((thing) => {
             thing.composite();
         }));
+        this.baffle.applyEffects();
         this.baffle.composite();
 
         // 2. 碰撞检测：根据next数据做碰撞检测，存储在collisionResult中

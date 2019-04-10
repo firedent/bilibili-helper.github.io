@@ -3,7 +3,10 @@
  * Create: 2019/4/1
  * Description:
  */
+import UUID from 'uuid/v1';
+
 export class Force {
+    id = UUID();
     thing; // 承载力的物体
     /**
      * 力计算的优先级，数字越大，优先级越低
@@ -20,7 +23,7 @@ export class Force {
     }
 
     /**
-     * @return {LimitedVector2}
+     * @return {LimitedVector2|undefined}
      */
     get f() {
         return;
@@ -31,6 +34,4 @@ export class Force {
      * @return {boolean}
      */
     condition() {}
-
-
 }

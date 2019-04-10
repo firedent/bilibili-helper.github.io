@@ -3,9 +3,11 @@
  * Create: 2019/4/3
  * Description: 物体类
  */
+import {GravityE} from 'Pinball/game/lib/Effect';
+import {EffectManager} from 'Pinball/game/lib/Effect/EffectManager';
 import {Rectangle, Container} from 'pixi.js';
 import UUID from 'uuid/v1';
-import {PullForce, PushForce, StaticFriction} from 'Pinball/game/lib/Forces';
+import {ForceManager, PullForce, PushForce, StaticFriction} from 'Pinball/game/lib/Forces';
 import {BOTTOM, CENTER, EPSILON, LEFT, NOT_INTERSECT, RIGHT, TOP, LimitedVector2, Vector2} from 'Pinball/game/lib/Math';
 import {RoundedRect} from 'Pinball/game/lib/Shapes';
 
@@ -143,7 +145,8 @@ export class Thing {
     shape; // 形状管理对象，更新并输出item
     item = new Container(); // 渲染对象
 
-    forces = [];
+    effectManager = new EffectManager(this);
+    forceManager = new ForceManager(this);
 
     /**
      * 物体基类
@@ -183,7 +186,8 @@ export class Thing {
         this.item.addChild(this.shape.item);
 
         originAcceleration && this.addForce(new PushForce(this, originAcceleration));
-        this.addForce(new StaticFriction(this, this.µ));
+        //this.addForce(new StaticFriction(this, this.µ));
+        this.effectManager.add(new GravityE(this));
     }
 
     get app() {
@@ -221,7 +225,7 @@ export class Thing {
     }
 
     get volume() {
-        return this.mass / this.density;
+        return this.width * this.height;
     }
 
     get radius() {
@@ -327,19 +331,28 @@ export class Thing {
     }
 
     /**
+     * 效果相关
+     */
+
+    applyEffects() {
+        this.effectManager.apply();
+        return this;
+    }
+
+
+    /**
      * 增加受力
      * @param force {Force}
      */
     addForce(force) {
-        this.forces.push(force);
+        this.forceManager.add(force);
         return this;
     }
 
     clearForces() {
-        this.forces.forEach((force, index) => {
-            // 不满足条件的力并且是非持久力则删除
-            if (force.instantaneous) this.forces.splice(index, 1);
-        });
+        // 不满足条件的力并且是非持久力则删除
+        this.forceManager.clearInstantForce();
+        return this;
     }
 
     /**
@@ -348,13 +361,7 @@ export class Thing {
      * @return {Thing}
      */
     composite() {
-        const newAcceleration = new LimitedVector2(0, 0);
-        this.forces.forEach((force) => {
-            // 过滤掉不满足触发条件的力
-            if (force.condition() && force.f.length > 0) { // 受力不为零
-                newAcceleration.add(force.f);
-            }
-        });
+        const newAcceleration = this.forceManager.jointForce();
         const newVelocity = this.velocity.clone().add(newAcceleration);
         const newPosition = this.position.clone().add(newVelocity);
         this.next['acceleration'] = newAcceleration;
