@@ -5,6 +5,7 @@
  */
 import {GravityE} from 'Pinball/game/lib/Effect';
 import {EffectManager} from 'Pinball/game/lib/Effect/EffectManager';
+import {EffectFieldManager} from 'Pinball/game/lib/Things/EffectFields/EffectFieldManager';
 import {Rectangle, Container} from 'pixi.js';
 import UUID from 'uuid/v1';
 import {ForceManager, PullForce, PushForce} from 'Pinball/game/lib/Forces';
@@ -14,6 +15,7 @@ import {RoundedRect} from 'Pinball/game/lib/Shapes';
 export class SyncCallback {
     priority;
     callback;
+    sign;
 
     /**
      * @param callback {function}
@@ -90,19 +92,12 @@ export class SyncManager {
         }
     }
 
-    clear() {
-        this.results.length = 0;
-    }
-
     /**
      * 碰撞检测结束，开始处理检测后的反应数据
      * 合并next和碰撞检测处理结果生成newNext用于下一帧的渲染数据
      * 结束后清理碰撞检测和反应的过程数据
      */
     compositeWithNextAndCollisionResult() {
-        for (let key in this.thing.next) {
-            this.newNext.set(key, this.thing.next[key]);
-        }
         if (this.size > 0) {
             this.each((syncObject) => {
                 if (syncObject instanceof SyncData) {
@@ -134,7 +129,12 @@ export class SyncManager {
                     syncObject.callback(this.thing, this.newNext);
                 }
             });
-            this.clear();
+            this.results.length = 0;
+        }
+
+        for (let key in this.thing.next) {
+            if (this.newNext.has(key)) continue;
+            else this.newNext.set(key, this.thing.next[key]);
         }
 
         return this;
@@ -154,9 +154,6 @@ export class SyncManager {
                 } else this.thing[key] = value;
             }
             this.newNext.clear();
-        }
-        if (this.size > 0) {
-            this.clear();
         }
         return this;
     }
@@ -206,7 +203,26 @@ export class Thing {
      */
     _collisionCheckedMap = new Set();
 
-    game; // pixi.js's application
+    /**
+     * pixi.js's application
+     * @type {Game}
+     */
+    game;
+
+    /**
+     * 有些物体可能会被反复创建或者修改
+     * 标记物体是否已经载入到关卡
+     * @type {boolean}
+     */
+    loadedInLevel = false;
+
+    /**
+     * 物体的名称
+     * 如果未指定，则以`type + '-' + UUID的一部分`命名
+     * @type {string}
+     */
+    name;
+
     next = { // 碰撞检测前计算的出的运动结果数据集
         velocity: new LimitedVector2(0, 0),
     };
@@ -223,10 +239,24 @@ export class Thing {
      * @private
      */
     _position;
-    acceleration = new LimitedVector2(0, 0); // 加速度
-    velocity = new LimitedVector2(0, 0); // 速度
-    density; // 密度
-    µ; // 摩擦力系数，包括静摩擦力和滑动摩擦力
+
+    /**
+     * 加速度
+     * @type {LimitedVector2}
+     */
+    acceleration = new LimitedVector2(0, 0);
+
+    /**
+     * 速度
+     * @type {LimitedVector2}
+     */
+    velocity = new LimitedVector2(0, 0);
+
+    /**
+     * 密度
+     * @type {number}
+     */
+    density;
 
     width;
     height;
@@ -237,8 +267,9 @@ export class Thing {
     item = new Container(); // 渲染对象
 
     syncManager = new SyncManager(this); // 碰撞检测后，响应前存储的根据碰撞检测结果生成的调整数据集
-    effectManager = new EffectManager(this);
     forceManager = new ForceManager(this);
+    effectManager = new EffectManager(this);
+    effectFieldManager = new EffectFieldManager(this);
 
     /**
      * 物体基类
@@ -247,13 +278,20 @@ export class Thing {
      * @param mass 质量
      * @param originAcceleration 初始加速度
      */
-    constructor({game, type = 'basic', position, width, height, radius = 0, density, originAcceleration, color, alpha, µ = 0, zIndex = 0, pivot}) {
+    constructor({
+        game, type = 'basic', name,
+        position, width, height, radius = 0, density, originAcceleration,
+        color, alpha, zIndex = 0, pivot, effects, effectFields,
+    }) {
         this.id = UUID();
         this.game = game;
         this.type = type;
+        this.name = name ? name : `${this.type}-${this.id.split('-')[0]}`;
 
-        this.position = position;
-        this.next.position = position;
+        if (position !== undefined) {
+            this.position = position;
+            this.next.position = position;
+        }
 
         //this.acceleration = originAcceleration;
         this.shape = new RoundedRect({
@@ -268,7 +306,6 @@ export class Thing {
         this.width = width;
         this.height = height;
         this.density = density;
-        this.µ = µ;
 
         this.color = color;
         this.alpha = alpha;
@@ -278,12 +315,17 @@ export class Thing {
         this.item.addChild(this.shape.item);
 
         originAcceleration && this.addForce(new PushForce(this, originAcceleration));
-        //this.addForce(new StaticFriction(this, this.µ));
-        this.density > 0 && this.addEffect(new GravityE(this));
+        //this.density > 0 && this.addEffect(new GravityE(this));
+        effects && effects.length > 0 && this.initEffects(effects);
+        effectFields && effectFields.length > 0 && this.initEffectFields(effectFields);
     }
 
     get app() {
         return this.game.app;
+    }
+
+    get level() {
+        return this.game.level;
     }
 
     get mass() {
@@ -402,6 +444,10 @@ export class Thing {
         }
     }
 
+    destroy() {
+        this.game.level.removeThing(this);
+    }
+
     /**
      * 受力处理及相关部分
      */
@@ -426,18 +472,52 @@ export class Thing {
      * 效果相关
      */
 
+    initEffectFields(effectFields) {
+        effectFields.forEach((effectFieldConfig) => {
+            const {Type, ...options} = effectFieldConfig;
+            const effectField = new Type({game: this.game, holder: this, ...options});
+            this.effectFieldManager.add(effectField);
+        });
+        return this;
+    }
+
+    addEffectField(effectField) {
+        this.effectFieldManager.add(effectField);
+        return this;
+    }
+
+    initEffects(effects) {
+        effects.forEach((effectConfig) => {
+            const {type: Type, ...options} = effectConfig;
+            const effect = new Type({holder: this, ...options});
+            this.addEffect(effect);
+        });
+    }
+
+    applyEffects() {
+        this.effectManager.apply();
+        return this;
+    }
+
+    hasEffect(effectType) {
+        this.effectManager.has(effectType);
+    }
+
     /**
-     *
      * @param effect {Effect}
      */
     addEffect(effect) {
         this.effectManager.add(effect);
-    }
-
-    clearEffects() {
-        this.effectManager.recycle();
         return this;
     }
+
+    removeEffect(eid) {
+        this.effectManager.removeById(eid);
+    }
+
+    /**
+     * 受力相关
+     */
 
     /**
      * 增加受力
@@ -483,10 +563,11 @@ export class Thing {
      * 如清理不再生效的力，碰撞检测名单，同步完后的帧数据
      * @return {Thing}
      */
-    updateWithNewNext() {
+    updateWithNewNextAndClear() {
         this.syncManager.updateWithNewNextAndClear();
         this.clearForces();
         this._collisionCheckedMap.clear();
+        this.effectManager.recycle();
         return this;
     }
 
@@ -497,17 +578,16 @@ export class Thing {
     /**
      * 与物体进行碰撞检测并执行回调
      * @param thing {Thing} 碰撞对象
-     * @param mutual {boolean} 标记是否有相互作用
      * @return {Thing}
      */
     collisionWithThingAndCallback(thing, callback = () => {}) {
-        if (this._collisionCheckedMap.has(thing.id) || this.id === thing.id) return;
+        if (this._collisionCheckedMap.has(thing.id) || this.id === thing.id) return this;
         else {
             this._collisionCheckedMap.add(thing.id);
             thing._collisionCheckedMap.add(this.id);
         }
         const collisionRes = this.onBBox(thing.nextBBox());
-        if (!(collisionRes[0] === NOT_INTERSECT || collisionRes[1] === NOT_INTERSECT)) {
+        if (collisionRes[0] !== NOT_INTERSECT && collisionRes[1] !== NOT_INTERSECT) {
             let topS = this.topS(thing);
             let bottomS = this.bottomS(thing);
             let leftS = this.leftS(thing);
@@ -579,7 +659,10 @@ export class Thing {
                 thisPoint: thisPosition.clone().addScalar(this.radius[0]),
                 point: new Vector2(targetPosition.x + thing.width - thing.radius[2], targetPosition.y + thing.height - thing.radius[2]),
             })) return this;
+
         }
+        callback(false);
+        return this;
     }
 
     /**
@@ -590,11 +673,12 @@ export class Thing {
      */
     collisionWithThingAndReflect(thing, mutual = false) {
         // 添加处理标记并排除自己
-        if (this._collisionCheckedMap.has(thing.id) || this.id === thing.id) return;
+        if (this._collisionCheckedMap.has(thing.id) || this.id === thing.id) return this;
         else {
             this._collisionCheckedMap.add(thing.id);
             thing._collisionCheckedMap.add(this.id);
         }
+        if (!thing.density) return this; // 密度为0则直接穿透
 
         const collisionRes = this.onBBox(thing.nextBBox());
         if (!(collisionRes[0] === NOT_INTERSECT || collisionRes[1] === NOT_INTERSECT)) {
@@ -623,7 +707,7 @@ export class Thing {
                 }
                 if (delta !== undefined) {
                     this.syncManager.add([
-                        new SyncData('position', 'y', 'set', this.next.position.clone().y - delta),
+                        //new SyncData('position', 'y', 'set', this.next.position.clone().y - delta),
                         new SyncData('velocity', null, 'set', this.next.velocity.clone().negateY()),
                     ]);
 
@@ -686,7 +770,7 @@ export class Thing {
                     }
                     if (delta !== undefined) {
                         this.syncManager.add([
-                            new SyncData('position', 'x', 'set', this.next.position.clone().x - delta, 10),
+                            //new SyncData('position', 'x', 'set', this.next.position.clone().x - delta),
                             new SyncData('velocity', null, 'set', this.next.velocity.clone().negateX()),
                         ]);
 

@@ -137,7 +137,7 @@ export class RoundedRect {
             roundedRect.moveTo(this._radiusTopLeft, 0);
             roundedRect.arc(this._radiusTopLeft, this._radiusTopLeft, this._radiusTopLeft, Math.PI, Math.PI * 3 / 2);
         }
-
+        roundedRect.moveTo(this._radiusTopLeft, 0);
         roundedRect.lineTo(this.width - this._radiusTopRight, 0);
 
         if (this._radiusTopRight > 0)

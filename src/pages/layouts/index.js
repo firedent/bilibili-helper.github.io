@@ -53,14 +53,14 @@ const Home = () => (
     <React.Fragment>
         <GlobalStyleSheet/>
         <HeaderArea/>
-        <DownloadArea/>
-        <AnnouncementArea/>
-        <WebsiteUpdateArea/>
-        <VoteArea/>
-        <FeedbackArea/>
-        <FeedArea/>
-        <BadgeArea/>
-        <CommentArea/>
+        {/*<DownloadArea/>*/}
+        {/*<AnnouncementArea/>*/}
+        {/*<WebsiteUpdateArea/>*/}
+        {/*<VoteArea/>*/}
+        {/*<FeedbackArea/>*/}
+        {/*<FeedArea/>*/}
+        {/*<BadgeArea/>*/}
+        {/*<CommentArea/>*/}
     </React.Fragment>
 );
 

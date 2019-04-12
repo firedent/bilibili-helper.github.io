@@ -3,7 +3,7 @@
  * Create: 2019/4/3
  * Description:
  */
-import {SlowdownE} from 'Pinball/game/lib/Effect';
+import {GravityE, SlowdownE} from 'Pinball/game/lib/Effect';
 import {PushForce} from 'Pinball/game/lib/Forces/PushForce';
 import {Graphics} from 'pixi.js';
 import {CENTER, LEFT, LimitedVector2, RIGHT} from 'Pinball/game/lib/Math';
@@ -14,19 +14,27 @@ import {SyncData, Thing} from 'Pinball/game/lib/Things/Thing';
 export class Baffle extends Thing {
     type = 'baffle';
 
-    carriedBalls = []; // 球的列表
+    /**
+     * 板携带的球对象
+     */
+    carriedBall;
+
+    /**
+     * 板内存储的待发射球
+     * @type {Array<Ball>}
+     */
+    storedBalls = [];
 
     directionLine;
 
     _launchPosition;
     launchDelta = new LimitedVector2(0, 0);
     launchTargetPosition = new LimitedVector2(150, 200);
-    //launchDirection = Math.PI * 3 / 2;
-    //launchStrength = 1;
+    launchDirection;
+    launchStrength;
+    launchWidth;
 
     mousedown = false;
-
-    pushOut = false; // 球是否已经被击出
 
     constructor(game) {
         super({
@@ -37,13 +45,18 @@ export class Baffle extends Thing {
             //radius: 10,
             density: .002,
             originAcceleration: new LimitedVector2(0, 0),
-            µ: .0007,
+            effects: [
+                {
+                    type: GravityE,
+                    µ: .0007,
+                },
+            ],
         });
 
         this.initDirectionLine();
         this.bindMouseEvent();
 
-        this.createBall();
+        this.loadBall();
     }
 
     /**
@@ -64,6 +77,10 @@ export class Baffle extends Thing {
         return this.game.level;
     }
 
+    get player() {
+        return this.game.level.player;
+    }
+
     moveLeft(delta) {
         this.pull(new LimitedVector2(-.5, 0));
     }
@@ -75,7 +92,7 @@ export class Baffle extends Thing {
     bindMouseEvent() {
         this.game.level.bindMouseEvent(this.level.stage, 'mousemove', (event) => {
             event.stopPropagation();
-            if (this.mousedown && !this.pushOut) {
+            if (this.mousedown) {
                 this.launchTargetPosition = new LimitedVector2(event.data.global.x, event.data.global.y);
                 this.drawDirectionLine();
             }
@@ -84,7 +101,7 @@ export class Baffle extends Thing {
         this.level.bindMouseEvent(this.level.stage, 'mousedown', (event) => {
             event.stopPropagation();
             this.mousedown = true;
-            if (!this.pushOut) {
+            if (this.storedBalls.length > 0 || this.carriedBall) {
                 this.launchTargetPosition = new LimitedVector2(event.data.global.x, event.data.global.y);
                 this.drawDirectionLine();
             }
@@ -99,22 +116,35 @@ export class Baffle extends Thing {
         };
     }
 
-    /**
-     * 创建球
-     * @param radius
-     */
-    createBall(radius = 10) {
-        const ballPosition = this.launchPosition.clone().sub(new LimitedVector2(100 - radius, radius * 2));
-        const newBall = new Ball({
-            game: this.game,
-            position: ballPosition,
-            density: .001,
-            radius: radius,
-            originAcceleration: new LimitedVector2(0, 0),
-            µ: .0,
-        });
-        this.carriedBalls.push(newBall);
-        this.level.addThing(newBall);
+    // 加载球
+    loadBall() {
+        if (this.carriedBall) return this; // 如果板上有球，则不加载
+        this.launchDelta.length = 0;
+        if (this.storedBalls.length > 0) { // 判断是否有已经被加载但未发射的球
+            const lastBall = this.storedBalls.shift();
+            lastBall.position = this.launchPosition.clone().sub(new LimitedVector2(100 - lastBall.radius[0], lastBall.radius[0] * 2));
+            this.carriedBall = lastBall;
+            this.drawDirectionLine();
+            this.carriedBall.renderable = true;
+        } else {
+            for (let index in this.player.ballOptions) {
+                const ballOption = this.player.ballOptions[index];
+                if (!ballOption.loaded) { // 没有加载过的球数据
+                    ballOption.loaded = true;
+                    const newBall = new Ball({
+                        game: this.game,
+                        position: this.launchPosition.clone().sub(new LimitedVector2(100 - ballOption.radius, ballOption.radius * 2)),
+                        ...ballOption,
+                    });
+                    this.carriedBall = newBall;
+                    this.drawDirectionLine();
+                    this.carriedBall.renderable = true;
+                    this.level.addThing(newBall); // 第一次加载Thing到level
+                    break;
+                }
+            }
+        }
+        return this;
     }
 
     /**
@@ -123,25 +153,30 @@ export class Baffle extends Thing {
      * @param strength 大小
      */
     pushBall() {
-        if (this.pushOut) return;
-        this.pushOut = true;
-        if (this.carriedBalls.length === 0) return this;
-        let pushBall = this.carriedBalls.shift();
+        let pushBall = this.carriedBall;
         if (pushBall) {
+            this.carriedBall = undefined;
             pushBall.carried = false;
             const pushForceVector = new LimitedVector2(1, 1);
-            pushForceVector.length = this.launchStrength;
+            pushForceVector.length = this.launchStrength / 100;
             pushForceVector.radian = this.launchDirection;
             pushBall.addForce(new PushForce(pushBall, pushForceVector));
-            pushBall.addEffect(new SlowdownE(pushBall,0.9,2.5));
+            this.loadBall();
         }
         return this;
     }
 
     carryBall(ball) {
-        this.pushOut = false;
-        if (!ball.carried) {
-            this.carriedBalls.unshift(ball);
+        if (!ball.carried) { // 球没有设定为需要被板携带时，将其携带在板上
+            if (this.carriedBall) {
+                /**
+                 * 如果板上已经有球了，将原先的球存在store里
+                 * 并用刚接收的球覆盖
+                 */
+                this.carriedBall.renderable = false;
+                this.storedBalls.unshift(this.carriedBall);
+            }
+            this.carriedBall = ball;
             ball.carried = true;
             ball.next.acceleration.length = 0;
             ball.next.velocity.length = 0;
@@ -155,7 +190,7 @@ export class Baffle extends Thing {
             game: this.game,
             type: 'other',
             color: 0x000000,
-            alpha: .5,
+            alpha: .2,
             width: .0000001,
             height: .3,
             density: 0,
@@ -169,16 +204,16 @@ export class Baffle extends Thing {
     }
 
     drawDirectionLine() {
-        if (this.carriedBalls.length > 0 && this.launchTargetPosition) {
+        if (this.carriedBall && this.launchTargetPosition) {
             this.directionLine.renderable = true;
             const line = this.launchTargetPosition.clone().sub(this.launchPosition);
-            if (this.launchDirection !== line.radian || this.launchStrength !== line.length / 100) {
-                const ball = this.carriedBalls[0];
+            if (this.launchDirection !== line.radian || this.launchStrength !== line.length || this.launchWidth !== this.carriedBall.radius[0] * 2) {
                 this.launchDirection = line.radian;
-                this.launchStrength = line.length / 100;
-                this.directionLine.position = new LimitedVector2(this.launchPosition.x, this.launchPosition.y - ball.radius[0]);
-                this.directionLine.width = line.length - ball.radius[0];
-                this.directionLine.height = ball.radius[0] * 2;
+                this.launchStrength = line.length;
+                this.launchWidth = this.carriedBall.radius[0] * 2;
+                this.directionLine.position = new LimitedVector2(this.launchPosition.x, this.launchPosition.y - this.carriedBall.radius[0]);
+                this.directionLine.width = line.length - this.carriedBall.radius[0];
+                this.directionLine.height = this.launchWidth;
                 this.directionLine.rotation = line.radian;
             }
         } else this.directionLine.renderable = false;

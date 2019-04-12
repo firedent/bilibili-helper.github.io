@@ -11,11 +11,13 @@
 //}
 import _ from 'lodash';
 import {LimitedVector2} from 'Pinball/game/lib/Math';
-import {Thing} from 'Pinball/game/lib/Things';
+import {EffectField, Thing} from 'Pinball/game/lib/Things';
 import {Baffle} from 'Pinball/game/lib/Things/Baffle';
+import {Player} from 'Pinball/game/lib/Things/Player/Player';
 import * as PIXI from 'pixi.js';
 import 'Pinball/game/lib/Timer';
 import 'Pinball/game/lib';
+import {playerData} from 'Pinball/game/data';
 
 export class Level {
     /**
@@ -28,6 +30,8 @@ export class Level {
     shape;
     groups = {};
 
+    player;
+
     id;
     coordinate; // 大地图数据
     originThingData; // 战斗物体初始化列表
@@ -37,6 +41,7 @@ export class Level {
         effectField: new Map(),
         entry: new Map(),
         other: new Map(),
+        player: null,
     };
 
     keyMap = {}; // 按键绑定列表
@@ -80,6 +85,7 @@ export class Level {
 
     // 载入关卡
     load() {
+        this.initPlayer(playerData);
         this.initStage();
         this.initKeyboard();
         this.game.addTicker(this.ticker);
@@ -106,7 +112,7 @@ export class Level {
          * 4. 更新数据：根据next更新为当前数据
          */
 
-        // 1. 初步计算：先计算物体各自属性和受力模型计算下一帧的属性，如位置，加速度，速度，存储在next中
+            // 1. 初步计算：先计算物体各自属性和受力模型计算下一帧的属性，如位置，加速度，速度，存储在next中
         const unCarriedBalls = [];
         const carriedBalls = [];
         this.things.ball.forEach((ball) => {
@@ -122,19 +128,24 @@ export class Level {
             thing.composite();
         }));
         this.baffle.composite();
+        this.player.composite();
 
         // 2. 碰撞检测：根据next数据做碰撞检测，存储在collisionResult中
         unCarriedBalls.map((ball) => {
             this.things.entry.forEach((type) => type.forEach((thing) => {
                 ball.collisionWithThingAndReflect(thing);
             }));
-            ball.collisionWithThingAndCallback(this.baffle, () => {
-                this.baffle.carryBall(ball);
+            ball.collisionWithThingAndReflect(this.things.player);
+            ball.collisionWithThingAndCallback(this.baffle, (res) => {
+                // res 为true则碰撞到
+                res && this.baffle.carryBall(ball);
             });
             ball.collisionWithScene(this.scene);
+            ball.applyEffects();
         });
         carriedBalls.map((ball) => {
             ball.collisionWithScene(this.scene);
+            ball.applyEffects();
         });
         this.things.entry.forEach((type) => type.forEach((thisThing) => {
             //this.things.entry.forEach((type) => type.forEach((thing) => { // 物体之间互相做碰撞检测和反应
@@ -142,8 +153,16 @@ export class Level {
             //}));
             thisThing.collisionWithThingAndReflect(this.baffle);
             thisThing.collisionWithScene(this.scene);
+            thisThing.applyEffects();
         }));
         this.baffle.collisionWithScene(this.scene);
+        this.baffle.applyEffects();
+        this.things.effectField.forEach((EF) => {
+            this.things.ball.forEach((ball) => {
+                EF.collisionWithThingAndApply(ball);
+                EF.collisionWithThingAndApply(this.player);
+            });
+        });
 
         // 3. 二次计算：根据next和collisionResult生成新的newNext
         this.things.ball.forEach((ball) => {
@@ -153,18 +172,20 @@ export class Level {
             thing.syncNextAndCollisionResult();
         }));
         this.baffle.syncNextAndCollisionResult();
+        this.player.syncNextAndCollisionResult();
 
         // 4. 更新数据：根据newNext更新为当前数据
         this.things.ball.forEach((ball) => {
-            ball.updateWithNewNext();
-            ball.clearEffects();
+            ball.updateWithNewNextAndClear();
         });
         this.things.entry.forEach((type) => type.forEach((thing) => {
-            thing.updateWithNewNext();
-            thing.clearEffects();
+            thing.updateWithNewNextAndClear();
         }));
-        this.baffle.updateWithNewNext();
-        this.baffle.clearEffects();
+        this.baffle.updateWithNewNextAndClear();
+        this.player.updateWithNewNextAndClear();
+        this.things.effectField.forEach((EF) => {
+            EF.updateWithNewNextAndClear();
+        });
     };
 
     destory() { // 退出关卡
@@ -199,6 +220,11 @@ export class Level {
         return this;
     }
 
+    initPlayer(playerData) {
+        this.player = new Player({game: this.game, level: this, ...playerData});
+        this.addThing(this.player);
+    }
+
     // 创建并载入反射板
     initBaffle() {
         this.addThing(new Baffle(this.game));
@@ -225,6 +251,8 @@ export class Level {
             this.things.ball.set(thing.id, thing);
         } else if (thing.type === 'effectField') {
             this.things.effectField.set(thing.id, thing);
+        } else if (thing.type === 'player') {
+            this.things.player = thing;
         } else if (thing.type === 'other') {
             this.things.other.set(thing.id, thing);
         } else {
@@ -233,14 +261,20 @@ export class Level {
             }
             this.things.entry.get(thing.type).set(thing.id, thing);
         }
-        this.stage.addChild(thing.item);
+        // 创建zIndex图层
         if (!this.groups[thing.item.zIndex]) {
             this.groups[thing.item.zIndex] = new PIXI.display.Group(thing.item.zIndex);
             this.app.stage.addChild(new PIXI.display.Layer(this.groups[thing.item.zIndex]));
         }
+        thing.loadedInLevel = true;
         thing.item.parentGroup = this.groups[thing.item.zIndex];
+        this.stage.addChild(thing.item);
         this.app.stage.updateStage();
         return this;
+    }
+
+    removeThing(thing) {
+        this.app.stage.removeChild(thing.item);
     }
 
     bindMouseEvent(element, eventType, callback) {

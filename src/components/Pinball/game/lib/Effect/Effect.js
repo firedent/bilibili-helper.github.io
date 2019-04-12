@@ -10,6 +10,16 @@ import 'Pinball/game/lib/Timer';
 export class Effect {
     id = new UUID();
 
+    /**
+     * 效果类型
+     * @type {string}
+     */
+    type;
+
+    /**
+     * 基础优先级
+     * @type {number}
+     */
     basePriority = 100;
 
     /**
@@ -25,40 +35,10 @@ export class Effect {
     source;
 
     /**
-     * 计时器
-     * @type {Timer}
-     */
-    timer;
-
-    /**
      * 激活标记
      * @type {boolean}
      */
     active;
-
-    /**
-     * 持久性标记，即如果没有使用计时器，则默认为一次性或者持久性效果
-     * @type {boolean}
-     */
-    lasting;
-
-    /**
-     * 重复次数
-     * @type {number}
-     */
-    repeat;
-
-    /**
-     * 一次循环时间
-     * @type {number}
-     */
-    duration;
-
-    /**
-     * 延迟计算时间
-     * @type {number}
-     */
-    delay;
 
     /**
      * 效果结束后是否可被回收清理
@@ -66,40 +46,49 @@ export class Effect {
      */
     recyclable;
 
+    /**
+     * 优先级
+     * @type {number}
+     */
     priority;
 
-    updateFrame;
+    /**
+     * 可叠加标记，即不需要合并操作
+     * @type {boolean}
+     */
+    stackable;
 
-    constructor({holder, source}) {
+    applied = false;
+
+    isEnded = false;
+
+    constructor({holder, source, priority, recyclable = true, stackable = true}) {
         this.holder = holder;
         this.source = source;
+        this.recyclable = recyclable;
+        this.stackable = stackable;
+        this.priority = priority;
     }
 
     get finalPriority() {
         return this.basePriority + this.priority;
     }
 
-    //bindEvent() {
-    //    this.timer.on('start', () => {
-    //        this.apply();
-    //    });
-    //    if (this.updateFrame) {
-    //        this.timer.on('update', () => {
-    //            this.apply();
-    //        });
-    //    }
-    //    this.timer.on('repeat', () => {
-    //        this.apply();
-    //    });
-    //    this.timer.on('end', () => {
-    //        this.disable();
-    //    });
-    //}
-
     /**
-     * 触发效果
+     * 启用效果
+     * 不论是否是多次作用，都是一次性启用，再通过timer实现repeat
      */
-    apply() {}
+    apply(callback) {
+        if (!this.applied) {
+            this.applied = true;
+            callback();
+        }
+        return this;
+    }
+
+    destroy() {
+        this.disable();
+    }
 
     /**
      * 禁用效果
@@ -107,4 +96,10 @@ export class Effect {
     disable() {
         this.active = false;
     }
+
+    /**
+     * 多个同类型效果同时存在时需要进行合并
+     * 不同效果合并逻辑可能不同
+     */
+    merge() {}
 }

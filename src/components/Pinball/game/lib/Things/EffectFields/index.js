@@ -4,3 +4,6 @@
  * Description:
  */
 export * from './EffectField';
+export {SlowdownEF} from './SlowdownEF';
+export {DamagedEF} from './DamagedEF';
+export {DamageEF} from './DamageEF';
