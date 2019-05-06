@@ -3,7 +3,7 @@
         "version": "1.2.2.1",
         "sign": "test",
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.2.1/bilibilihelper_1.2.2.beta.1.crx",
-        "notify": [
+        "info": [
             ["delete", "删除<i>跨区域解锁</i>功能，该功能由于方案失效暂时无法修复故下架，如果有其他合适的方案再考虑重新上架"],
             ["fix", "修复模块加载后启用和关闭的逻辑错误问题，现在可以正常关闭功能了"],
             ["fix", "修复<i>版聊模式</i>在关闭时仍然加载UI的问题"],
