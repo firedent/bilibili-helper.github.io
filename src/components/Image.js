@@ -5,15 +5,29 @@
  */
 import {connect} from 'dva';
 import React from 'react';
-//import styled from 'styled-components';
-//
-//const Img = styled.img`
-//  &:not([src]) {
-//    content: url("data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
-//    border: 1px solid var(--border-color);
-//    box-sizing: border-box;
-//  }
-//`;
+import styled, {keyframes} from 'styled-components';
+
+const FadeIn = keyframes`
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+`;
+
+const Img = styled.img`
+  &:not([src]) {
+    content: url("data:image/gif;base64,R0lGODlhAQABAPAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    opacity: 0;
+  }
+  &[src] {
+    animation: ${FadeIn} cubic-bezier(0.16, 0.6, 0.45, 0.93);
+    animation-duration: 1s;
+  }
+`;
 
 class Image extends React.Component {
     constructor(props) {
@@ -24,7 +38,7 @@ class Image extends React.Component {
 
     render() {
         const {image, sign, url, dispatch, className, ...rest} = this.props;
-        return <img className={['model-img', className].join(' ')} key={sign} src={image[sign] || null} {...rest}/>;
+        return <Img className={['model-img', className].join(' ')} key={sign} src={image[sign] || null} {...rest}/>;
     }
 }
 

@@ -1,4 +1,3 @@
-import Url from 'url-parse';
 import {fetchFromHelper} from '../utils/functions';
 
 export default {
