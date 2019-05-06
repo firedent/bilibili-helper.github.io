@@ -16,6 +16,7 @@ import CommentEditor from './CommentEditor';
 import {LOADING_IMAGE_URL} from './loadingImage';
 import Page from 'Components/Page';
 import {cumulativeOffset} from 'Utils/functions';
+import LazyLoad from 'react-lazy-load';
 
 moment.locale('zh-cn');
 
@@ -461,7 +462,9 @@ class CommentArea extends React.Component {
         return (
             <Comment key={rpid} id={rpid} ref={i => this[`reply-${rpid}`] = i}>
                 <div className="user">
-                    <Image className={'avatar'} url={avatar} sign={mid}/>
+                    <LazyLoad>
+                        <Image className={'avatar'} url={avatar} sign={mid}/>
+                    </LazyLoad>
                 </div>
                 <div className="main">
                     <div className="header">

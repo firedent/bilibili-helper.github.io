@@ -55,7 +55,7 @@ export default {
             });
         },
         * fetchUser({type, payload}, {put, call, select}) {
-            const url = new Url('https://api.live.bilibili.com/User/getUserInfo');
+            const url = new Url('https://api.live.bilibili.com/xlive/web-ucenter/user/get_user_info');
             fetchFromHelper('json', {url: url.toString(), model: 'user'});
         },
     },

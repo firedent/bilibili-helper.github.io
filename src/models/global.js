@@ -25,10 +25,10 @@ export default {
                         if (data.code === 0) {
                             switch (sign) {
                                 case 'connect': {
+                                    dispatch({type: 'user/fetchUser'});
                                     dispatch({type: 'comments/loadCommentMap'})
                                     .then(() => dispatch({type: 'comments/loadVoteConfig'})
                                     .then(() => dispatch({type: 'comments/fetchVotes'})));
-                                    dispatch({type: 'user/fetchUser'});
                                     dispatch({type: 'user/fetchCsrf'});
                                     dispatch({type: 'initApp', payload: {...data.data, initializing: false}});
                                     break;
