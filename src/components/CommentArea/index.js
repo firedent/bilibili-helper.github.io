@@ -16,7 +16,6 @@ import CommentEditor from './CommentEditor';
 import {LOADING_IMAGE_URL} from './loadingImage';
 import Page from 'Components/Page';
 import {cumulativeOffset} from 'Utils/functions';
-import LazyLoad from 'react-lazy-load';
 
 moment.locale('zh-cn');
 
@@ -86,9 +85,10 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
     }
   }
   .main {
-    flex-grow: 1;
+    //flex-grow: 1;
+    width: 100%;
     .header {
-      display: flex;
+      //display: flex;
       line-height: 12px;
       margin: 0 10px 10px 0;
       & > * {
@@ -114,7 +114,6 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
         }
       }
       .floor {
-        flex-grow: 1;
         text-align: right;
         margin-right: 0;
         color: #ccc;
@@ -123,8 +122,8 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
       }
     }
     .content {
-      padding: 0 10px 30px 0;
-      position: relative;
+      padding: 0 10px 0 0;
+      //position: relative;
       color: var(--content-color);
       border-bottom: 1px solid var(--border-color);
       font-size: 14px;
@@ -133,11 +132,10 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
         white-space: pre-wrap;
         word-wrap: break-word;
         font-family: auto;
+        padding-bottom: 10px;
       }
       .toolbar {
-        position: absolute;
         font-size: 10px;
-        bottom: 3px;
         color: #bbb;
         .like-box {
           display: inline-block;
@@ -155,13 +153,11 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
           }
         }
         .reply {
-          padding: 3px 6px;
+          padding: 2px 4px;
           border: none;
           border-radius: 3px;
           background-color: var(--background-color);
           color: var(--bilibili-blue);
-          transform: scale(0.8);
-          transition: all 0.15s;
           cursor: pointer;
           outline: none;
           user-select: none;
@@ -173,7 +169,6 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
       }
     }
     .replies-box {
-      position: relative;
       padding-top: 30px;
       border-bottom: 1px solid var(--border-color);
       & > .replies > * {
@@ -462,9 +457,7 @@ class CommentArea extends React.Component {
         return (
             <Comment key={rpid} id={rpid} ref={i => this[`reply-${rpid}`] = i}>
                 <div className="user">
-                    <LazyLoad>
-                        <Image className={'avatar'} url={avatar} sign={mid}/>
-                    </LazyLoad>
+                    <Image className={'avatar'} url={avatar} sign={mid}/>
                 </div>
                 <div className="main">
                     <div className="header">

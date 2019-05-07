@@ -6,6 +6,7 @@
 import {connect} from 'dva';
 import React from 'react';
 import styled, {keyframes} from 'styled-components';
+import LazyLoad from 'react-lazyload';
 
 const FadeIn = keyframes`
   0% {
@@ -33,12 +34,16 @@ class Image extends React.Component {
     constructor(props) {
         super(props);
         const {sign, url} = props;
-        url && this.props.dispatch({type: 'image/fetch', payload: {url, sign}});
+        this.props.dispatch({type: 'image/fetch', payload: {url, sign}});
     }
 
     render() {
         const {image, sign, url, dispatch, className, ...rest} = this.props;
-        return <Img className={['model-img', className].join(' ')} key={sign} src={image[sign] || null} {...rest}/>;
+        return (
+            <LazyLoad once>
+                <Img className={['model-img', className].join(' ')} key={sign} src={image[sign] || null} {...rest}/>
+            </LazyLoad>
+        );
     }
 }
 
