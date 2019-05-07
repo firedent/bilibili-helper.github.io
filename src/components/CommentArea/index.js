@@ -153,7 +153,8 @@ const Comment = styled.div.attrs({className: 'comment-item'})`
           }
         }
         .reply {
-          padding: 2px 4px;
+          padding: 1px 3px;
+          font-size: 10px;
           border: none;
           border-radius: 3px;
           background-color: var(--background-color);

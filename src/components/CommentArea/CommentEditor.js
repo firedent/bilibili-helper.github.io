@@ -155,22 +155,23 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
           display: flex;
           justify-content: space-between;
           background-color: var(--border-color);
-          .tab-btn, img {
-            display: block;
+          & > div {
             margin: 2px;
             padding: 3px;
-            width: 21px;
-            height: 21px;
-            line-height: 21px;
             border-radius: 3px;
-            box-sizing: content-box;
-            font-size: 12px;
-            cursor: pointer;
             transition: background-color 0.3s;
+            cursor: pointer;
             user-select: none;
             &[on="1"], &:hover {
               background-color: var(--background-color);
             }
+          }
+          .tab-btn, img {
+            display: block;
+            width: 21px;
+            height: 21px;
+            line-height: 21px;
+            font-size: 12px;
           }
           .tab-btn {
             width: auto;
@@ -383,13 +384,11 @@ class CommentEditor extends React.Component {
                                 {start > 0 && <div className="tab-btn" onClick={this.handleOnClickStickerNavPrev}>PREV</div>}
                                 {optionJSON.map(({pid, emojis, pname, purl}, index) => {
                                     if (index < start + length && index > start - 1) {
-                                        return <Image
-                                            key={pid}
-                                            url={purl}
-                                            sign={`default-emoji-tab-${pid}`}
-                                            on={current === index ? '1' : '0'}
-                                            onClick={() => this.handleOnClickStickerTab(pid, index)}
-                                        />;
+                                        return (
+                                            <div key={pid} on={current === index ? '1' : '0'} onClick={() => this.handleOnClickStickerTab(pid, index)}>
+                                                <Image url={purl} sign={`default-emoji-tab-${pid}`}/>
+                                            </div>
+                                        );
                                     }
                                 })}
                                 {start + length < optionJSON.length && <div className="tab-btn" onClick={this.handleOnClickStickerNavNext}>NEXT</div>}
