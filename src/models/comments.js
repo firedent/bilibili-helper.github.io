@@ -294,14 +294,14 @@ export default {
     effects: {
         * loadVoteConfig({payload}, {put, call}) {
             const configResponse = yield call(fetch, '../static/json/votes.json');
-            if (configResponse.status === 200) {
+            if (configResponse.status === 200 || configResponse.status === 304) {
                 const config = yield configResponse.json();
                 yield put({type: 'updateVoteConfig', payload: config});
             }
         },
         * loadCommentMap({payload}, {put, call}) {
             const configResponse = yield call(fetch, '../static/json/comments.json');
-            if (configResponse.status === 200) {
+            if (configResponse.status === 200 || configResponse.status === 304) {
                 const config = yield configResponse.json();
                 yield put({type: 'updateCommentMap', payload: config});
             }

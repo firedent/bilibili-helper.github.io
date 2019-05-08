@@ -43,7 +43,7 @@ export default {
         },
         * fetchAnnouncementConfig({}, {put, call}) {
             const configResponse = yield call(fetch, '../static/json/announcement.json');
-            if (configResponse.status === 200) {
+            if (configResponse.status === 200 || configResponse.status === 304) {
                 const config = yield configResponse.json();
                 yield put({type: 'updateAnnouncementConfig', payload: config});
             }

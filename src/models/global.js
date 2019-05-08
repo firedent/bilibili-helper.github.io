@@ -82,29 +82,30 @@ export default {
         },
         * fetchConfig({}, {put, call}) {
             const configResponse = yield call(fetch, '../static/json/config.json');
-            if (configResponse.status === 200) {
+            if (configResponse.status === 200 || configResponse.status === 304) {
                 const config = yield configResponse.json();
                 yield put({type: 'updateAppConfig', payload: config});
             }
         },
         * fetchDownloadsConfig({}, {put, call}) {
             const downloadsResponse = yield call(fetch, '../static/json/downloads.json');
-            if (downloadsResponse.status === 200) {
+            if (downloadsResponse.status === 200 || downloadsResponse.status === 304) {
                 const config = yield downloadsResponse.json();
                 yield put({type: 'updateDownloadsConfig', payload: config});
             }
         },
         * fetchFeedsConfig({}, {put, call}) {
             const feedsResponse = yield call(fetch, '../static/json/feed.json');
-            if (feedsResponse.status === 200) {
+            if (feedsResponse.status === 200 || feedsResponse.status === 304) {
                 const config = yield feedsResponse.json();
                 yield put({type: 'updateFeedsConfig', payload: config});
             }
         },
         * fetchWebsiteUpdateConfig({}, {put, call}) {
             const updateResponse = yield call(fetch, '../static/json/websiteUpdate.json');
-            if (updateResponse.status === 200) {
+            if (updateResponse.status === 200 || updateResponse.status === 304) {
                 const config = yield updateResponse.json();
+                console.log(config);
                 yield put({type: 'updateWebsiteUpdateConfig', payload: config});
             }
         },
