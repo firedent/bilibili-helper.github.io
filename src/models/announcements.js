@@ -1,4 +1,4 @@
-import {sendCommendToHelper} from 'Utils/functions';
+import {sendCommandToHelper} from 'Utils/functions';
 
 export default {
     state: {
@@ -12,7 +12,7 @@ export default {
     subscriptions: {
         setup({dispatch, history}) {
             window.addEventListener('message', function(event) {
-                const {commend = '', data = {}, from, model, sign} = event.data;
+                const {command = '', data = {}, from, model, sign} = event.data;
                 if (from !== 'helper') return;
                 if (model !== 'announcements') return;
             });
@@ -37,7 +37,7 @@ export default {
     },
     effects: {
         * connectHelper({}, {put}) {
-            sendCommendToHelper('connect', {model: 'global', sign: 'connect'});
+            sendCommandToHelper('connect', {model: 'global', sign: 'connect'});
             yield put({type: 'initApp', payload: {initializing: true}});
             yield put({type: 'updateTryConnect'});
         },

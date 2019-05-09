@@ -25,10 +25,10 @@ export default {
     subscriptions: {
         setup({dispatch, history}) {
             window.addEventListener('message', function(event) {
-                const {commend = '', data = {}, from, model, sign} = event.data;
+                const {command = '', data = {}, from, model, sign} = event.data;
                 if (from !== 'helper') return;
                 if (model !== 'emoji') return;
-                switch (commend) {
+                switch (command) {
                     case 'returnFetch': {
                         dispatch({type: 'updateOptions', payload: data.data});
                         break;

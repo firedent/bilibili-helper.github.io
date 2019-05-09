@@ -1,7 +1,7 @@
 import Url from 'url-parse';
 import {fetchFromHelper, htmlDecode} from '../utils/functions';
 
-const myCommendConfig = {
+const myCommentConfig = {
     pn: 1, // 评论页数
     oid: 44808808, // 评论数据库id
     sort: 0, // 降序
@@ -18,7 +18,7 @@ const targetConfig = {
     pn: 1,
 };
 
-const testCommendConfig = {
+const testCommentConfig = {
     pn: 1,
     oid: 43669143,
     sort: 0,
@@ -68,10 +68,10 @@ export default {
     subscriptions: {
         setup({dispatch, history}, done) {
             window.addEventListener('message', function(event) {
-                const {commend = '', data = {}, from, model, sign} = event.data;
+                const {command = '', data = {}, from, model, sign} = event.data;
                 if (from !== 'helper') return;
                 if (model !== 'comment') return;
-                switch (commend) {
+                switch (command) {
                     case 'returnFetch': {
                         if (data.code === 0) {
                             switch (sign) {

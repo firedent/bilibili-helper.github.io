@@ -10,20 +10,20 @@ export const postMessage = (message, origin = (local ? 'http://localhost:8000/' 
 
 /**
  * 向助手发送message
- * @param commend
+ * @param command
  * @param data
  */
-export const sendCommendToHelper = (commend, data) => {
-    postMessage({commend, data, from: 'website'});
+export const sendCommandToHelper = (command, data) => {
+    postMessage({command, data, from: 'website'});
 };
 
 export const fetchFromHelper = (type, fetchOptions) => {
     if (fetchOptions.type) throw('fetchOptions can not contain the param: type');
-    sendCommendToHelper('fetch', {...fetchOptions, type});
+    sendCommandToHelper('fetch', {...fetchOptions, type});
 };
 
 export const getCookieFromHelper = (getOptions) => {
-    sendCommendToHelper('cookie', getOptions);
+    sendCommandToHelper('cookie', getOptions);
 };
 
 export const htmlDecode = (all, input) => {
