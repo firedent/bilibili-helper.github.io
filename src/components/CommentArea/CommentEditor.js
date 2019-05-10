@@ -367,6 +367,7 @@ class CommentEditor extends React.Component {
                 <div className="main">
                     <div className="send-box">
                         <textarea
+                            autoFocus={true}
                             disabled={!canUse}
                             ref={i => this.textarea = i}
                             placeholder={name && !global ? `回复 @${name}` : '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。'}

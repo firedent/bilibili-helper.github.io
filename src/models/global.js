@@ -105,7 +105,6 @@ export default {
             const updateResponse = yield call(fetch, '../static/json/websiteUpdate.json');
             if (updateResponse.status === 200 || updateResponse.status === 304) {
                 const config = yield updateResponse.json();
-                console.log(config);
                 yield put({type: 'updateWebsiteUpdateConfig', payload: config});
             }
         },

@@ -34,7 +34,7 @@ class Image extends React.Component {
     constructor(props) {
         super(props);
         const {sign, url} = props;
-        this.props.dispatch({type: 'image/fetch', payload: {url, sign}});
+        url && this.props.dispatch({type: 'image/fetch', payload: {url, sign}});
     }
 
     render() {
