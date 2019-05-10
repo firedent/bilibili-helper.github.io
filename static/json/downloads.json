@@ -1,10 +1,10 @@
 [
     {
-        "version": "1.2.2.5",
+        "version": "1.2.2.7",
         "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.2.1/bilibilihelper_1.2.2.beta.5.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.2.7/bilibilihelper_1.2.2.beta.7.crx",
         "notify": [
-            ["important", "重新上线<i>跨区域解锁</i>功能，但是启用该功能后原本大陆的部分视频会看不了，关闭后恢复，后需考虑在菜单栏增加一个快速切换按钮"]
+            ["important", "重新上线<i>跨区域解锁</i>功能，该功能现在会自动切换配置，但不会在不需要的时候自动禁用，后续会继续考虑优化方案"]
         ],
         "info": [
             ["fix", "修复模块加载后启用和关闭的逻辑错误问题，现在可以正常关闭功能了", 590],
