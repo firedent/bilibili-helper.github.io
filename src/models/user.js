@@ -9,10 +9,10 @@ export default {
     subscriptions: {
         setup({dispatch, history}) {
             window.addEventListener('message', function(event) {
-                const {command = '', data = {}, from, model, sign} = event.data;
+                const {command = '', commend = '', data = {}, from, model, sign} = event.data;
                 if (from !== 'helper') return;
                 if (model !== 'user') return;
-                switch (command) {
+                switch (command || commend) {
                     case 'returnFetch': {
                         if (data.code === 'REPONSE_OK' || data.code === 0) {
                             //if (sign === 'reply') {

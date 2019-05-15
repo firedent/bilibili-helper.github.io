@@ -68,10 +68,10 @@ export default {
     subscriptions: {
         setup({dispatch, history}, done) {
             window.addEventListener('message', function(event) {
-                const {command = '', data = {}, from, model, sign} = event.data;
+                const {command = '',commend = '', data = {}, from, model, sign} = event.data;
                 if (from !== 'helper') return;
                 if (model !== 'comment') return;
-                switch (command) {
+                switch (command || commend) {
                     case 'returnFetch': {
                         if (data.code === 0) {
                             switch (sign) {

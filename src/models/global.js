@@ -17,10 +17,10 @@ export default {
     subscriptions: {
         setup({dispatch, history}) {
             window.addEventListener('message', function(event) {
-                const {command = '', data = {}, from, model, sign} = event.data;
+                let {command = '', commend = '', data = {}, from, model, sign} = event.data;
                 if (from !== 'helper') return;
                 if (model !== 'global') return;
-                switch (command) {
+                switch (command || commend) {
                     case 'returnApp': {
                         if (data.code === 0) {
                             switch (sign) {

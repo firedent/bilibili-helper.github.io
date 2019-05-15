@@ -14,7 +14,7 @@ export const postMessage = (message, origin = (local ? 'http://localhost:8000/' 
  * @param data
  */
 export const sendCommandToHelper = (command, data) => {
-    postMessage({command, data, from: 'website'});
+    postMessage({command, commend: command, data, from: 'website'});
 };
 
 export const fetchFromHelper = (type, fetchOptions) => {
