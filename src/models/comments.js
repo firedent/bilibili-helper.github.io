@@ -323,14 +323,14 @@ export default {
             const url = new Url('https://api.bilibili.com/x/v2/reply');
             const {oid, pn, sort, type} = yield select(({comments}) => comments.config);
             yield put({type: 'updateConfig', payload});
-            url.set('query', {oid, pn, sort, type, ...payload});
+            url.set('query', {oid, pn, sort, type, mobi_app: 1, ...payload});
             fetchFromHelper('json', {url: url.toString(), model: 'comment', sign: 'getComment'});
         },
         * fetchReply({payload}, {put, select}) {
             yield put({type: 'updateReplyLoadingState', payload: payload.root});
             const url = new Url('https://api.bilibili.com/x/v2/reply/reply');
             const {oid, type: originType} = yield select(({comments}) => comments.config);
-            url.set('query', {oid, type: originType, ...payload});
+            url.set('query', {oid, type: originType, mobi_app: 1, ...payload});
             fetchFromHelper('json', {url: url.toString(), model: 'comment', sign: 'getReply'});
         },
         * sendReply({payload}, {put, select}) {
