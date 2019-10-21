@@ -1,5 +1,18 @@
 [
     {
+        "version": "1.2.2.12",
+        "sign": "test",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.2.12/bilibilihelper_1.2.2.beta.12.crx",
+        "notify": [
+            ["important", "下线<i>跨区域解锁</i>功能，该功能预计将在2.x版本上线，由于我的主力笔记本损坏导致原有进度全部丢置，已经重新开始，将尽快恢复"]
+        ],
+        "info": [
+            ["fix", "修复<i>自动领瓜子</i>时导致页面卡顿的问题", 620],
+            ["fix", "修复<i>去污粉</i>点击没有反应的问题", 621],
+            ["fix", "修复<i>夜间模式</i>部分样式错误问题", 599]
+        ]
+    },
+    {
         "version": "1.2.2.7",
         "sign": "test",
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.2.7/bilibilihelper_1.2.2.beta.7.crx",
