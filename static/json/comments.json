@@ -5,7 +5,8 @@
             "oid": 16116344,
             "type": 11,
             "sort": 0,
-            "pn": 1
+            "pn": 1,
+            "plat": 1
         },
         "canComment": true
     },
@@ -15,7 +16,8 @@
             "oid": 16877351,
             "type": 11,
             "sort": 0,
-            "pn": 1
+            "pn": 1,
+            "plat": 1
         },
         "canComment": false
     }
