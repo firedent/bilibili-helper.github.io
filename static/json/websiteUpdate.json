@@ -1,4 +1,5 @@
 [
     "评论区添加新emoji表情",
-    "评论编辑器现在支持快捷键发送 (ctrl+enter/command+enter)"
+    "评论编辑器现在支持快捷键发送 (ctrl+enter/command+enter)",
+    "增加评论区楼层显示"
 ]
