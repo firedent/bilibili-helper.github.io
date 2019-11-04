@@ -325,7 +325,7 @@ class DownloadArea extends React.Component {
                                 >
                                     <span>{this.getVersionTypeString(sign)} {version}</span>
                                     {version === tabVersion && (
-                                        <a href={url}>
+                                        <a href={url} download>
                                             <i className="download-btn">Click here to download</i>
                                         </a>)}
                                 </DownloadButton>
