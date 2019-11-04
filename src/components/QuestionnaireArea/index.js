@@ -39,7 +39,7 @@ class QuestionnaireArea extends React.Component {
     return (
       <Wrappr id="announcement">
         <h3>问卷调查 ~ QUESTIONNAIRE</h3>
-        <p>关于POPUP页面的问卷，很简短，请参与填写一下：→ <a href="https://docs.qq.com/form/edit/DUHZ3allZS0ZYQlBN">link</a></p>
+        <p>关于POPUP页面的问卷，很简短，请参与填写一下~：→ <a href="https://docs.qq.com/form/edit/DUHZ3allZS0ZYQlBN">link</a></p>
       </Wrappr>
     );
   }
