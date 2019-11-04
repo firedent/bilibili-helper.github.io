@@ -12,6 +12,7 @@ export AnnouncementArea from 'Components/AnnouncementArea';
 export BadgeArea from 'Components/BadgeArea';
 export FeedbackArea from 'Components/FeedbackArea';
 export VoteArea from 'Components/VoteArea';
+export QuestionnaireArea from 'Components/QuestionnaireArea';
 export Page from 'Components/Page';
 export FeedArea from 'Components/FeedArea';
 export {Header} from 'Components/Header';

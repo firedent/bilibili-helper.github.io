@@ -18,6 +18,7 @@ import {
     WebsiteUpdateArea,
     Page,
     FeedArea,
+  QuestionnaireArea,
     PinballArea,
 } from 'Components';
 
@@ -53,6 +54,7 @@ const Home = () => (
     <React.Fragment>
         <GlobalStyleSheet/>
         <HeaderArea/>
+        <QuestionnaireArea/>
         <DownloadArea/>
         <AnnouncementArea/>
         <WebsiteUpdateArea/>
