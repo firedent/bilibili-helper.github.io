@@ -1,8 +1,8 @@
 [
     {
-        "version": "1.2.2",
+        "version": "1.2.3",
         "sign": "store",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.2/bilibilihelper_1.2.2.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.3/bilibilihelper_1.2.3.crx",
         "notify": [
             ["important", "下线<i>跨区域解锁</i>功能，该功能预计将在2.x版本上线，由于我的主力笔记本损坏导致原有进度全部丢置，已经重新开始，将尽快恢复"],
             ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"]
