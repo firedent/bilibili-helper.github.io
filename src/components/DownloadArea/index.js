@@ -252,8 +252,8 @@ class DownloadArea extends React.Component {
         const restVersion = [];
         let i = 0;
         _.forEach(downloads, (data) => {
-            const {url} = data;
-            if (url && i < 3) {
+            const {url, available = false} = data;
+            if (url && i < 3 && available) {
                 i += 1;
                 downloadThree.push(data);
             } else restVersion.push(data);
