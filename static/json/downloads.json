@@ -1,5 +1,20 @@
 [
     {
+        "version": "1.2.8",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.8/bilibilihelper_1.2.8.crx",
+        "notify": [
+            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.8这个版本中将菜单项目的文字进行了简化"],
+            ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"]
+        ],
+        "available": true,
+        "info": [
+            ["change", "popup菜单栏变动，视频跳转功能现在改为使用回车键进行确认跳转"],
+            ["fix", "修复<i>弹幕发送者查询</i>功能"],
+            ["fix", "修复<i>关闭动态页面小视频自动播放</i>功能（快速滚动时有个别仍旧会播放，这是由于实现方案比较简单暴力「划掉」）"],
+        ]
+    },
+    {
         "version": "1.2.7",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.7/bilibilihelper_1.2.7.crx",
