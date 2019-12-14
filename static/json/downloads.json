@@ -1,5 +1,24 @@
 [
     {
+        "version": "1.2.11",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.11/bilibilihelper_1.2.11.crx",
+        "notify": [
+            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"],
+            ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"],
+            ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"]
+        ],
+        "available": true,
+        "info": [
+            ["add", "增加扩展程序弹窗下的「窄模式」，默认仍旧是宽模式，所以图标模式不会再有了"],
+            ["improve", "调整了一些i18n的细节，仍有一部份没有处理"],
+            ["fix", "修复火狐下notification.buttons不兼容的问题"],
+            ["fix", "修复火狐下领瓜子卡主的问题"],
+            ["fix", "修复字幕下载功能的问题"],
+            ["fix", "修复仍有部分视频获取不到下载视频的问题"]
+        ]
+    },
+    {
         "version": "1.2.9",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.9/bilibilihelper_1.2.9.crx",
@@ -7,7 +26,7 @@
             ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.8这个版本中将菜单项目的文字进行了简化"],
             ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复由于b站改动导致的视频下载显示错误"]
         ]
