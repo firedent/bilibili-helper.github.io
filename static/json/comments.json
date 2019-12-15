@@ -11,6 +11,17 @@
         "canComment": true
     },
     {
+        "name": "音乐区",
+        "config": {
+            "oid": 44718286,
+            "type": 11,
+            "sort": 0,
+            "pn": 1,
+            "plat": 1
+        },
+        "canComment": true
+    },
+    {
         "name": "投票区",
         "config": {
             "oid": 16877351,
