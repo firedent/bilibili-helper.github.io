@@ -1,5 +1,21 @@
 [
     {
+        "version": "1.2.13",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.13/bilibilihelper_1.2.13.crx",
+        "notify": [
+            ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
+            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"],
+            ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"],
+            ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"]
+        ],
+        "available": true,
+        "info": [
+            ["add", "增加大会员福利自动领取功能，即卡券页面所列出的那些福利，该自动功能需要用户打开b站页面才会自动检测"],
+            ["fix", "修复仍然存在的于某种条件下出现高频请求的问题"]
+        ]
+    },
+    {
         "version": "1.2.12",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.12/bilibilihelper_1.2.12.crx",
@@ -8,7 +24,7 @@
             ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"],
             ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复由显示失效视频部分信息功能导致的问题，请尽快更新至该版本。否则我要被b站杀了😭"]
         ]
@@ -68,7 +84,7 @@
             ["important", "下线<i>跨区域解锁</i>功能，该功能预计将在2.x版本上线，由于我的主力笔记本损坏导致原有进度全部丢置，已经重新开始，将尽快恢复"],
             ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["add", "增加<i>直播开播推送</i>并在菜单栏显示最近开播列表（可设置隐藏），目前没有添加“特别关注”的特性，之后会考虑。开播5分钟内会推送"],
             ["add", "增加<i>失效视频部分信息显示</i>，以前好像可以看到封面的，现在显示不了了，将鼠标放到标题上悬停一会儿会显示视屏的介绍文字，如果标题获取不到，则会被视频介绍覆盖"],
