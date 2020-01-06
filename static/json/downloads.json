@@ -1,5 +1,26 @@
 [
     {
+        "version": "1.2.14.2",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.14.2/bilibilihelper_1.2.14-beta.2.crx",
+        "notify": [
+            ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
+            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"],
+            ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"],
+            ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"]
+        ],
+        "available": true,
+        "info": [
+            ["fix", "修复<i>视频下载</i>问题，尤其是有多分P视频切换后无法下载到切换后视频和视频文件命名失败问题"],
+            ["fix", "修复<i>夜间模式</i>导航栏失效问题"],
+            ["fix", "修复<i>版聊模式</i>关闭时，自动开关弹幕显示的设置生效的问题"],
+            ["fix", "修复弹幕自动关闭在自动切换分P时的错误逻辑"],
+            ["improve", "优化<i>画中画</i>在关闭时，开关按钮在直播间仍旧显示问题"],
+            ["improve", "优化<i>自动领瓜子</i>多房间冲突问题，现在会判断当被其他房间领取后解决冲突"],
+            ["add", "增加<i>直播间回看视频分段下载</i>，会自动命名。由于一个分段就会有上G的容量，所以不可能提供合并功能，还望大家能够理解"]
+        ]
+    },
+    {
         "version": "1.2.13",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.13/bilibilihelper_1.2.13.crx",
