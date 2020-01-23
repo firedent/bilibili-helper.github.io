@@ -1,17 +1,20 @@
 [
     {
-        "version": "1.2.14.2",
-        "sign": "store",
-        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.14.2/bilibilihelper_1.2.14-beta.2.crx",
+        "version": "1.2.14.3",
+        "sign": "test",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.14.3/bilibilihelper_1.2.14-beta.3.crx",
         "notify": [
             ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
             ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"],
             ["important", "由于一些事故，仍旧没有完成区域解锁功能，未来可期"],
-            ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"]
+            ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"],
+            ["important", "正上线edge中，请耐心等待~"]
         ],
         "available": true,
         "info": [
-            ["fix", "修复<i>视频下载</i>问题，尤其是有多分P视频切换后无法下载到切换后视频和视频文件命名失败问题"],
+            ["fix", "修复<i>视频下载</i>问题中显示下载按钮为小圆点的问题"],
+            ["fix", "修复<i>视频下载</i>问题中有多分P视频切换后无法下载到切换后视频和视频文件命名失败问题"],
+            ["fix", "修复<i>自动领取大会员福利</i>每天都弹出的问题"],
             ["fix", "修复<i>夜间模式</i>导航栏失效问题"],
             ["fix", "修复<i>版聊模式</i>关闭时，自动开关弹幕显示的设置生效的问题"],
             ["fix", "修复弹幕自动关闭在自动切换分P时的错误逻辑"],
