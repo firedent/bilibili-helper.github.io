@@ -1,5 +1,25 @@
 [
     {
+        "version": "1.2.16.5",
+        "sign": "test",
+        "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.16.5/bilibilihelper_1.2.16-beta.5.crx",
+        "notify": [
+            ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
+            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"],
+            ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"],
+            ["important", "正上线edge中，请耐心等待~"]
+        ],
+        "available": true,
+        "info": [
+            ["fix", "修复「字幕下载」功能失效问题"],
+            ["fix", "修复火狐下载视频文件重命名不正确的问题"],
+            ["fix", "修复部分flv合并下载没反应的问题"],
+            ["fix", "修复拜年祭视频的弹幕下载不了的问题"],
+            ["add", "支持b站对BV号的推进计划"],
+            ["add", "增加对直播间录播回放页面的支持"]
+        ]
+    },
+    {
         "version": "1.2.15",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/v1.2.15/bilibilihelper_1.2.15.crx",
