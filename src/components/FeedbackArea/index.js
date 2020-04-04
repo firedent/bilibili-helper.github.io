@@ -9,6 +9,9 @@ import {Header} from 'Components/Header';
 import Page from 'Components/Page';
 
 const FeedbackWrapper = styled(Page)`
+  .wrapper {
+    
+  }
   a {
     display: inline-block;
     margin: 3px 5px;
@@ -19,8 +22,8 @@ const FeedbackWrapper = styled(Page)`
     background-color: #ef6c00;
     color: var(--pure-white);
     user-select: none;
-    &:first-of-type {
-      margin-left: 0;
+    &:last-of-type {
+      margin-right: 0;
     }
     &:hover {
       opacity: 0.9;
@@ -40,6 +43,9 @@ const FeedbackWrapper = styled(Page)`
   .qq {
     background-color: #11abff;
   }
+  .telegram {
+    background-color: #0095e6;
+  }
   .comments {
     background-color: var(--bilibili-pink);
   }
@@ -51,10 +57,13 @@ export default () => (
             问题反馈 ~ FEEDBACK
             <p>赶紧留言吧~想说什么都可以~</p>
         </Header>
-        <a className="comments">「评论区」留言</a>
-        <a className="github" href="https://github.com/bilibili-helper/bilibili-helper/issues" target="_blank">「Github」上反馈</a>
-        <a href="https://weibo.com/guguke" target="_blank">「微博」@啾咕咕www</a>
-        <a href="https://weibo.com/ruo0037" target="_blank">「微博」@没睡醒的肉啊</a>
-        <a className="qq">在「QQ群548321019」私聊 肉肉</a>
+        <div className="wrapper">
+            <a className="comments">「评论区」留言</a>
+            <a className="github" href="https://github.com/bilibili-helper/bilibili-helper/issues" target="_blank">「Github」上反馈</a>
+            <a href="https://weibo.com/guguke" target="_blank">「微博」@啾咕咕www</a>
+            <a href="https://weibo.com/ruo0037" target="_blank">「微博」@没睡醒的肉啊</a>
+            <a className="qq">在「QQ群548321019」私聊 肉肉</a>
+            <a className="qq" target="_blank" href="https://t.me/bilibili_helper">点击加入「Telegram频道」</a>
+        </div>
     </FeedbackWrapper>
 )

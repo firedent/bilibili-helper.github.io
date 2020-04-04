@@ -30,7 +30,7 @@
             ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"],
             ["important", "正上线edge中，请耐心等待~"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复「字幕下载」功能失效问题"],
             ["fix", "修复火狐下载视频文件重命名不正确的问题"],
@@ -51,7 +51,7 @@
             ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"],
             ["important", "正上线edge中，请耐心等待~"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复因b站改动而部分失效的<i>视频下载</i>功能"],
             ["add", "增加对支持拜年祭视频页的支持"]
