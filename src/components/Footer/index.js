@@ -16,6 +16,10 @@ const FooterWrapper = styled(Page)`
     color: var(--content-color);
     text-decoration: none;
   }
+  
+  .email {
+    margin-left: auto;
+  }
 `;
 
 export default () => {
