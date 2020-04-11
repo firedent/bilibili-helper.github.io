@@ -24,6 +24,6 @@ const FooterWrapper = styled(Page)`
 
 export default () => {
     return (
-        <FooterWrapper><a target="_blank" href="http://www.beian.miit.gov.cn/">沪ICP备20008971号</a> © 2020 bilibili helper. <span className="email">邮箱：<a target="_blank" href="mailto:shanghaishujiao@gmail.com">shanghaishujiao@gmail.com</a></span></FooterWrapper>
+        <FooterWrapper><a target="_blank" href="http://www.beian.miit.gov.cn/">沪ICP备20008971号</a>&nbsp;&nbsp;&nbsp;&nbsp;© 2020 bilibili helper. <span className="email">邮箱：<a target="_blank" href="mailto:shanghaishujiao@gmail.com">shanghaishujiao@gmail.com</a></span></FooterWrapper>
     );
 }
