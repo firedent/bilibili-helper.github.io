@@ -18,8 +18,9 @@ import {
     WebsiteUpdateArea,
     Page,
     FeedArea,
-  QuestionnaireArea,
+    QuestionnaireArea,
     PinballArea,
+    Footer,
 } from 'Components';
 
 const GlobalStyleSheet = createGlobalStyle`
@@ -63,6 +64,7 @@ const Home = () => (
         <FeedArea/>
         <BadgeArea/>
         <CommentArea/>
+        <Footer/>
     </React.Fragment>
 );
 
