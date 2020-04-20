@@ -279,6 +279,8 @@ class DownloadArea extends React.Component {
                 return 'Google Web Store';
             case 'test':
                 return '测试版';
+            case 'edge':
+                return 'Edge Addons'
             default:
                 return '';
         }
@@ -288,8 +290,10 @@ class DownloadArea extends React.Component {
         switch (sign) {
             case 'store':
                 return <img src="../static/icons/google_favicon.ico"/>;
+            case 'edge':
+                return <img src="../static/icons/edge_favicon.ico"/>;
             case 'test':
-                return 'test ';
+                return <img src="../static/icons/bug.png"/>;
             default:
                 return '';
         }

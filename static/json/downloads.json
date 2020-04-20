@@ -5,9 +5,7 @@
         "url": "https://github.com/bilibili-helper/bilibili-helper/releases/download/1.2.16/bilibilihelper_1.2.16.crx",
         "notify": [
             ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
-            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"],
-            ["important", "在火狐浏览器中，是没办法显示推送弹窗按钮的，因为浏览器不支持"],
-            ["important", "正上线edge中，请耐心等待~"]
+            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"]
         ],
         "available": true,
         "info": [
@@ -18,6 +16,20 @@
             ["fix", "修复拜年祭视频的弹幕下载不了的问题"],
             ["add", "支持b站对BV号的推进计划"],
             ["add", "增加对直播间录播回放页面的支持"]
+        ]
+    },
+    {
+        "version": "1.2.17.3",
+        "sign": "edge",
+        "url": "https://microsoftedge.microsoft.com/addons/detail/fcfebhekhbkhjjimonjmbgmkbclheaoh?hl=zh-CN",
+        "notify": [
+            ["important", "由于浏览器差异而另外追加的更新导致了不同浏览器之间的版本差异，之后我们会采用一种约定来规范不同浏览器之间的版本保持同一步伐"],
+            ["important", "请认准扩展发布者「Bilibili Helper Foundation」，其他发布者都为我们非官方版本，其中「edge ext」发布的版本为恶意修改版本，存在严重安全隐患，请顺手恶评举报"]
+        ],
+        "available": true,
+        "info": [
+            ["fix", "修复「自动领瓜子」功能失效问题"],
+            ["add", "支持b站对BV号的推进计划"]
         ]
     },
     {
