@@ -26,7 +26,7 @@
             ["important", "由于浏览器差异而另外追加的更新导致了不同浏览器之间的版本差异，之后我们会采用一种约定来规范不同浏览器之间的版本保持同一步伐"],
             ["important", "请认准扩展发布者「Bilibili Helper Foundation」，其他发布者都为我们非官方版本，其中「edge ext」发布的版本为恶意修改版本，存在严重安全隐患，请顺手恶评举报"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复「自动领瓜子」功能失效问题"],
             ["add", "支持b站对BV号的推进计划"]
