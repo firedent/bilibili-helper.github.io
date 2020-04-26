@@ -6,7 +6,6 @@ node_modules/
 .idea/
 .umi/
 .DS_Store
-package-lock.json
 build/
 *.zip
 videoUnblock/
