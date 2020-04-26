@@ -21,6 +21,7 @@ import {
     QuestionnaireArea,
     PinballArea,
     Footer,
+    PriceArea,
 } from 'Components';
 
 const GlobalStyleSheet = createGlobalStyle`
@@ -55,6 +56,7 @@ const Home = () => (
     <React.Fragment>
         <GlobalStyleSheet/>
         <HeaderArea/>
+        <PriceArea/>
         <QuestionnaireArea/>
         <DownloadArea/>
         <AnnouncementArea/>
