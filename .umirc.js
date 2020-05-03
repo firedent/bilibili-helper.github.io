@@ -5,7 +5,10 @@ export default {
     hash: true,
     routes: [
         {
-            path: '/', component: './layouts',
+            path: '/', component: './layouts/index.js',
+        },
+        {
+            path: '/product', component: './layouts/product.js',
         },
     ],
     alias: {

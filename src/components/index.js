@@ -18,3 +18,4 @@ export FeedArea from 'Components/FeedArea';
 export {Header} from 'Components/Header';
 export Footer from 'Components/Footer';
 export PriceArea from 'Components/PriceArea';
+export {GlobalStyleSheet} from 'Components/GlobalStyleSheet';
