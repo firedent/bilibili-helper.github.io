@@ -83,7 +83,7 @@ class PriceArea extends React.Component {
                         <h2>「 赞助一瓶可乐，不再白嫖 」</h2>
                         <p>立即获得限时体验「多账号同时登陆」与「配置同步」功能的资格</p>
                     </div>
-                    <BuyBtn href="/product"><span className="price">￥2/月</span> 立即订阅</BuyBtn>
+                    <BuyBtn href="/product">查看详情</BuyBtn>
                 </PriceBox>
             </Wrapper>
         );
