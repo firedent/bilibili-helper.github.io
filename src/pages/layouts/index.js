@@ -29,7 +29,7 @@ const Home = () => (
     <React.Fragment>
         <GlobalStyleSheet/>
         <HeaderArea/>
-        <PriceArea/>
+        {/*<PriceArea/>*/}
         <QuestionnaireArea/>
         <DownloadArea/>
         <AnnouncementArea/>
@@ -43,4 +43,4 @@ const Home = () => (
     </React.Fragment>
 );
 
-export default withRouter(connect((state) => state)(Home));
+export default withRouter(connect(state => state)(Home));

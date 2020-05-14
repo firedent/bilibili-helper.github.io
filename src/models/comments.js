@@ -336,16 +336,25 @@ export default {
         * sendReply({payload}, {put, select}) {
             yield put({type: 'updateEditorSendingState', payload: true});
             const url = 'https://api.bilibili.com/x/v2/reply/add';
-            const {oid, type, plat} = yield select(({comments}) => comments.config);
+            const {oid, type, plat} = yield select(({comments}) => comments.config.config);
             const csrf = yield select(({user}) => user.csrf);
             const {root, parent, message} = payload;
-            const body = _.pickBy({oid, type, root, parent, message, plat, csrf}, _.identity);
-            fetchFromHelper('post', {
+            const b = {oid, type, root, parent, message, plat, csrf};
+            const body = Object.keys(b).map(key => {
+                if (b[key]) {
+                    return key + '=' + b[key]
+                } else return false;
+            }).filter(Boolean).join('&');
+            console.log(body);
+            fetchFromHelper('json', {
                 url,
                 model: 'comment',
                 sign: 'sendReply',
                 options: {
                     method: 'POST',
+                    headers: {
+                      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    },
                     body,
                 },
             });
