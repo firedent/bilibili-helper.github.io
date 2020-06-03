@@ -1,5 +1,21 @@
 [
     {
+        "version": "1.2.19",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.19/bilibilihelper_1.2.19.crx",
+        "notify": [
+            ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
+            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"]
+        ],
+        "available": true,
+        "info": [
+            ["fix", "修复样式问题"],
+            ["fix", "修复弹幕筛选过程中显示出错的问题"],
+            ["fix", "修复由于新弹幕格式导致的下载失败问题"],
+            ["add", "增加对”稍后再看“页面的支持"]
+        ]
+    },
+    {
         "version": "1.2.18",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.18/bilibilihelper_1.2.18.crx",
@@ -7,13 +23,13 @@
             ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
             ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复「弹幕查询功能」没有数据的问题，以及由于高级弹幕导致的页面卡顿问题"],
             ["fix", "修复一些样式错误"],
             ["fix", "修复主站视频下载功能中，多集视频切换下载时都是同一视频的问题"],
             ["fix", "修复领瓜子中可能会卡在“已领取”的状态的问题"],
-            ["fix", "修复直播间会看视频下载按钮重复显示的问题"],
+            ["fix", "修复直播间会看视频下载按钮重复显示的问题"]
         ]
     },
     {

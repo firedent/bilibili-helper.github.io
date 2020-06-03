@@ -90,7 +90,9 @@ export default {
         * fetchDownloadsConfig({}, {put, call}) {
             const downloadsResponse = yield call(fetch, '../static/json/downloads.json');
             if (downloadsResponse.status === 200 || downloadsResponse.status === 304) {
+                console.log(downloadsResponse);
                 const config = yield downloadsResponse.json();
+                console.log(config);
                 yield put({type: 'updateDownloadsConfig', payload: config});
             }
         },
