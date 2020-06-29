@@ -1,5 +1,19 @@
 [
     {
+        "version": "1.2.21",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.19/bilibilihelper_1.2.21.crx",
+        "notify": [
+            ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
+            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"]
+        ],
+        "available": true,
+        "info": [
+            ["fix", "修复下载弹幕文件播放问题"],
+            ["fix", "修复助手官网无法评论的问题"]
+        ]
+    },
+    {
         "version": "1.2.19",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.19/bilibilihelper_1.2.19.crx",
@@ -7,7 +21,7 @@
             ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
             ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复样式问题"],
             ["fix", "修复弹幕筛选过程中显示出错的问题"],
