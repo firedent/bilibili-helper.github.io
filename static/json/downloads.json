@@ -4,7 +4,7 @@
         "sign": "test",
         "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.23-beta.1/bilibilihelper_1.2.23-beta.1.crx",
         "notify": [
-            ["important", "从1.2.22版本开始，增加对B站购买有版权视频的下载限制，其中包含但不限于动漫番剧，电影和综艺等分类"],
+            ["important", "从1.2.22版本开始，增加对B站购买有版权视频的下载限制，其中包含但不限于动漫番剧，电影和综艺等分类"]
         ],
         "available": true,
         "info": [
