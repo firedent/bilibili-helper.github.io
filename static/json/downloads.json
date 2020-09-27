@@ -1,15 +1,16 @@
 [
     {
-        "version": "1.2.23-beta.1",
+        "version": "1.2.23-beta.2",
         "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.23-beta.1/bilibilihelper_1.2.23-beta.1.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.23-beta.1/bilibilihelper_1.2.23-beta.2.crx",
         "notify": [
             ["important", "从1.2.22版本开始，增加对B站购买有版权视频的下载限制，其中包含但不限于动漫番剧，电影和综艺等分类"]
         ],
         "available": true,
         "info": [
             ["add", "支持4K视频下载，同时增加对B站购买有版权视频的下载限制"],
-            ["add", "修复自动宽频失效问题"],
+            ["fix", "修复自动宽频失效问题"],
+            ["fix", "修复自动关闭弹幕失效问题"],
             ["add", "增加实验性的全局深色模式，如果出现问题影响到其他功能使用，请在设置页面关闭"]
         ]
     },
