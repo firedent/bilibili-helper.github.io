@@ -1,17 +1,17 @@
 [
     {
-        "version": "1.2.23-beta.2",
-        "sign": "test",
-        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.23-beta.1/bilibilihelper_1.2.23-beta.2.crx",
+        "version": "1.2.24",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.24/bilibilihelper_1.2.24.crx",
         "notify": [
             ["important", "从1.2.22版本开始，增加对B站购买有版权视频的下载限制，其中包含但不限于动漫番剧，电影和综艺等分类"]
         ],
         "available": true,
         "info": [
-            ["add", "支持4K视频下载，同时增加对B站购买有版权视频的下载限制"],
-            ["fix", "修复自动宽频失效问题"],
-            ["fix", "修复自动关闭弹幕失效问题"],
-            ["add", "增加实验性的全局深色模式，如果出现问题影响到其他功能使用，请在设置页面关闭"]
+            ["fix", "修复<i>自动宽屏</i>功能"],
+            ["fix", "修复<i>自动关闭弹幕</i>功能"],
+            ["fix", "修复部分<i>全局深色模式</i>显示错误"],
+            ["add", "增加「历史」快捷菜单，可在设置页面关闭"]
         ]
     },
     {
@@ -22,7 +22,7 @@
             ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
             ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复下载弹幕文件播放问题"],
             ["fix", "修复助手官网无法评论的问题"]
