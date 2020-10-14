@@ -307,7 +307,6 @@ class DownloadArea extends React.Component {
             downloadThree,
             restVersion,
         } = this.state;
-        console.log(this.state);
         return (
             <DownloadAreaWrapper id="downloadArea">
                 <Header>

@@ -345,7 +345,6 @@ export default {
                     return key + '=' + b[key]
                 } else return false;
             }).filter(Boolean).join('&');
-            console.log(body);
             fetchFromHelper('json', {
                 url,
                 model: 'comment',
