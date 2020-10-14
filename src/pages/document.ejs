@@ -22,6 +22,26 @@
         s.parentNode.insertBefore(hm, s);
     })();
 </script>
+<div id="paypal-button-container"></div>
+<script src="https://www.paypal.com/sdk/js?client-id=AeLAN4h2FDcqDkU8rglZ-33MwFCCEkO_kzKAmC0HehVpmpuS4Rc5r5B5Z1vJeP9C7_Rvywj-B6COUcj4&vault=true" data-sdk-integration-source="button-factory"></script>
+<script>
+    paypal.Buttons({
+        style: {
+            shape: 'rect',
+            color: 'blue',
+            layout: 'horizontal',
+            label: 'paypal'
+        },
+        createSubscription: function(data, actions) {
+            return actions.subscription.create({
+                'plan_id': 'P-16W75856YF100883KL6DRVHA'
+            });
+        },
+        onApprove: function(data, actions) {
+            alert(data.subscriptionID);
+        }
+    }).render('#paypal-button-container');
+</script>
 <script data-ad-client="ca-pub-7070347184516719" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script crossorigin src="https://unpkg.com/lodash@4.17.11/lodash.min.js"></script>
 <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
