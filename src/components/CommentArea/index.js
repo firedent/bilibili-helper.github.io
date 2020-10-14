@@ -566,7 +566,7 @@ class CommentArea extends React.Component {
                 {/* header */}
                 <Header>
                     {`${acount} 评论`}
-                    {currentComment === null && <p>尚未加载评论区</p>}
+                    {currentComment === null && <p>~ 尚未连接助手 ~</p>}
                     {currentComment && <p>
                         本评论区来自哔哩哔哩弹幕网的评论系统，请遵守相关法律法规并共同维护秩序
                         {currentComment.canComment && <React.Fragment>，原地址为:<a

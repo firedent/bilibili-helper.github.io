@@ -247,7 +247,7 @@ class DownloadArea extends React.Component {
     }
 
     updateDownloads = (downloads) => {
-        const firstVersion = _.find(downloads, ({version, url}) => url).version;
+        const {version: firstVersion, sign} = _.find(downloads, ({version, url}) => url);
         const downloadThree = [];
         const restVersion = [];
         let i = 0;
@@ -260,13 +260,14 @@ class DownloadArea extends React.Component {
         });
         this.setState({
             tabVersion: firstVersion,
+            tabSign: sign,
             downloadThree,
             restVersion,
         });
     };
 
-    handleOnClickTab = (version) => {
-        this.setState({tabVersion: version});
+    handleOnClickTab = (version, sign) => {
+        this.setState({tabVersion: version, tabSign: sign});
     };
 
     handleOnClickMoreVersion = () => {
@@ -303,6 +304,7 @@ class DownloadArea extends React.Component {
         const {global} = this.props;
         const {
             tabVersion,
+            tabSign,
             showMoreVersion,
             downloadThree,
             restVersion,
@@ -324,12 +326,12 @@ class DownloadArea extends React.Component {
                             url && (
                                 <DownloadButton
                                     key={version}
-                                    className={`download-btn ${version === tabVersion && 'active'}`}
-                                    onClick={() => this.handleOnClickTab(version)}
+                                    className={`download-btn ${version === tabVersion && sign === tabSign && 'active'}`}
+                                    onClick={() => this.handleOnClickTab(version, sign)}
                                 >
                                     <span>{this.getVersionTypeString(sign)} {version}</span>
-                                    {version === tabVersion && (
-                                        <a href={url} download>
+                                    {version === tabVersion && sign === tabSign && (
+                                        <a href={url} download target="_blank">
                                             <i className="download-btn">Click here to download</i>
                                         </a>)}
                                 </DownloadButton>
@@ -342,8 +344,8 @@ class DownloadArea extends React.Component {
                             {restVersion && restVersion.map(({version, url, sign}) => (
 
                                 <li
-                                    className={`${version === tabVersion && 'active'}`}
-                                    key={version} onClick={() => this.handleOnClickTab(version)}
+                                    className={`${version === tabVersion && sign === tabSign && 'active'}`}
+                                    key={version} onClick={() => this.handleOnClickTab(version, sign)}
                                 >
                                     {this.getVersionTypeIcon(sign)}
                                     {version}
@@ -353,8 +355,8 @@ class DownloadArea extends React.Component {
                     </div>
                 </div>
                 <div className="tab-contents">
-                    {global.downloads && global.downloads.map(({version, url, notify, info}) => ([
-                        tabVersion === version && notify && (<ul key={version + '-notify'}>
+                    {global.downloads && global.downloads.map(({version, sign, url, notify, info}) => ([
+                        tabVersion === version && sign === tabSign && notify && (<ul key={version + '-notify'}>
                             {notify.map((line, index) => (
                                 <div className={`info-item ${line[0]}`} key={index}>
                                     <li dangerouslySetInnerHTML={{__html: line[1]}}/>
@@ -367,7 +369,7 @@ class DownloadArea extends React.Component {
                                 </div>
                             ))}
                         </ul>),
-                        tabVersion === version && (<ol key={version}>
+                        tabVersion === version && sign === tabSign && (<ol key={version}>
                             {info.map((line, index) => (
                                 <div className={`info-item ${line[0]}`} key={index}>
                                     <li dangerouslySetInnerHTML={{__html: line[1]}}/>

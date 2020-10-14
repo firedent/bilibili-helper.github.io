@@ -20,11 +20,9 @@ const FeedAreaWrapper = styled(Page)`
     top: 102px;
     right: 30px;
     width: 160px;
-    opacity: 0.7;
     user-select: none;
     pointer-events: none;
-    &:hover {
-    }
+    filter: brightness(0) grayscale(1);
   }
   a {
     margin-left: 0;
