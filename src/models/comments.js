@@ -341,9 +341,7 @@ export default {
             const {root, parent, message} = payload;
             const b = {oid, type, root, parent, message, plat, csrf};
             const body = Object.keys(b).map(key => {
-                if (b[key]) {
-                    return key + '=' + b[key]
-                } else return false;
+                return b[key] ? (key + '=' + b[key]) : false;
             }).filter(Boolean).join('&');
             fetchFromHelper('json', {
                 url,
@@ -362,13 +360,20 @@ export default {
             const url = new Url('https://api.bilibili.com/x/v2/reply/action');
             const {oid, type} = yield select(({comments}) => comments.config);
             const csrf = yield select(({user}) => user.csrf);
-            fetchFromHelper('post', {
+            const b = {csrf, oid, type, ...payload};
+            const body = Object.keys(b).map(key => {
+                return b[key] ? (key + '=' + b[key]) : false;
+            }).filter(Boolean).join('&');
+            fetchFromHelper('json', {
                 url: url.toString(),
                 model: 'comment',
                 sign: 'setLike',
                 options: {
                     method: 'POST',
-                    body: {csrf, oid, type, ...payload},
+                    headers: {
+                        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    },
+                    body,
                 },
             });
         },
@@ -376,13 +381,20 @@ export default {
             const url = new Url('https://api.bilibili.com/x/v2/reply/hate');
             const {oid, type} = yield select(({comments}) => comments.config);
             const csrf = yield select(({user}) => user.csrf);
-            fetchFromHelper('post', {
+            const b = {csrf, oid, type, ...payload};
+            const body = Object.keys(b).map(key => {
+                return b[key] ? (key + '=' + b[key]) : false;
+            }).filter(Boolean).join('&');
+            fetchFromHelper('json', {
                 url: url.toString(),
                 model: 'comment',
                 sign: 'setHate',
                 options: {
                     method: 'POST',
-                    body: {csrf, oid, type, ...payload},
+                    body,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    },
                 },
             });
         },
