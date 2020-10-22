@@ -15,7 +15,7 @@
         ]
     },
     {
-        "version": "1.2.21",
+        "version": "1.2.24",
         "sign": "edge",
         "url": "https://microsoftedge.microsoft.com/addons/detail/fcfebhekhbkhjjimonjmbgmkbclheaoh?hl=zh-CN",
         "notify": [
@@ -26,6 +26,21 @@
         "info": [
             ["fix", "修复下载弹幕文件播放问题"],
             ["fix", "修复助手官网无法评论的问题"]
+        ]
+    },
+    {
+        "version": "1.2.4-beta.1",
+        "sign": "music-test",
+        "url": "https://github.com/bilibili-helper/bilibili-music/releases/download/v1.2.4.1/bilibili-music-1.2.4-beta.1.crx",
+        "notify": [
+            ["important", "该版本为测试版，请打开开发者模式后解压缩安装"]
+        ],
+        "available": true,
+        "info": [
+            ["fix", "修复一些小问题"],
+            ["improve", "替换了个别图标"],
+            ["add", "增加进度条"],
+            ["add", "增加视频听放功能，目前只支持bvid和avid，未来将支持直播等更多格式"]
         ]
     },
     {

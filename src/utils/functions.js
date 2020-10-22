@@ -42,3 +42,14 @@ export const cumulativeOffset = (element) => {
 
     return {top, left};
 };
+
+export const generateFeedList = (str) => {
+    return JSON.stringify(str.split('\n').map(s => s.trim().split(/\s+/g)).map((data) => {
+        return [
+            data[0].replace(/-/g, '/'),
+            data[12],
+            +data[6],
+            data[13].split('-')[1] || ''
+        ].filter(Boolean)
+    }))
+}

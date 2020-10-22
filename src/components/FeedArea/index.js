@@ -18,7 +18,7 @@ const FeedAreaWrapper = styled(Page)`
   img {
     position: absolute;
     top: 102px;
-    right: 30px;
+    right: -180px;
     width: 160px;
     user-select: none;
     pointer-events: none;
@@ -60,7 +60,7 @@ const Line = styled.div`
   }
   & > * {
     padding: 0 2px 0 5px;
-    width: 100px;
+    width: 80px;
     border-right: 1px solid white;
     &:last-of-type {
       border-right: none;
@@ -69,7 +69,7 @@ const Line = styled.div`
   .date {
   }
   .name {
-    width: 60px;
+    width: 40px;
     text-align: center;
   }
   .num {
@@ -78,6 +78,9 @@ const Line = styled.div`
     width: 60px;
   }
   .message {
+    flex-grow: 1;
+  }
+  .replay {
     flex-grow: 1;
   }
 `;
@@ -89,7 +92,7 @@ class FeedArea extends React.Component {
 
     renderLine = ({index, style}) => {
         const {global} = this.props;
-        const [date, name, num, message] = global.feeds[index];
+        const [date, name, num, message, replay] = global.feeds[index];
         const largeThanTen = num >= 10;
         const largeThanFive = num >= 5 && num < 10;
         return <Line style={style} key={index} className={`${largeThanFive ? 'largeThanFive': (largeThanTen ? 'largeThanTen': '')}`}>
@@ -97,6 +100,7 @@ class FeedArea extends React.Component {
             <span className="name">{name}</span>
             <span className="num">￥ {Number(num).toFixed(2)}</span>
             <span className="message">{message}</span>
+            <span className="replay">{replay}</span>
         </Line>;
     };
 
