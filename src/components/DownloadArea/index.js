@@ -282,8 +282,10 @@ class DownloadArea extends React.Component {
                 return '测试版';
             case 'edge':
                 return 'Edge Addons';
-            case 'music-test':
+            case 'music':
                 return 'Bilibili Music';
+            case 'music-test':
+                return 'Bilibili Music 测试版';
             default:
                 return '';
         }

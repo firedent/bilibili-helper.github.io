@@ -29,13 +29,29 @@
         ]
     },
     {
+        "version": "1.2.4",
+        "sign": "music",
+        "url": "https://github.com/bilibili-helper/bilibili-music/releases/download/v1.2.5/bilibili-music-1.2.5.crx",
+        "notify": [
+            ["important", "该版本为测试版，请打开开发者模式后解压缩安装"],
+            ["important", "该版本中视频听放为实验性功能，如果您觉得好用请务必让我们知道，才有更多动力做后续开发"]
+        ],
+        "available": true,
+        "info": [
+            ["fix", "修复一些小问题"],
+            ["improve", "替换了个别图标"],
+            ["add", "增加进度条"],
+            ["add", "增加视频听放功能，目前只支持bvid和avid，未来将支持直播等更多格式"]
+        ]
+    },
+    {
         "version": "1.2.4-beta.1",
         "sign": "music-test",
         "url": "https://github.com/bilibili-helper/bilibili-music/releases/download/v1.2.4.1/bilibili-music-1.2.4-beta.1.crx",
         "notify": [
             ["important", "该版本为测试版，请打开开发者模式后解压缩安装"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复一些小问题"],
             ["improve", "替换了个别图标"],
