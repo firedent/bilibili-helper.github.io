@@ -178,7 +178,6 @@ const CommentEditorWrapper = styled.div.attrs({className: 'comment-editor'})`
             padding: 3px 6px;
           }
           img {
-            margin: 2px 3px;
             &:not([src]) {
               width: 27px;
               height: 27px;

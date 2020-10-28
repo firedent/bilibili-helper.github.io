@@ -10,7 +10,6 @@ const HeaderWrapper = styled.h3`
   align-items: center;
   margin: 15px 0 20px;
   font-size: 16px;
-  color: #212121;
   a {
     margin-left: 20px;
     padding: 2px 7px;

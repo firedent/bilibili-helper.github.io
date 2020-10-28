@@ -38,7 +38,7 @@ const FeedbackWrapper = styled(Page)`
     }
   }
   .github {
-    background-color: #222;
+    background-color: var(--font-color);
   }
   .qq {
     background-color: #11abff;

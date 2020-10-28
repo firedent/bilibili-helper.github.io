@@ -9,7 +9,6 @@ const Wrappr = styled.div`
   h3 {
     margin: 15px 0 10px;
     font-size: 16px;
-    color: #212121;
   }
   
   p {
@@ -18,11 +17,11 @@ const Wrappr = styled.div`
     border-radius: 3px;
     font-size: 12px;
     background-color: var(--bilibili-pink);
-    color: var(--pure-white);
+    color: var(--font-color-white);
   }
   
   a {
-    color: var(--pure-white);
+    color: var(--font-color-white);
   }
   .important {
     background-color: red;

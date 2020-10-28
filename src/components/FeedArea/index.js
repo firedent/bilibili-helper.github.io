@@ -44,9 +44,9 @@ const Line = styled.div`
   padding: 5px 6px;
   font-size: 12px;
   box-sizing: border-box;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid var(--border-color);
   border-radius: 3px;
-  background-color: var(--border-color);
+  background-color: var(--font-color-white);
   cursor: pointer;
   transition: all 0.3s;
   &:hover {
@@ -61,7 +61,7 @@ const Line = styled.div`
   & > * {
     padding: 0 2px 0 5px;
     width: 80px;
-    border-right: 1px solid white;
+    border-right: 1px solid var(--border-color);
     &:last-of-type {
       border-right: none;
     }

@@ -12,7 +12,6 @@ const VoteAreaWrapper = styled(Page)`
   h3 {
     margin: 15px 0 20px;
     font-size: 16px;
-    color: #212121;
     p {
       margin: 3px 0px;
       font-size: 12px;
@@ -42,7 +41,7 @@ const VoteLine = styled.div`
   border-radius: 3px;
   border-right: 1px solid var(--bilibili-pink);
   border-left: 1px solid var(--bilibili-pink);
-  background-color: #f1f1f1;
+  background-color: var(--pure-white);
   &::after {
     content: '';
     display: block;
@@ -63,7 +62,7 @@ const VoteLine = styled.div`
     opacity: 0.8;
   }
   .topic {
-    color: #000;
+    color: var(--font-color);
     z-index: 1;
   }
   .percent {

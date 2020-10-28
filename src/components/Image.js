@@ -23,6 +23,9 @@ const Img = styled.img`
     border: 1px solid var(--border-color);
     box-sizing: border-box;
     opacity: 0;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
   }
   &[src] {
     animation: ${FadeIn} cubic-bezier(0.16, 0.6, 0.45, 0.93);

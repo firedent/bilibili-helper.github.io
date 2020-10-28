@@ -15,7 +15,6 @@ const AnnouncementWrapper = styled(Page)`
   h3 {
     margin: 15px 0 10px;
     font-size: 16px;
-    color: #212121;
   }
   header {
     font-size: 14px;
@@ -23,11 +22,14 @@ const AnnouncementWrapper = styled(Page)`
   }
   .item {
     padding-left: 10px;
+    header {
+      color: var(--content-color);
+    }
   }
   ul {
     padding: 5px 1px;
     border-radius: 3px;
-    background-color: var(--pure-white);
+    background-color: var(--font-color-white);
     z-index: 101;
     li {
       padding: 7px 10px;

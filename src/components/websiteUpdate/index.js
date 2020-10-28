@@ -90,6 +90,7 @@ const WebsiteUpdateAreaWrapper = styled(Page)`
     border-radius: 3px;
     //border-bottom: 1px solid var(--pure-white);
     border-bottom: 1px solid var(--border-color);
+    color: var(--font-color);
     &:last-of-type {
       border:none;
     }

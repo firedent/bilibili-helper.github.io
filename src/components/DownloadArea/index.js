@@ -11,8 +11,11 @@ import Page from 'Components/Page';
 
 const DownloadAreaWrapper = styled(Page)`
   ol {
-    padding: 10px;
+    margin-left: 10px;
+    padding: 10px 0 10px 10px;
     border-radius: 3px;
+    background-color: var(--pure-white);
+    color: var(--font-color);
   }
   .tab-bar {
     display: flex;
@@ -28,11 +31,12 @@ const DownloadAreaWrapper = styled(Page)`
         border: 1px solid var(--border-color);
         border-radius: 3px;
         background-color: var(--pure-white);
+        color: var(--font-color);
         align-self: flex-end;
         outline: none;
         user-select: none;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all 0.5s;
         &:hover {
           color: var(--bilibili-blue);
           border: 1px solid var(--bilibili-blue);
@@ -54,7 +58,7 @@ const DownloadAreaWrapper = styled(Page)`
         width: max-content;
         padding: 5px 1px;
         border-radius: 3px;
-        background-color: var(--pure-white);
+        background-color: var(--font-color-white);
         box-shadow: rgba(20, 20, 20, 0.1) 1px 1px 10px;
         z-index: 101;
         li {
@@ -82,15 +86,15 @@ const DownloadAreaWrapper = styled(Page)`
       margin-top: 10px;
       list-style: none;
       .info-item {
-        margin: 0 20px;
+        margin: 0 0 10px 10px;
         padding: 5px 4px;
       }
     }
     .important, .important:hover {
       background-color: var(--bilibili-pink);
-      color: var(--pure-white);
+      color: var(--font-color-white);
       i {
-        color: var(--pure-white);
+        color: var(--font-color-white);
         font-weight: bold;
       }
     }
@@ -107,7 +111,7 @@ const DownloadAreaWrapper = styled(Page)`
       border:none;
     }
     &:hover, &.active {
-      background-color: #eee;
+      background-color: var(--border-color);
     }
     i {
       margin: 0 3px;
@@ -147,7 +151,8 @@ const DownloadButton = styled.button`
   font-size: 14px;
   font-weight: bold;
   border: 1px solid var(--border-color);
-  background-color: white;
+  background-color: var(--pure-white);
+  color: var(--font-color);
   cursor: pointer;
   outline: none;
   transition: all 0.15s;
@@ -199,6 +204,7 @@ const DownloadButton = styled.button`
     top: 0;
     font-weight: normal;
     user-select: none;
+    color: var(--font-color);
   }
   .download-btn {
     position: absolute;
@@ -212,6 +218,9 @@ const DownloadButton = styled.button`
     color: var(--content-color);
     z-index: 1;
     transition: background-color 0.1s;
+    span {
+      color: var(--content-color);
+    }
     &:hover {
       //box-shadow: rgba(20, 20, 20, 0.1) 1px 1px 10px;
       background-color: #eee;
@@ -329,7 +338,7 @@ class DownloadArea extends React.Component {
                         {downloadThree && downloadThree.map(({version, sign, url}) => (
                             url && (
                                 <DownloadButton
-                                    key={version}
+                                    key={version + sign}
                                     className={`download-btn ${version === tabVersion && sign === tabSign && 'active'}`}
                                     onClick={() => this.handleOnClickTab(version, sign)}
                                 >
@@ -349,7 +358,7 @@ class DownloadArea extends React.Component {
 
                                 <li
                                     className={`${version === tabVersion && sign === tabSign && 'active'}`}
-                                    key={version} onClick={() => this.handleOnClickTab(version, sign)}
+                                    key={version + sign} onClick={() => this.handleOnClickTab(version, sign)}
                                 >
                                     {this.getVersionTypeIcon(sign)}
                                     {version}
@@ -360,7 +369,7 @@ class DownloadArea extends React.Component {
                 </div>
                 <div className="tab-contents">
                     {global.downloads && global.downloads.map(({version, sign, url, notify, info}) => ([
-                        tabVersion === version && sign === tabSign && notify && (<ul key={version + '-notify'}>
+                        tabVersion === version && sign === tabSign && notify && (<ul key={version + sign + '-notify'}>
                             {notify.map((line, index) => (
                                 <div className={`info-item ${line[0]}`} key={index}>
                                     <li dangerouslySetInnerHTML={{__html: line[1]}}/>
@@ -373,7 +382,7 @@ class DownloadArea extends React.Component {
                                 </div>
                             ))}
                         </ul>),
-                        tabVersion === version && sign === tabSign && (<ol key={version}>
+                        tabVersion === version && sign === tabSign && (<ol key={version + sign}>
                             {info.map((line, index) => (
                                 <div className={`info-item ${line[0]}`} key={index}>
                                     <li dangerouslySetInnerHTML={{__html: line[1]}}/>

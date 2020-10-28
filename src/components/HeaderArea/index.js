@@ -17,7 +17,7 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
   height: 80px;
   min-width: 800px;
   background-color: var(--bilibili-pink);
-  color: var(--background-color);
+  color: #fafafa;
   padding: 50px 0px 20px;
   &::after {
     content: '';
@@ -25,7 +25,7 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
     margin-top: 10px;
     width: 100%;
     height: 20px;
-    background-color: #fb7299;
+    background-color: var(--bilibili-pink);
     border-radius: 0 0 50% 50%;
   }
   & > * {
@@ -38,9 +38,12 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
     display: flex;
     justify-content: space-between;
     height: 80px;
+    color: #fff;
+    
     .title-box {
       h1 {
         font-size: 24px;
+        color: #fff;
       }
       .version-box {
         height: 12px;
@@ -51,6 +54,7 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
           line-height: 12px;
           font-size: 12px;
           font-weight: normal;
+          color: #fff;
         }
       }
     }
@@ -70,6 +74,7 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
           font-size: 12px;
           margin-top: 3px;
           text-align: right;
+          color: #fff;
         }
         .login-btn {
           

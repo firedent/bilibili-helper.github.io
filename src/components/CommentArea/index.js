@@ -259,9 +259,9 @@ const PageNavigation = styled.div.attrs({className: 'page-navigation'})`
     padding: 5px 6px;
     text-align: center;
     letter-spacing: 1px;
-    border: 1px solid #eee;
+    border: 1px solid var(--border-color);
     border-radius: 5px;
-    color: #333;
+    color: var(--font-color);
     user-select: none;
     transform: scale(0.8);
     cursor: pointer;
@@ -355,13 +355,13 @@ class CommentArea extends React.Component {
             (location.query.oid !== prevProps.location.query.oid) || // 切换评论区
             (prevProps.location.query.oid !== undefined && !prevProps.comments.config)) { // 从地址初始化评论区
             const currentComment = _.find(commentMap, (comment) => comment.config.oid === +location.query.oid);
-            this.load(currentComment);
+            currentComment && this.load(currentComment);
         } else if (!prevProps.comments.config && commentMap.length >= prevProps.comments.commentMap.length && !location.query.oid) {
             commentMap.length > 0 && this.load(commentMap[0]);
         }
     }
 
-    load = (comment) => {
+    load = (comment = {}) => {
         const {comments, dispatch, location} = this.props;
         let config = comment.config;
         if (!config && comments.config) {
