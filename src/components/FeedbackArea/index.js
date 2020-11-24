@@ -63,6 +63,7 @@ export default () => (
             <a href="https://weibo.com/guguke" target="_blank">「微博」@啾咕咕www</a>
             <a href="https://weibo.com/ruo0037" target="_blank">「微博」@没睡醒的肉啊</a>
             <a className="qq">在「QQ群548321019」私聊 肉肉</a>
+            <a className="qq">「2.0 QQ群677639415」</a>
             <a className="qq" target="_blank" href="https://t.me/bilibili_helper">点击加入「Telegram频道」</a>
         </div>
     </FeedbackWrapper>
