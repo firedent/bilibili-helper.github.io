@@ -29,7 +29,7 @@ export default {
                         //},
                         vendors: {
                             name: 'vendors',
-                            test: /[\\/](node_modules)[\\/]/,
+                            test: '/(node_modules)/',
                             chunks: 'all',
                             minChunks: 1,
                         },
