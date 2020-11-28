@@ -45,7 +45,7 @@
         ]
     },
     {
-        "version": "1.2.25",
+        "version": "1.2.26",
         "sign": "edge",
         "url": "https://microsoftedge.microsoft.com/addons/detail/fcfebhekhbkhjjimonjmbgmkbclheaoh?hl=zh-CN",
         "notify": [
@@ -54,9 +54,11 @@
         ],
         "available": true,
         "info": [
-            ["fix", "增加<i>首页栏目过滤</i>功能，默认关闭，可在设置页面开启"],
-            ["fix", "<i>深色模式</i>新增了搜索页面的深色"],
-            ["fix", "修复部分<i>深色模式</i>问题，现在改为默认关闭「跟随系统」，需要的请自行开启"]
+            ["fix", "修复部分用户无法正常使用视频下载功能的问题"],
+            ["fix", "修复部分视频类型无法启用<i>画中画</i>的问题"],
+            ["fix", "修复部分<i>夜间模式</i>问题"],
+            ["fix", "修复部分弹幕文件下载错误"],
+            ["fix", "修复视频下载会提示'保留'的问题"]
         ]
     },
     {
