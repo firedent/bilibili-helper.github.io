@@ -144,6 +144,7 @@ class HeaderArea extends React.Component {
                                 {/*<PinballArea/>*/}
                             </h1>
                             <div className="version-box">
+                                <span>最好用的非官方扩展程序</span>
                                 {global.config && <span>Latest: {global.config.lastVersion}</span>}
                                 {global.version && <span>Yours: {global.version}</span>}
                             </div>
