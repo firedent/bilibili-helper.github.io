@@ -95,7 +95,7 @@ class RecommendArea extends React.Component {
                 <div className="item">
                     <ul className="content">
                         <li>
-                            <a href="https://s.xmcp.ml/pakkujs/?src=helper">
+                            <a href="https://s.xmcp.ml/pakkujs/?src=helper" target="_blank">
                                 <PakkuImage src="https://s.xmcp.ml/pakkujs/icon_display.png"/>
                                 <div className="info">
                                     <h6>Pakku：哔哩哔哩弹幕过滤器</h6>
