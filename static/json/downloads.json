@@ -49,8 +49,7 @@
         "sign": "edge",
         "url": "https://microsoftedge.microsoft.com/addons/detail/fcfebhekhbkhjjimonjmbgmkbclheaoh?hl=zh-CN",
         "notify": [
-            ["important", "该版本中修复了从2019-10-25日时发布至该版本之间的高频发送请求的问题"],
-            ["important", "在1.2.7中我们删除了popup弹出菜单中的图标模式，然后在1.2.11这个版本中将菜单项目的文字进行了简化"]
+            ["important", "从1.2.22版本开始，增加对B站购买有版权视频的下载限制，其中包含但不限于动漫番剧，电影和综艺等分类"]
         ],
         "available": true,
         "info": [
