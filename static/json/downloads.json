@@ -1,12 +1,26 @@
 [
     {
+        "version": "1.2.27.2",
+        "sign": "store",
+        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.27.2/bilibilihelper_1.2.27.2.crx",
+        "notify": [
+            ["important", "从1.2.22版本开始，增加对B站购买有版权视频的下载限制，其中包含但不限于动漫番剧，电影和综艺等分类"]
+        ],
+        "available": true,
+        "info": [
+            ["fix", "修复明明已登录却还是显示「未登录」的问题"],
+            ["fix", "修复部分视频下载时重命名特性失效的问题"],
+            ["fix", "修复直播版聊模式，增加横向调整功能"]
+        ]
+    },
+    {
         "version": "1.2.26",
         "sign": "store",
         "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.26/bilibilihelper_1.2.26.crx",
         "notify": [
             ["important", "从1.2.22版本开始，增加对B站购买有版权视频的下载限制，其中包含但不限于动漫番剧，电影和综艺等分类"]
         ],
-        "available": true,
+        "available": false,
         "info": [
             ["fix", "修复部分用户无法正常使用视频下载功能的问题"],
             ["fix", "修复部分视频类型无法启用<i>画中画</i>的问题"],
@@ -45,7 +59,7 @@
         ]
     },
     {
-        "version": "1.2.26",
+        "version": "1.2.27.2",
         "sign": "edge",
         "url": "https://microsoftedge.microsoft.com/addons/detail/fcfebhekhbkhjjimonjmbgmkbclheaoh?hl=zh-CN",
         "notify": [
@@ -53,11 +67,9 @@
         ],
         "available": true,
         "info": [
-            ["fix", "修复部分用户无法正常使用视频下载功能的问题"],
-            ["fix", "修复部分视频类型无法启用<i>画中画</i>的问题"],
-            ["fix", "修复部分<i>夜间模式</i>问题"],
-            ["fix", "修复部分弹幕文件下载错误"],
-            ["fix", "修复视频下载会提示'保留'的问题"]
+            ["fix", "修复明明已登录却还是显示「未登录」的问题"],
+            ["fix", "修复部分视频下载时重命名特性失效的问题"],
+            ["fix", "修复直播版聊模式，增加横向调整功能"]
         ]
     },
     {
