@@ -105,6 +105,15 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
           margin-right: 3px;
         }
       }
+      .avatar {
+        display: inline-block;
+        position: static;
+        width: 16px;
+        height: 16px;
+        border-radius: 50px;
+        margin-right: 4px;
+        vertical-align: bottom;
+      }
     }
   }
   img {
@@ -180,6 +189,9 @@ class HeaderArea extends React.Component {
                                 <a className="funding-btn" href="https://www.patreon.com/bilibilihelper" target="_blank">
                                     <span className="bilibili-helper-2-iconfont bilibili-helper-2-icon-patreon"/>Patreon
                                 </a>
+                                <a className="funding-btn" href="https://space.bilibili.com/50623" target="_blank">
+                                    <img width="20" height="20" className="avatar" src="../static/images/50623_avatar.webp"/>
+                                    关注我</a>
                             </div>
                         </div>
                         <div className="action-box">
