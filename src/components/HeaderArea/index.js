@@ -47,6 +47,7 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
         .bilibili-helper-2-icon-bilibilihelper {
           font-size: 32px;
           font-weight: 400;
+          color: rgb(255, 255, 255);
         }
       }
       .version-box {
