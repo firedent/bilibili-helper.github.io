@@ -4,7 +4,7 @@
  * Create: 2019/2/28
  * Description:
  */
-export const postMessage = (message, origin = (local ? 'http://localhost:8000/' : 'https://bilibili-helper.github.io/')) => {
+export const postMessage = (message, origin = (local ? 'http://bilibilihelper.com:8000/' : 'https://bilibili-helper.github.io/')) => {
     window.postMessage(message, origin);
 };
 

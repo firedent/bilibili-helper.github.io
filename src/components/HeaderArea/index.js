@@ -44,6 +44,10 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
       h1 {
         font-size: 24px;
         color: #fff;
+        .bilibili-helper-2-icon-bilibilihelper {
+          font-size: 32px;
+          font-weight: 400;
+        }
       }
       .version-box {
         height: 12px;
@@ -78,6 +82,26 @@ const HeaderWrapper = styled.div.attrs({className: 'header-box'})`
         }
         .login-btn {
           
+        }
+      }
+    }
+    .funding-wrapper {
+      margin-top: 12px;
+      
+      .funding-btn {
+        padding: 4px;
+        margin-right: 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        background-color: #fff;
+        color: var(--bilibili-pink);
+        cursor: pointer;
+        text-decoration: none;
+        
+        .bilibili-helper-2-iconfont {
+          color: var(--bilibili-pink);
+          font-size: 12px;
+          margin-right: 3px;
         }
       }
     }
@@ -140,13 +164,21 @@ class HeaderArea extends React.Component {
                     <div className="header-box">
                         <div className="title-box">
                             <h1>
-                                BILIBILI HELPER
+                                <span className="bilibili-helper-2-iconfont bilibili-helper-2-icon-bilibilihelper"/>
                                 {/*<PinballArea/>*/}
                             </h1>
                             <div className="version-box">
                                 <span>最好用的非官方扩展程序</span>
-                                {global.config && <span>Latest: {global.config.lastVersion}</span>}
-                                {global.version && <span>Yours: {global.version}</span>}
+                                {global.config && <span>最新版本: {global.config.lastVersion}</span>}
+                                {global.version && <span>你的版本: {global.version}</span>}
+                            </div>
+                            <div className="funding-wrapper">
+                                <a className="funding-btn" href="https://afdian.net/@bilibilihelper" target="_blank">
+                                    <span className="bilibili-helper-2-iconfont bilibili-helper-2-icon-afdian"/>爱发电
+                                </a>
+                                <a className="funding-btn" href="https://www.patreon.com/bilibilihelper" target="_blank">
+                                    <span className="bilibili-helper-2-iconfont bilibili-helper-2-icon-patreon"/>Patreon
+                                </a>
                             </div>
                         </div>
                         <div className="action-box">
