@@ -183,12 +183,12 @@ class HeaderArea extends React.Component {
                                 {global.version && <span>你的版本: {global.version}</span>}
                             </div>
                             <div className="funding-wrapper">
-                                <a className="funding-btn" href="https://afdian.net/@bilibilihelper" target="_blank">
-                                    <span className="bilibili-helper-2-iconfont bilibili-helper-2-icon-afdian"/>爱发电
-                                </a>
-                                <a className="funding-btn" href="https://www.patreon.com/bilibilihelper" target="_blank">
-                                    <span className="bilibili-helper-2-iconfont bilibili-helper-2-icon-patreon"/>Patreon
-                                </a>
+                                {/*<a className="funding-btn" href="https://afdian.net/@bilibilihelper" target="_blank">*/}
+                                {/*    <span className="bilibili-helper-2-iconfont bilibili-helper-2-icon-afdian"/>爱发电*/}
+                                {/*</a>*/}
+                                {/*<a className="funding-btn" href="https://www.patreon.com/bilibilihelper" target="_blank">*/}
+                                {/*    <span className="bilibili-helper-2-iconfont bilibili-helper-2-icon-patreon"/>Patreon*/}
+                                {/*</a>*/}
                                 <a className="funding-btn" href="https://space.bilibili.com/50623" target="_blank">
                                     <img width="20" height="20" className="avatar" src="../static/images/50623_avatar.webp"/>
                                     关注我</a>
