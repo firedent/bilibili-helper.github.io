@@ -1,8 +1,8 @@
 [
     {
-        "version": "1.2.27.2",
+        "version": "1.2.30",
         "sign": "store",
-        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.27.2/bilibilihelper_1.2.27.2.crx",
+        "url": "https://github.com/bilibili-helper/bilibili-helper-o/releases/download/v1.2.30/bilibilihelper_1.2.30.crx",
         "notify": [
             ["important", "从1.2.22版本开始，增加对B站购买有版权视频的下载限制，其中包含但不限于动漫番剧，电影和综艺等分类"]
         ],
@@ -10,7 +10,8 @@
         "info": [
             ["fix", "修复明明已登录却还是显示「未登录」的问题"],
             ["fix", "修复部分视频下载时重命名特性失效的问题"],
-            ["fix", "修复直播版聊模式，增加横向调整功能"]
+            ["fix", "修复直播版聊模式，增加横向调整功能"],
+            ["add", "增加关注开发者的小弹窗，关闭后不再显示"]
         ]
     },
     {
@@ -59,7 +60,7 @@
         ]
     },
     {
-        "version": "1.2.27.2",
+        "version": "1.2.30",
         "sign": "edge",
         "url": "https://microsoftedge.microsoft.com/addons/detail/fcfebhekhbkhjjimonjmbgmkbclheaoh?hl=zh-CN",
         "notify": [
@@ -69,7 +70,8 @@
         "info": [
             ["fix", "修复明明已登录却还是显示「未登录」的问题"],
             ["fix", "修复部分视频下载时重命名特性失效的问题"],
-            ["fix", "修复直播版聊模式，增加横向调整功能"]
+            ["fix", "修复直播版聊模式，增加横向调整功能"],
+            ["add", "增加关注开发者的小弹窗，关闭后不再显示"]
         ]
     },
     {
