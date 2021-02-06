@@ -90,7 +90,7 @@ class RecommendArea extends React.Component {
 
     render() {
         return (
-            <RecommendWrapper id="announcement">
+            <RecommendWrapper id="recommend">
                 <h3>相关软件推荐 ~ RECOMMEND</h3>
                 <div className="item">
                     <ul className="content">
